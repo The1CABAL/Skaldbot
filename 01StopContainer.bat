@@ -1,2 +1,2 @@
-rem stop skaldbot
-rem rm skaldbot
+stop skaldbot
+rm skaldbot
