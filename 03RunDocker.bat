@@ -1,1 +1,1 @@
-docker - run -it -p 5478:5478 --name skaldbot -d skaldbot
+docker - run -t -p 5478:5478 --name skaldbot -d skaldbot
