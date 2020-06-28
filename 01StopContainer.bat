@@ -1,2 +1,2 @@
-stop skaldbot
-rm skaldbot
+docker stop skaldbot
+docker rm skaldbot
