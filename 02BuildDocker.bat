@@ -1,1 +1,1 @@
-docker build --tag skaldbot
+docker build --tag skaldbot .
