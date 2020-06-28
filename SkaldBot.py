@@ -24,6 +24,6 @@ async def on_message(message):
         await message.channel.send('Isaac lost his ship to the Fer De Lance mentioned in the story so he drank over 6 ounces of rum and wrote a discord bot. \n\nI am a bot if you would like me to say something new please type "$newStory" but without the quotes.')
 
     if message.content.startswith('$newStory'):
-        await message.channel.send('I am sorry but I cannot bring myself to tell any other story for no story is as tragic as thr story you will hear from typing "$story" without the quotes..."')
+        await message.channel.send('I am sorry but I cannot bring myself to tell any other story for no story is as tragic as the story you will hear from typing "$story" without the quotes..."')
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
