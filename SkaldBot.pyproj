@@ -22,7 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Classes\MythSwitcher.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SkaldBot.py" />
+    <Compile Include="Classes\storySwitcher.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -37,6 +43,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
+    <Content Include="Stories\The_Great_Famine.txt" />
+    <Content Include="Stories\The_Tragedy_of_The_Gungnir.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
+    <Folder Include="Myths\" />
+    <Folder Include="Wisdom\" />
+    <Folder Include="Stories\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
