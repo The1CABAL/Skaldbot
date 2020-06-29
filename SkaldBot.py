@@ -1,6 +1,7 @@
 
 import discord
 from Classes.storySwitcher import storySwitcher
+from Wisdom.Wisdom_List import random_wisdom
 import os
 
 home = os.getcwd()
@@ -29,7 +30,8 @@ async def on_message(message):
         await message.channel.send('Isaac lost his ship to the Fer De Lance mentioned in one of the stories so he drank over 6 ounces of rum and wrote a discord bot. \n\nI am a bot if you would like me to say something new please type "$newStory" but without the quotes.')
 
     if message.content.startswith('$wisdom'):
-        await message.channel.send('Shields grow back. \n\nThis has been the wisdom of the gods.')
+        wisdom = random_wisdom()
+        await message.channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
 
     if message.content.startswith('$myth'):
         myth = storySwitcher(home, 'Myths')

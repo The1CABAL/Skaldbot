@@ -26,6 +26,9 @@
     <Compile Include="Classes\storySwitcher.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Wisdom\Wisdom_List.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -41,6 +44,7 @@
   <ItemGroup>
     <Content Include="requirements.txt" />
     <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
+    <Content Include="Stories\Devins Adoption.txt" />
     <Content Include="Stories\The_Great_Famine.txt" />
     <Content Include="Stories\The_Tragedy_of_The_Gungnir.txt" />
   </ItemGroup>
