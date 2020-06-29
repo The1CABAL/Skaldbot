@@ -34,6 +34,15 @@ async def on_message(message):
 
     if message.content.startswith('$myth'):
         myth = mythSwitcher(home)
-        await message.channel.send(str(myth))
+
+        if len(myth) <= 2000:
+            await message.channel.send(str(myth))
+        elif len(myth) > 2000 and len(myth) < 4000:
+            await message.channel.send(str(myth[0:1999]))
+            await message.channel.send(str(myth[2000:4000]))
+        elif len(myth) > 4000:
+            await message.channel.send(str(myth[0:1999]))
+            await message.channel.send(str(myth[2000:3999]))
+            await message.channel.send(str(myth[4000:5999]))
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
