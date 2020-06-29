@@ -1,5 +1,6 @@
 
 import discord
+import tradedangerous
 
 client = discord.Client()
 
@@ -25,5 +26,17 @@ async def on_message(message):
 
     if message.content.startswith('$newStory'):
         await message.channel.send('I am sorry but I cannot bring myself to tell any other story for no story is as tragic as the story you will hear from typing "$story" without the quotes..."')
+
+
+    ##Trade advisor
+    if message.content.startswith('$trade'):
+        if message.channel.id == 726832213840101386:
+            message = message.content
+            argList = message.split(' ')
+            trade_data = tradedangerous.trade 
+            
+            await message.channel.send("Trade data will appear here")
+        else:
+            await message.channel.send("Lets head over to the trade advice channel to get started.")
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
