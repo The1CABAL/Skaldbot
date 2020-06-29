@@ -36,12 +36,12 @@ async def on_message(message):
 
         if len(myth) <= 2000:
             await message.channel.send(str(myth))
-        elif len(myth) > 2000 and len(myth) <= 4000:
+        elif len(myth) > 2000 and len(myth) < 4001:
             await message.channel.send(str(myth[0:1999]))
             await message.channel.send(str(myth[2000:4000]))
         elif len(myth) > 4000:
-            await message.channel.send(str(myth[0:1999]))
-            await message.channel.send(str(myth[2000:3999]))
-            await message.channel.send(str(myth[4000]))
+            await message.channel.send(str(myth[0:2000]))
+            await message.channel.send(str(myth[2000:4000]))
+            await message.channel.send(str(myth[4000:6000]))
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
