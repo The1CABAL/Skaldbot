@@ -1,7 +1,6 @@
 
 import discord
 from Classes.storySwitcher import storySwitcher
-from Classes.MythSwitcher import mythSwitcher
 import os
 
 home = os.getcwd()
@@ -23,7 +22,7 @@ async def on_message(message):
         return
 
     if message.content.startswith('$story'):
-        story = storySwitcher(home)
+        story = storySwitcher(home, 'Stories')
         await message.channel.send(str(story))
 
     if message.content.startswith('$why'):
@@ -33,16 +32,16 @@ async def on_message(message):
         await message.channel.send('Shields grow back. \n\nThis has been the wisdom of the gods.')
 
     if message.content.startswith('$myth'):
-        myth = mythSwitcher(home)
+        myth = storySwitcher(home, 'Myths')
 
         if len(myth) <= 2000:
             await message.channel.send(str(myth))
-        elif len(myth) > 2000 and len(myth) < 4000:
+        elif len(myth) > 2000 and len(myth) <= 4000:
             await message.channel.send(str(myth[0:1999]))
             await message.channel.send(str(myth[2000:4000]))
         elif len(myth) > 4000:
             await message.channel.send(str(myth[0:1999]))
             await message.channel.send(str(myth[2000:3999]))
-            await message.channel.send(str(myth[4000:5999]))
+            await message.channel.send(str(myth[4000]))
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')

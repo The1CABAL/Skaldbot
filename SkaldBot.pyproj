@@ -22,9 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\MythSwitcher.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SkaldBot.py" />
     <Compile Include="Classes\storySwitcher.py">
       <SubType>Code</SubType>

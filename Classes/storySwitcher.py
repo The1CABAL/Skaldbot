@@ -2,8 +2,8 @@
 import random
 import os
 
-def storySwitcher(home):
-    path = home + '//Stories'
+def storySwitcher(home, folder):
+    path = home + '//' + folder
     os.chdir(path)
     directory = os.fsencode(path)
     files = os.listdir(directory)
