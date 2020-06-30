@@ -1,11 +1,9 @@
 
-import discord
+import discord, os, threading
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Classes.moduleFinder import findModules
 from Wisdom.Wisdom_List import random_wisdom
-import os
-import threading
 
 home = os.getcwd()
 
@@ -80,8 +78,8 @@ async def on_message(message):
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
     if message.content.startswith('$modules'):
-        if channel.id != 726832213840101386:
-            await message.channel.send('Head over to temp channel name to chat about this.')
+        if message.channel.type != discord.ChannelType.private:
+            await message.channel.send('Go ahead and DM me and I will help you find what youre looking for.')
         else:
             findModules(client)
 
