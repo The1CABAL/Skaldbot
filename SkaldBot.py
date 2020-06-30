@@ -19,7 +19,7 @@ async def on_ready():
     #channel = client.get_channel(726640547019751458)
     #Group Channel DO NOT RUN LOCALLY UNLESS THIS IS COMMENTED OUT
     channel = client.get_channel(725880649356935192)
-    await channel.send('Hey everyone! I am now going to start announcing me new abilities as I learn them! Type $help to see what I can already do!')
+    await channel.send('Hey everyone! I have new wisdom to offer! Type $wisdom for a chance to hear it!')
 
 @client.event
 
