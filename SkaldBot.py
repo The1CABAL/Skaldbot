@@ -15,7 +15,11 @@ client = discord.Client()
 async def on_ready():
 
     print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
-    await message.content.startswith('Hey everyone! I now have the ability to ask the gods yes or no questions on your behalf. Type $help to see what else I can do for you!')
+    #Test Channel
+    #channel = client.get_channel(726640547019751458)
+    #Group Channel
+    channel = client.get_channel(725880649356935192)
+    await channel.send('Hey everyone! I am now going to start announcing me new abilities as I learn them! Type $help to see what I can already do!')
 
 @client.event
 
