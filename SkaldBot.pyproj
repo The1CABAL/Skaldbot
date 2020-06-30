@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\storyLister.py">
+    <Compile Include="Classes\decisionMaker.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SkaldBot.py" />

@@ -3,7 +3,8 @@ import random
 
 wisdom_list=[
     'Shields grow back.',
-    'Gravity is heavy.'
+    'Gravity is heavy.',
+    'If you want to get out of going on a date, pull a spark plug out of your car and send a snap of the car not starting.'
     ]
 
 def random_wisdom():

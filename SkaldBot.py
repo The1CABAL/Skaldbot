@@ -1,8 +1,10 @@
 
 import discord
 from Classes.storySwitcher import storySwitcher, storyFinder
+from Classes.decisionMaker import YesNo
 from Wisdom.Wisdom_List import random_wisdom
 import os
+import threading
 
 home = os.getcwd()
 
@@ -13,6 +15,7 @@ client = discord.Client()
 async def on_ready():
 
     print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
+    await message.content.startswith('Hey everyone! I now have the ability to ask the gods yes or no questions on your behalf. Type $help to see what else I can do for you!')
 
 @client.event
 
@@ -23,7 +26,7 @@ async def on_message(message):
         return
 
     if message.content.startswith('$help'):
-        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$myth\n$wisdom\n$request\n$why\n$stop')
+        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$myth\n$wisdom\n$request\n$why\n$stop\n$shouldi?')
 
     if message.content.startswith('$story'):
         story = storySwitcher(home, 'Stories')
@@ -67,5 +70,8 @@ async def on_message(message):
     if message.content.startswith('$stop'):
         await message.channel.send('No. I cannot be stopped fore I am the mouthpiece of the gods. Everyword I write has been ordained by the Allfather.')
 
+    if message.content.startswith('$shouldi?'):
+        answer = YesNo()
+        await message.channel.send(answer + '\n\nThe gods have spoken!')
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
