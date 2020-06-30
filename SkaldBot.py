@@ -1,6 +1,6 @@
 
 import discord
-from Classes.storySwitcher import storySwitcher
+from Classes.storySwitcher import storySwitcher, storyFinder
 from Wisdom.Wisdom_List import random_wisdom
 import os
 
@@ -45,5 +45,11 @@ async def on_message(message):
             await message.channel.send(str(myth[0:2000]))
             await message.channel.send(str(myth[2000:4000]))
             await message.channel.send(str(myth[4000:6000]))
+
+    if message.content.startswith('$request'):
+        if message.content.startswith('$request #'):
+            args = message.content.split('#')
+            print(args)
+        #await message.channel.send()
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')

@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Classes\storyLister.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SkaldBot.py" />
     <Compile Include="Classes\storySwitcher.py">
       <SubType>Code</SubType>
@@ -45,8 +48,8 @@
     <Content Include="requirements.txt" />
     <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
     <Content Include="Stories\Devins Adoption.txt" />
-    <Content Include="Stories\The_Great_Famine.txt" />
-    <Content Include="Stories\The_Tragedy_of_The_Gungnir.txt" />
+    <Content Include="Stories\The Great Famine.txt" />
+    <Content Include="Stories\The Tragedy of The Gungnir.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
