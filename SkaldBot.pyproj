@@ -31,6 +31,9 @@
     <Compile Include="Classes\SQLITE.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\distanceCalculator.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SkaldBot.py" />
     <Compile Include="Classes\storySwitcher.py">
       <SubType>Code</SubType>
@@ -60,6 +63,7 @@
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="Myths\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
   </ItemGroup>
