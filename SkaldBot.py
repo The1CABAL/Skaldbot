@@ -15,9 +15,9 @@ client = discord.Client()
 async def on_ready():
 
     print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
-    #Test Channel
+    #Test Channel THE BELOW CHANNEL WILL SEND TO THE TEST DISCORD SERVER
     #channel = client.get_channel(726640547019751458)
-    #Group Channel
+    #Group Channel DO NOT RUN LOCALLY UNLESS THIS IS COMMENTED OUT
     channel = client.get_channel(725880649356935192)
     await channel.send('Hey everyone! I am now going to start announcing me new abilities as I learn them! Type $help to see what I can already do!')
 
