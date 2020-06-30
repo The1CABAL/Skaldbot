@@ -22,6 +22,9 @@ async def on_message(message):
 
         return
 
+    if message.content.startswith('$help'):
+        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$myth\n$wisdom\n$request\n$why\n$stop')
+
     if message.content.startswith('$story'):
         story = storySwitcher(home, 'Stories')
         await message.channel.send(str(story))
@@ -48,8 +51,21 @@ async def on_message(message):
 
     if message.content.startswith('$request'):
         if message.content.startswith('$request #'):
-            args = message.content.split('#')
-            print(args)
-        #await message.channel.send()
+            try:
+                args = message.content.split('#')
+                arg = args[1]
+
+                story = storyFinder(home, 'Stories', arg)
+                await message.channel.send(story)
+            except:
+                await message.channel.send('Sorry I didnt understand what you asked for...')
+
+        else:
+            list = storyFinder(home, 'Stories')
+            await message.channel.send('Please select from the following stories by typing "$request #1" but replace the number with the number next to the story you want. \n\n'+str(list))
+
+    if message.content.startswith('$stop'):
+        await message.channel.send('No. I cannot be stopped fore I am the mouthpiece of the gods. Everyword I write has been ordained by the Allfather.')
+
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
