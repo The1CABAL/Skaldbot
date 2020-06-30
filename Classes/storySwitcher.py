@@ -32,16 +32,21 @@ def storyFinder(home, folder, iteration = ''):
 
     count = 1
     for i in foundfiles:
-        i = str(i).replace('.txt''', '')
-        i = str(i).replace('b''', '')
+        i = str(i).replace('.txt', '')
+        i = str(i).replace('b', '')
+        i = str(i).replace("'", '', 2)
         cleaned_files.update({count:i})
 
         count += 1
 
     if iteration == '':
+        cleaned_files = str(cleaned_files).replace('{', '')
+        cleaned_files = str(cleaned_files).replace('}', '')
+        cleaned_files = str(cleaned_files).replace(', ', '\n')
         return cleaned_files
     else:
-        file = foundfiles[iteration-1]
+        integer = (int(iteration)-1)
+        file = foundfiles[integer]
 
         with open(file, 'r') as openedfile:
             storylist = openedfile.readlines()

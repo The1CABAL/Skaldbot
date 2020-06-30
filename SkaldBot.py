@@ -48,8 +48,18 @@ async def on_message(message):
 
     if message.content.startswith('$request'):
         if message.content.startswith('$request #'):
-            args = message.content.split('#')
-            print(args)
-        #await message.channel.send()
+            try:
+                args = message.content.split('#')
+                arg = args[1]
+
+                story = storyFinder(home, 'Stories', arg)
+                await message.channel.send(story)
+            except:
+                await message.channel.send('Sorry I didnt understand what you were asking...')
+
+        else:
+            list = storyFinder(home, 'Stories')
+            await message.channel.send('Please select from the following stories by typing "$request #1" but replace the number with the number next to the story you want. \n\n'+str(list))
+
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
