@@ -2,6 +2,7 @@
 import discord
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
+from Classes.moduleFinder import findModules
 from Wisdom.Wisdom_List import random_wisdom
 import os
 import threading
@@ -16,10 +17,10 @@ async def on_ready():
 
     print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
     #Test Channel
-    #channel = client.get_channel(726640547019751458)
+    channel = client.get_channel(726640547019751458)
     #Group Channel
-    channel = client.get_channel(725880649356935192)
-    await channel.send('Hey everyone! I am now going to start announcing me new abilities as I learn them! Type $help to see what I can already do!')
+    #channel = client.get_channel(725880649356935192)
+    await channel.send('Ready for testing Module Finder features')
 
 @client.event
 
@@ -77,5 +78,12 @@ async def on_message(message):
     if message.content.startswith('$shouldi?'):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
+
+    if message.content.startswith('$modules'):
+        if channel.id != 726832213840101386:
+            await message.channel.send('Head over to temp channel name to chat about this.')
+        else:
+            findModules(client)
+
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
