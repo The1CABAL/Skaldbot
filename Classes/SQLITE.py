@@ -26,3 +26,27 @@ class SQLITE():
     #This function gets a list of stations that contain the module selected
     def find_station_by_module(ModuleId):
         pass
+
+    #This function gets the closest coordinates 
+    def find_closest_coordinates(id):
+        sql = 'SELECT x, y, z FROM CodeSystems WHERE Id <> @id GROUP BY x, y, z ORDER BY ABS((SUM(x + y + z) / 3) - (SELECT (SUM(x + y + z) / 3) FROM CodeSystems WHERE id = @id)) LIMIT 1'
+        sql = sql.replace('@id', id)
+
+        try:
+            conn = sqlite3.connect('SB_EDDB.sqlite3')
+            c = conn.cursor()
+
+            c.execute(sql)
+            coordinates = c.fetchall()
+
+            if coordinates == None:
+                return None
+            else:
+                coordinates = c.fetchall()[0]
+                c.close()
+                conn.close()
+
+                return coordinates
+
+        except sqlite3.Error as e:
+            print("Error getting closest coordinates. Error: " + e)
