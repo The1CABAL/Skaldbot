@@ -6,6 +6,8 @@ from Wisdom.Wisdom_List import random_wisdom
 import os
 import threading
 
+SUM_IsSent = False
+
 home = os.getcwd()
 
 client = discord.Client()
@@ -15,11 +17,15 @@ client = discord.Client()
 async def on_ready():
 
     print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
-    #Test Channel THE BELOW CHANNEL WILL SEND TO THE TEST DISCORD SERVER
-    #channel = client.get_channel(726640547019751458)
-    #Group Channel DO NOT RUN LOCALLY UNLESS THIS IS COMMENTED OUT
-    channel = client.get_channel(725880649356935192)
-    await channel.send('Hey everyone! I have new wisdom to offer! Type $wisdom for a chance to hear it!')
+    
+    ##SEND STARTUP MESSAGE
+    if SUM_IsSent == False:
+        #Test Channel THE BELOW CHANNEL WILL SEND TO THE TEST DISCORD SERVER
+        #channel = client.get_channel(726640547019751458)
+        #Group Channel DO NOT RUN LOCALLY UNLESS THIS IS COMMENTED OUT
+        channel = client.get_channel(725880649356935192)
+        await channel.send('Alright, this SHOULD be the only time this message is sent...')
+        SUM_IsSent = True
 
 @client.event
 
