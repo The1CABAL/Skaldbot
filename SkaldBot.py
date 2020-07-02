@@ -2,10 +2,12 @@
 import discord, os, threading
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
-from Classes.moduleFinder import findModules
+from Classes.SQLITE import SQLITE as SQL
 from Wisdom.Wisdom_List import random_wisdom
 
 home = os.getcwd()
+
+SUM_IsSent = False
 
 client = discord.Client()
 
@@ -13,12 +15,10 @@ client = discord.Client()
 
 async def on_ready():
 
-    print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
-    #Test Channel
-    channel = client.get_channel(726640547019751458)
-    #Group Channel
-    #channel = client.get_channel(725880649356935192)
-    await channel.send('Ready for testing Module Finder features')
+    SQL.create_dbo()
+    #SQL.populate_dbo()
+
+    print('Logged in as {0.user}'.format(client))
 
 @client.event
 
@@ -80,8 +80,17 @@ async def on_message(message):
     if message.content.startswith('$modules'):
         if message.channel.type != discord.ChannelType.private:
             await message.channel.send('Go ahead and DM me and I will help you find what youre looking for.')
-        else:
-            findModules(client)
+        elif message.content.startswith('$module, '):
+            args = message.content.split(', ')
+            arg = args[1]
+
+            ##Check for exactly matching module name
+            try:
+                SQL.find_station_by_module(arg)
+            except:
+                possibleModules = SQL.get_modules_names(arg)
+                #send out these possibilities with a message stating to retry $module with the right module name
+                #consider just requesting that the user submit an exact module name
 
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
