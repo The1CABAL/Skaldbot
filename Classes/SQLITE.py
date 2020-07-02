@@ -1,14 +1,65 @@
 
-import sqlite3, json, urllib
+import sqlite3, json, urllib.request
 
 class SQLITE():
     #Creates database
     def create_dbo():
-        pass
+        conn = sqlite3.connect('SB_EDDB.sqlite3')
+        c = conn.cursor()
+
+        c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
+        c.execute("CREATE TABLE IF NOT EXISTS CodeStations (id INT NOT NULL, name TEXT, system_id TEXT, updated_at TEXT, max_landing_pad_size TEXT, distance_to_star TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, states TEXT, type_id TEXT, type TEXT, has_blackmarket TEXT, has_market TEXT, has_refuel TEXT, has_repair TEXT, has_rearm TEXT, has_outfitting TEXT, has_shipyard TEXT, has_docking TEXT, has_commodities TEXT, import_commodities TEXT, export_commodities TEXT, prohibited_commodities TEXT, economies TEXT, shipyard_updated_at TEXT, outfitting_updated_at TEXT, market_updated_at TEXT, is_planetary TEXT, selling_ships TEXT, selling_modules TEXT, settlement_size_id TEXT, settlement_size TEXT, settlement_security_id TEXT, settlement_security TEXT, body_id TEXT, controlling_minor_faction_id TEXT, ed_market_id TEXT, PRIMARY KEY(id) ON CONFLICT REPLACE)")
+        c.execute("CREATE TABLE IF NOT EXISTS CodeSystems (id INT NOT NULL, edsm_id TEXT, name TEXT, x TEXT, y TEXT, z TEXT, population TEXT, is_populated TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, security_id TEXT, security TEXT, primary_economy_id TEXT, primary_economy TEXT, power TEXT, power_state TEXT, power_state_id TEXT, needs_permit TEXT, updated_at TEXT, simbad_ref TEXT, controlling_minor_faction_id TEXT, controlling_minor_faction TEXT, reserve_type_id TEXT, reserve_type TEXT, ed_system_address, PRIMARY KEY(id) ON CONFLICT REPLACE)")
+
+        c.close()
+        conn.close()
 
     #Populates database from EDDB.io API links
     def populate_dbo():
-        pass
+        conn = sqlite3.connect('SB_EDDB.sqlite3')
+        c = conn.cursor()
+
+        JSON_urls = {
+            'CodeModules': 'https://eddb.io/archive/v6/modules.json',
+            #'CodeCommodities': 'https://eddb.io/archive/v6/commodities.json',
+            'CodeStations': 'https://eddb.io/archive/v6/stations.json'
+            }
+
+        #Iterate through the URLS and Collect JSON data
+        for table in JSON_urls:
+            link = JSON_urls[table]
+            openedlink = urllib.request.urlopen(link)
+            data = json.loads(openedlink.read())
+
+            #iterate trhough the line to build a list of keys
+            keys = []
+            for line in data:
+                for key in line:
+                    if key == 'group':
+                        key = "'group'"
+                    keys.append(key)
+
+                #Iterate through the line and build a list of values associated with those keys
+                values = []
+                for i in keys:
+                    if i == "'group'":
+                        i = 'group'
+                    values.append(line[i])
+
+                #Make list of questionmarks
+                variable_list = []
+                for e in keys:
+                    variable_list.append('?')
+
+                #join necessary lists into comma separated string which can be used as the query input
+                col_name_string = ', '.join(keys)
+                var_string = ', '.join(variable_list)
+
+                #Insert values
+                c.execute('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+var_string + ');', values)
+
+        c.close()
+        conn.close()
 
     '''
     This function will find modules based on a "like" search submitted by the user.
@@ -24,5 +75,5 @@ class SQLITE():
         return ModuleDict
 
     #This function gets a list of stations that contain the module selected
-    def find_station_by_module(ModuleId):
-        pass
+    #def find_station_by_module(ModuleId):
+    #    pass
