@@ -5,7 +5,8 @@ wisdom_list=[
     'Shields grow back.',
     'Gravity is heavy.',
     'If you want to get out of going on a date, pull a spark plug out of your car and send a snap of the car not starting.',
-    'Space is hard.'
+    'Space is hard.',
+    'You need to prospect to see things.'
     ]
 
 def random_wisdom():
