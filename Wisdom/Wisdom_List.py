@@ -7,7 +7,8 @@ wisdom_list=[
     'If you want to get out of going on a date, pull a spark plug out of your car and send a snap of the car not starting.',
     'Space is hard.',
     'You need to prospect to see things.',
-    'We are all egg.'
+    'We are all egg.',
+    'Jormungandr in English is Jormungandr'
     ]
 
 def random_wisdom():
