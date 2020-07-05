@@ -79,7 +79,7 @@ async def on_message(message):
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
     if message.content.startswith('$sing'):
-        async def vuvuzela(context):
+        async def singing(context):
             # grab the user who sent the command
             user=context.message.author
             voice_channel=user.voice.voice_channel
