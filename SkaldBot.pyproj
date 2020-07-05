@@ -25,6 +25,9 @@
     <Compile Include="Classes\decisionMaker.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\Music.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SkaldBot.py" />
     <Compile Include="Classes\storySwitcher.py">
       <SubType>Code</SubType>
