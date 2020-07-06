@@ -1,5 +1,7 @@
 
 import sqlite3, json, urllib.request
+import pandas as pd
+from time import sleep
 
 class SQLITE():
     #Creates database
@@ -7,15 +9,17 @@ class SQLITE():
         conn = sqlite3.connect('SB_EDDB.sqlite3')
         c = conn.cursor()
 
-        c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
+        c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, mass TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
         c.execute("CREATE TABLE IF NOT EXISTS CodeStations (id INT NOT NULL, name TEXT, system_id TEXT, updated_at TEXT, max_landing_pad_size TEXT, distance_to_star TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, states TEXT, type_id TEXT, type TEXT, has_blackmarket TEXT, has_market TEXT, has_refuel TEXT, has_repair TEXT, has_rearm TEXT, has_outfitting TEXT, has_shipyard TEXT, has_docking TEXT, has_commodities TEXT, import_commodities TEXT, export_commodities TEXT, prohibited_commodities TEXT, economies TEXT, shipyard_updated_at TEXT, outfitting_updated_at TEXT, market_updated_at TEXT, is_planetary TEXT, selling_ships TEXT, selling_modules TEXT, settlement_size_id TEXT, settlement_size TEXT, settlement_security_id TEXT, settlement_security TEXT, body_id TEXT, controlling_minor_faction_id TEXT, ed_market_id TEXT, PRIMARY KEY(id) ON CONFLICT REPLACE)")
         c.execute("CREATE TABLE IF NOT EXISTS CodeSystems (id INT NOT NULL, edsm_id TEXT, name TEXT, x TEXT, y TEXT, z TEXT, population TEXT, is_populated TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, security_id TEXT, security TEXT, primary_economy_id TEXT, primary_economy TEXT, power TEXT, power_state TEXT, power_state_id TEXT, needs_permit TEXT, updated_at TEXT, simbad_ref TEXT, controlling_minor_faction_id TEXT, controlling_minor_faction TEXT, reserve_type_id TEXT, reserve_type TEXT, ed_system_address, PRIMARY KEY(id) ON CONFLICT REPLACE)")
 
+
+        conn.commit()
         c.close()
         conn.close()
 
     #Populates database from EDDB.io API links
-    def populate_dbo():
+    def populate_jsons():
         conn = sqlite3.connect('SB_EDDB.sqlite3')
         c = conn.cursor()
 
@@ -42,9 +46,14 @@ class SQLITE():
                 #Iterate through the line and build a list of values associated with those keys
                 values = []
                 for i in keys:
+                    i.replace('Mk.', 'Mk')
                     if i == "'group'":
                         i = 'group'
-                    values.append(line[i])
+                    try:
+                        values.append(str(line[i]))
+                    except:
+                        pass
+
 
                 #Make list of questionmarks
                 variable_list = []
@@ -54,12 +63,44 @@ class SQLITE():
                 #join necessary lists into comma separated string which can be used as the query input
                 col_name_string = ', '.join(keys)
                 var_string = ', '.join(variable_list)
+                val_string = ', '.join(values)
 
                 #Insert values
-                c.execute('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+var_string + ');', values)
+                try:
+                    c.execute('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ');')
+                except:
+                    pass
 
+        conn.commit()
         c.close()
         conn.close()
+        sleep(86400)
+
+    def get_all_systems():
+        conn = sqlite3.connect('SB_EDDB.sqlite3')
+        c = conn.cursor()
+
+        link = 'https://eddb.io/archive/v6/systems.csv'
+        print('Getting Data')
+        data = pd.read_csv(link, sep=',', dtype={'a': str})
+        print('Finally got Data')
+        headers = next(data)
+
+        marks = []
+        for i in headers:
+            marks.append('?')
+
+        col_name_string = ', '.join(headers)
+        var_string = ', '.join(marks)
+
+        for row in data:
+            values = row
+            print(row)
+            c.execute('INSERT INTO CodeSystems ('+col_name_string+') VALUES ('+var_string+');', row)
+
+        conn.commit()
+        conn.close()
+        c.close()
 
     '''
     This function will find modules based on a "like" search submitted by the user.
@@ -101,3 +142,5 @@ class SQLITE():
 
         except sqlite3.Error as e:
             print("Error getting closest coordinates. Error: " + e)
+
+

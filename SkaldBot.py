@@ -1,5 +1,6 @@
 
-import discord, os, threading
+import discord, os
+import threading
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Classes.SQLITE import SQLITE as SQL
@@ -16,7 +17,10 @@ client = discord.Client()
 async def on_ready():
 
     SQL.create_dbo()
-    #SQL.populate_dbo()
+
+    ##Establish a 24 hour cycling job in a different thread
+    populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
+    populate_jsons.start()
 
     print('Logged in as {0.user}'.format(client))
 
@@ -91,6 +95,13 @@ async def on_message(message):
                 possibleModules = SQL.get_modules_names(arg)
                 #send out these possibilities with a message stating to retry $module with the right module name
                 #consider just requesting that the user submit an exact module name
+
+    if message.content.startswith('$getAllSystems'):
+        if message.author.id == 270864751947546625:
+            await message.channel.send('This little maneuver is going to cost us 51 years...')
+            SQL.get_all_systems()
+        else:
+            await message.channel.send('I am sorry, but in order to make sure I can continuously be a conduit to the gods, I can not do that for you.')
 
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
