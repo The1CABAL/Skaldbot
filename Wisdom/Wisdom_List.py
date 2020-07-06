@@ -8,7 +8,8 @@ wisdom_list=[
     'Space is hard.',
     'You need to prospect to see things.',
     'We are all egg.',
-    'Jormungandr in English is Jormungandr'
+    'Jormungandr in English is Jormungandr.',
+    'A jumo is approximately 6 jumps. Only a Diamondback Explorer is capable of a jumo.'
     ]
 
 def random_wisdom():
