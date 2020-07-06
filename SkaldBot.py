@@ -79,27 +79,6 @@ async def on_message(message):
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
     if message.content.startswith('$sing'):
-        async def singing(context):
-            # grab the user who sent the command
-            user=context.message.author
-            voice_channel=user.voice.voice_channel
-            channel=None
-            song = Music.get_song()
-            # only play music if user is in a voice channel
-            if voice_channel!= None:
-                # grab user's voice channel
-                channel=voice_channel.name
-                await client.say('User is in channel: '+ channel)
-                # create StreamPlayer
-                vc= await client.join_voice_channel(voice_channel)
-                player = vc.create_ffmpeg_player(song, after=lambda: print('done'))
-                player.start()
-                while not player.is_done():
-                    await asyncio.sleep(1)
-                # disconnect after the player has finished
-                player.stop()
-                await vc.disconnect()
-            else:
-                await client.say('User is not in a channel.')
+        pass
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')

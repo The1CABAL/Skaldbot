@@ -25,7 +25,10 @@
     <Compile Include="Classes\decisionMaker.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\Music.py">
+    <Compile Include="Classes\Music\Music.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\Music\YTDLSource.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SkaldBot.py" />
@@ -56,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="Classes\Music\" />
     <Folder Include="Myths\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
