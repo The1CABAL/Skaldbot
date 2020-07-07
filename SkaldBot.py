@@ -100,6 +100,7 @@ async def on_message(message):
         if message.author.id == 270864751947546625:
             await message.channel.send('This little maneuver is going to cost us 51 years...')
             SQL.get_all_systems()
+            await message.channel.send('Phew... Done. /n/nWhere''s my daughter?')
         else:
             await message.channel.send('I am sorry, but in order to make sure I can continuously be a conduit to the gods, I can not do that for you.')
 

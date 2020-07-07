@@ -79,26 +79,35 @@ class SQLITE():
     def get_all_systems():
         conn = sqlite3.connect('SB_EDDB.sqlite3')
         c = conn.cursor()
+        chunksize = 10 ** 6
 
         link = 'https://eddb.io/archive/v6/systems.csv'
         print('Getting Data')
-        data = pd.read_csv(link, sep=',', dtype={'a': str})
-        print('Finally got Data')
-        headers = next(data)
+        for chunk in pd.read_csv(link, sep=',', chunksize=chunksize, dtype={'id': int, 'edsm_id':str,'name':str,'x':str,'y':str,'z':str,'population':str,'is_populated':str,'government_id':str,
+                                                                            'government':str,'allegiance_id':str,'allegiance':str,'security_id':str,'security':str,'primary_economy_id':str,
+                                                                            'primary_economy':str,'power':str,'power_state':str,'power_state_id':str,'needs_permit':str,'updated_at':str,
+                                                                            'simbad_ref':str,'controlling_minor_faction_id':str,'controlling_minor_faction':str,'reserve_type_id':str,'reserve_type	ed_system_address':str
+                                                                            }
+                                 ):
+            df = chunk
+            print('Got a chunk of data!')
+            headers = df.columns
 
-        marks = []
-        for i in headers:
-            marks.append('?')
+            marks = []
+            for i in headers:
+                marks.append('?')
 
-        col_name_string = ', '.join(headers)
-        var_string = ', '.join(marks)
+            col_name_string = ', '.join(headers)
+            var_string = ', '.join(marks)
 
-        for row in data:
-            values = row
-            print(row)
-            c.execute('INSERT INTO CodeSystems ('+col_name_string+') VALUES ('+var_string+');', row)
+            for iterant, row in df.iterrows():
+                values = []
+                for h in headers:
+                    values.append(df.at[iterant, h])
+                c.execute('INSERT INTO CodeSystems ('+col_name_string+') VALUES ('+var_string+');', row)
 
-        conn.commit()
+            conn.commit()
+            print('Done with Chunk')
         conn.close()
         c.close()
 
