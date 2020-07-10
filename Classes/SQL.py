@@ -1,26 +1,58 @@
 
-import sqlite3, json, urllib.request
+import sqlite3, json, urllib.request, pyodbc
 import pandas as pd
 from time import sleep
+from Classes.ConfigParser import *
 
-class SQLITE():
+class SQL():
     #Creates database
-    def create_dbo():
-        conn = sqlite3.connect('SB_EDDB.sqlite3')
-        c = conn.cursor()
+    #def create_dbo():
+    #    conn = sqlite3.connect('SB_EDDB.sqlite3')
+    #    c = conn.cursor()
 
-        c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, mass TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
-        c.execute("CREATE TABLE IF NOT EXISTS CodeStations (id INT NOT NULL, name TEXT, system_id TEXT, updated_at TEXT, max_landing_pad_size TEXT, distance_to_star TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, states TEXT, type_id TEXT, type TEXT, has_blackmarket TEXT, has_market TEXT, has_refuel TEXT, has_repair TEXT, has_rearm TEXT, has_outfitting TEXT, has_shipyard TEXT, has_docking TEXT, has_commodities TEXT, import_commodities TEXT, export_commodities TEXT, prohibited_commodities TEXT, economies TEXT, shipyard_updated_at TEXT, outfitting_updated_at TEXT, market_updated_at TEXT, is_planetary TEXT, selling_ships TEXT, selling_modules TEXT, settlement_size_id TEXT, settlement_size TEXT, settlement_security_id TEXT, settlement_security TEXT, body_id TEXT, controlling_minor_faction_id TEXT, ed_market_id TEXT, PRIMARY KEY(id) ON CONFLICT REPLACE)")
-        c.execute("CREATE TABLE IF NOT EXISTS CodeSystems (id INT NOT NULL, edsm_id TEXT, name TEXT, x TEXT, y TEXT, z TEXT, population TEXT, is_populated TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, security_id TEXT, security TEXT, primary_economy_id TEXT, primary_economy TEXT, power TEXT, power_state TEXT, power_state_id TEXT, needs_permit TEXT, updated_at TEXT, simbad_ref TEXT, controlling_minor_faction_id TEXT, controlling_minor_faction TEXT, reserve_type_id TEXT, reserve_type TEXT, ed_system_address, PRIMARY KEY(id) ON CONFLICT REPLACE)")
+    #    c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, mass TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
+    #    c.execute("CREATE TABLE IF NOT EXISTS CodeStations (id INT NOT NULL, name TEXT, system_id TEXT, updated_at TEXT, max_landing_pad_size TEXT, distance_to_star TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, states TEXT, type_id TEXT, type TEXT, has_blackmarket TEXT, has_market TEXT, has_refuel TEXT, has_repair TEXT, has_rearm TEXT, has_outfitting TEXT, has_shipyard TEXT, has_docking TEXT, has_commodities TEXT, import_commodities TEXT, export_commodities TEXT, prohibited_commodities TEXT, economies TEXT, shipyard_updated_at TEXT, outfitting_updated_at TEXT, market_updated_at TEXT, is_planetary TEXT, selling_ships TEXT, selling_modules TEXT, settlement_size_id TEXT, settlement_size TEXT, settlement_security_id TEXT, settlement_security TEXT, body_id TEXT, controlling_minor_faction_id TEXT, ed_market_id TEXT, PRIMARY KEY(id) ON CONFLICT REPLACE)")
+    #    c.execute("CREATE TABLE IF NOT EXISTS CodeSystems (id INT NOT NULL, edsm_id TEXT, name TEXT, x TEXT, y TEXT, z TEXT, population TEXT, is_populated TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, security_id TEXT, security TEXT, primary_economy_id TEXT, primary_economy TEXT, power TEXT, power_state TEXT, power_state_id TEXT, needs_permit TEXT, updated_at TEXT, simbad_ref TEXT, controlling_minor_faction_id TEXT, controlling_minor_faction TEXT, reserve_type_id TEXT, reserve_type TEXT, ed_system_address, PRIMARY KEY(id) ON CONFLICT REPLACE)")
 
 
-        conn.commit()
-        c.close()
-        conn.close()
+    #    conn.commit()
+    #    c.close()
+    #    conn.close()
+
+    #Test connection to database
+    def test_connect_to_dbo():
+        conString = SQL.build_connection_string()
+
+        try:
+            conn = pyodbc.connect(conString, autocommit = False, ansi = False, timeout = 5)
+            conn.close()
+
+            return True
+        except pyodbc.Error as conn_er:
+            print("Connection Error!")
+            print("Connection string used: {}".format(conString))
+            print(conn_er)
+            return False
+
+    #Build Connection String
+    def build_connection_string():
+        config = LoadConfig('config.ini')
+
+        if config:
+            conString = None
+            integrated = config['database.integratedsecurity']
+            if (integrated.lower() == "true"):
+                conString = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';Trusted_Connection=yes;'
+            else:
+                conString = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';UID='+config['database.user']+';PWD='+config['database.password']
+
+            return conString
+        else:
+            return None
 
     #Populates database from EDDB.io API links
     def populate_jsons():
-        conn = sqlite3.connect('SB_EDDB.sqlite3')
+        conn = pyodbc.connect(SQL.build_connection_string())
         c = conn.cursor()
 
         JSON_urls = {
@@ -77,7 +109,7 @@ class SQLITE():
         sleep(86400)
 
     def get_all_systems():
-        conn = sqlite3.connect('SB_EDDB.sqlite3')
+        conn = pyodbc.connect(SQL.build_connection_string())
         c = conn.cursor()
         chunksize = 10 ** 6
 
@@ -134,7 +166,7 @@ class SQLITE():
         sql = sql.replace('@id', id)
 
         try:
-            conn = sqlite3.connect('SB_EDDB.sqlite3')
+            conn = pyodbc.connect(SQL.build_connection_string())
             c = conn.cursor()
 
             c.execute(sql)
@@ -149,7 +181,7 @@ class SQLITE():
 
                 return coordinates
 
-        except sqlite3.Error as e:
+        except pyodbc.Error as e:
             print("Error getting closest coordinates. Error: " + e)
 
 

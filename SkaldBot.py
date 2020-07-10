@@ -3,7 +3,7 @@ import discord, os
 import threading
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
-from Classes.SQLITE import SQLITE as SQL
+from Classes.SQL import SQL as SQL
 from Wisdom.Wisdom_List import random_wisdom
 
 home = os.getcwd()
@@ -16,13 +16,14 @@ client = discord.Client()
 
 async def on_ready():
 
-    SQL.create_dbo()
+    conSuccess = SQL.test_connect_to_dbo()
+    
+    if conSuccess:
+        #Establish a 24 hour cycling job in a different thread
+        #populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
+        #populate_jsons.start()
 
-    ##Establish a 24 hour cycling job in a different thread
-    populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
-    populate_jsons.start()
-
-    print('Logged in as {0.user}'.format(client))
+        print('Logged in as {0.user}'.format(client))
 
 @client.event
 
