@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>SkaldBot</Name>
     <RootNamespace>SkaldBot</RootNamespace>
-    <InterpreterId>MSBuild|devin|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

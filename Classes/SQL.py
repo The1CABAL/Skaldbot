@@ -1,5 +1,5 @@
 
-import sqlite3, json, urllib.request, pyodbc
+import json, urllib.request, pyodbc
 import pandas as pd
 from time import sleep
 from Classes.ConfigParser import *
