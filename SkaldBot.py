@@ -20,8 +20,8 @@ async def on_ready():
     
     if conSuccess:
         #Establish a 24 hour cycling job in a different thread
-        #populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
-        #populate_jsons.start()
+        populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
+        populate_jsons.start()
 
         print('Logged in as {0.user}'.format(client))
 
