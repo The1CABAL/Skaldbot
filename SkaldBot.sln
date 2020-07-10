@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SkaldBot", "SkaldBot.pyproj", "{BE51D694-0D00-4542-90F1-80D519BF4E94}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SkaldBot.Database", "..\SkaldBot.Database\SkaldBot.Database.sqlproj", "{E0599BAC-0FED-4EF6-B179-C9723E67BB78}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SkaldBot.Database", "..\SkaldBot\SkaldBot.Database\SkaldBot.Database.sqlproj", "{E0599BAC-0FED-4EF6-B179-C9723E67BB78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
