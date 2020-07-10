@@ -65,4 +65,7 @@
     <Build Include="dbo\Tables\CodeStations.sql" />
     <Build Include="dbo\Tables\CodeModules.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Profiles\SkaldBot.Database.publish.xml" />
+  </ItemGroup>
 </Project>
