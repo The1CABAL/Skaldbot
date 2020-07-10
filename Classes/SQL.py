@@ -42,9 +42,9 @@ class SQL():
             conString = None
             integrated = config['database.integratedsecurity']
             if (integrated.lower() == "true"):
-                conString = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';Trusted_Connection=yes;'
+                conString = 'DRIVER={SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';Trusted_Connection=yes;'
             else:
-                conString = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';UID='+config['database.user']+';PWD='+config['database.password']
+                conString = 'DRIVER={SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';UID='+config['database.user']+';PWD='+config['database.password']
 
             return conString
         else:
