@@ -1,5 +1,5 @@
 
-import json, urllib.request, pyodbc
+import json, urllib.request, pymssql
 import pandas as pd
 from time import sleep
 from Classes.ConfigParser import *
@@ -21,38 +21,43 @@ class SQL():
 
     #Test connection to database
     def test_connect_to_dbo():
-        conString = SQL.build_connection_string()
-
-        try:
-            conn = pyodbc.connect(conString, autocommit = False, ansi = False, timeout = 5)
-            conn.close()
-
-            return True
-        except pyodbc.Error as conn_er:
-            print("Connection Error!")
-            print("Connection string used: {}".format(conString))
-            print(conn_er)
-            return False
+        conn = SQL.open_connection()
+        if conn:
+            try:
+                conn.close()
+                return True
+            except pymssql.Error as conn_er:
+                print("Error in test_connect_to_dbo")
+                print(conn_er)
+                return False
 
     #Build Connection String
-    def build_connection_string():
+    def open_connection():
         config = LoadConfig('config.ini')
 
         if config:
-            conString = None
             integrated = config['database.integratedsecurity']
-            if (integrated.lower() == "true"):
-                conString = 'DRIVER={SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';Trusted_Connection=yes;'
-            else:
-                conString = 'DRIVER={SQL Server};SERVER='+config['database.server']+';DATABASE='+config['database.name']+';UID='+config['database.user']+';PWD='+config['database.password']
 
-            return conString
+            if (integrated.lower() == "true"):
+                try:
+                    conn = pymssql.connect(server = config['database.server'], database=config['database.name'])
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+            else:
+                try:
+                    conn = pymssql.connect(server = config['database.server'], user=config['database.user'], password=config['database.password'], database=config['database.name'])
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+
+            return conn
         else:
             return None
 
     #Populates database from EDDB.io API links
     def populate_jsons():
-        conn = pyodbc.connect(SQL.build_connection_string())
+        conn = SQL.open_connection()
         c = conn.cursor()
 
         JSON_urls = {
@@ -109,7 +114,7 @@ class SQL():
         sleep(86400)
 
     def get_all_systems():
-        conn = pyodbc.connect(SQL.build_connection_string())
+        conn = SQL.open_connection()
         c = conn.cursor()
         chunksize = 10 ** 6
 
@@ -166,7 +171,7 @@ class SQL():
         sql = sql.replace('@id', id)
 
         try:
-            conn = pyodbc.connect(SQL.build_connection_string())
+            conn = SQL.open_connection()
             c = conn.cursor()
 
             c.execute(sql)
@@ -181,7 +186,7 @@ class SQL():
 
                 return coordinates
 
-        except pyodbc.Error as e:
+        except pymssql.Error as e:
             print("Error getting closest coordinates. Error: " + e)
 
 
