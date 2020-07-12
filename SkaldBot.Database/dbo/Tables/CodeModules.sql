@@ -14,6 +14,7 @@
     [mass]         NVARCHAR (MAX) NULL,
     [ship]         NVARCHAR (MAX) NULL,
     [group]        NVARCHAR (MAX) NULL,
+    [game_context_id] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_CodeModules] PRIMARY KEY CLUSTERED ([group_id] ASC)
 );
 

@@ -20,6 +20,7 @@ async def on_ready():
     
     if conSuccess:
         #Establish a 24 hour cycling job in a different thread
+        print('Starting Thread')
         populate_jsons = threading.Thread(target = SQL.populate_jsons, args=())
         populate_jsons.start()
 

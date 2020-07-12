@@ -77,36 +77,60 @@ class SQL():
             for line in data:
                 for key in line:
                     if key == 'group':
-                        key = "'group'"
-                    keys.append(key)
+                        #key = '[group]'
+                        pass
+                    else:
+                        keys.append(key)
 
                 #Iterate through the line and build a list of values associated with those keys
                 values = []
                 for i in keys:
-                    i.replace('Mk.', 'Mk')
-                    if i == "'group'":
+                    if i == "[group]":
                         i = 'group'
                     try:
-                        values.append(str(line[i]))
+                        newvalue = str(line[i])
+                        if '{' in newvalue:
+                            newvalue.replace("'", "''''")
+                        elif newvalue == None:
+                            newvalue = 'None'
+
+                        '''
+                        The following nightmare is designed to check 
+                        for integers and add them to the list appropriately
+                        '''
+                        try:
+                            newvalue +=1
+                            values.append(newvalue)
+                        except:
+                            values.append("N'"+newvalue+"'")
                     except:
                         pass
 
 
-                #Make list of questionmarks
-                variable_list = []
-                for e in keys:
-                    variable_list.append('?')
+                #Convert NoneTypes to NULLtype for SQL Server
+                for n, i in enumerate(values):
+                    if i == "N'None'":
+                        values[n] = 'NULL'
 
                 #join necessary lists into comma separated string which can be used as the query input
                 col_name_string = ', '.join(keys)
-                var_string = ', '.join(variable_list)
                 val_string = ', '.join(values)
 
                 #Insert values
                 try:
-                    c.execute('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ');')
-                except:
-                    pass
+                    sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
+                    c.execute(sqlstring)
+                    values = []
+                    keys = []
+                    col_name_string = ''
+                    val_string = ''
+                    print('Inserted row!')
+                except pymssql.OperationalError as ex:
+                    print('Error Inserting JSON!')
+                    print('')
+                    print('SQL:    '+sqlstring)
+                    print('')
+                    print('ERROR:    '+str(ex))
 
         conn.commit()
         c.close()
