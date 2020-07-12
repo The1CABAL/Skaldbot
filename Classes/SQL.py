@@ -61,7 +61,7 @@ class SQL():
         c = conn.cursor()
 
         JSON_urls = {
-            'CodeModules': 'https://eddb.io/archive/v6/modules.json',
+            #'CodeModules': 'https://eddb.io/archive/v6/modules.json',
             #'CodeCommodities': 'https://eddb.io/archive/v6/commodities.json',
             'CodeStations': 'https://eddb.io/archive/v6/stations.json'
             }
@@ -99,7 +99,7 @@ class SQL():
                         for integers and add them to the list appropriately
                         '''
                         try:
-                            newvalue +=1
+                            newvalue + 1
                             values.append(newvalue)
                         except:
                             values.append("N'"+newvalue+"'")
@@ -124,15 +124,19 @@ class SQL():
                     keys = []
                     col_name_string = ''
                     val_string = ''
-                    print('Inserted row!')
-                except pymssql.OperationalError as ex:
+                except pymssql.Error as ex:
                     print('Error Inserting JSON!')
                     print('')
                     print('SQL:    '+sqlstring)
                     print('')
                     print('ERROR:    '+str(ex))
+                    values = []
+                    keys = []
+                    col_name_string = ''
+                    val_string = ''
+                conn.commit()
 
-        conn.commit()
+            print('Done with '+table)
         c.close()
         conn.close()
         sleep(86400)

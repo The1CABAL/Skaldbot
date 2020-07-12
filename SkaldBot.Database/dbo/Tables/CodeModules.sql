@@ -15,6 +15,22 @@
     [ship]         NVARCHAR (MAX) NULL,
     [group]        NVARCHAR (MAX) NULL,
     [game_context_id] NVARCHAR(MAX) NULL, 
-    CONSTRAINT [PK_CodeModules] PRIMARY KEY CLUSTERED ([group_id] ASC)
+    [dps] NVARCHAR(MAX) NULL, 
+    [power] NVARCHAR(MAX) NULL, 
+    [damage] NVARCHAR(MAX) NULL, 
+    [ammo] NVARCHAR(MAX) NULL, 
+    [range_km] NVARCHAR(MAX) NULL, 
+    [efficiency] NVARCHAR(MAX) NULL, 
+    [power_produced] NVARCHAR(MAX) NULL, 
+    [duration] NVARCHAR(MAX) NULL, 
+    [cells] NVARCHAR(MAX) NULL, 
+    [recharge_rating] NVARCHAR(MAX) NULL, 
+    [capacity] NVARCHAR(MAX) NULL, 
+    [count] NVARCHAR(MAX) NULL, 
+    [rate] NVARCHAR(MAX) NULL, 
+    [bins] NVARCHAR(MAX) NULL, 
+    [additional_armour] NVARCHAR(MAX) NULL, 
+    [vehicle_count] NVARCHAR(MAX) NULL, 
+    CONSTRAINT [PK_CodeModules] PRIMARY KEY ([id]) 
 );
 
