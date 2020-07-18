@@ -116,8 +116,11 @@ class SQL():
                 col_name_string = ', '.join(keys)
                 val_string = ', '.join(values)
 
+                upsertTable = 'Upsert' + table
+
                 #Insert values
                 try:
+                    #sqlstring = ('EXEC ' + upsertTable + ' ' + val_string + '')
                     sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
                     c.execute(sqlstring)
                     values = []
