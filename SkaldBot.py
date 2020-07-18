@@ -3,12 +3,14 @@ import discord
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Wisdom.Wisdom_List import random_wisdom
+from discord.ext import commands, tasks
 import os
 import threading
 
 home = os.getcwd()
 
 client = discord.Client()
+target_channel_id = 726640547019751458
 
 @client.event
 
@@ -72,5 +74,19 @@ async def on_message(message):
     if message.content.startswith('$shouldi?'):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
+
+@tasks.loop(hours=24)
+async def wisdom_once_a_day():
+    message_channel = client.get_channel(target_channel_id)
+    print(f"Got channel {message_channel}")
+    wisdom = random_wisdom()
+    await message_channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
+
+@wisdom_once_a_day.before_loop
+async def before():
+    await client.wait_until_ready()
+    print("Finished waiting")
+
+wisdom_once_a_day.start()
 
 client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
