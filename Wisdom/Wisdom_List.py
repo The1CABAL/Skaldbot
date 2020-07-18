@@ -15,6 +15,6 @@ wisdom_list=[
 def random_wisdom():
     max_int=len(wisdom_list)
     
-    choice = random.randint(0,max_int)
+    choice = random.randint(0, (max_int - 1))
 
     return wisdom_list[choice]
