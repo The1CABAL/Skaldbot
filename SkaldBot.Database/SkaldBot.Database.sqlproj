@@ -70,15 +70,9 @@
     <Build Include="dbo\Stored Procedures\UpsertCodeSystems.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeStations.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeModules.sql" />
-    <Build Include="bin\Debug\SkaldBot.Database.publish.sql" />
-    <Build Include="bin\Debug\SkaldBot.Database_1.publish.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
-    <None Include="bin\Debug\DeploymentReport.txt" />
-    <None Include="bin\Debug\DeploymentReport_1.txt" />
     <None Include="bin\Debug\SkaldBot.Database.dacpac" />
-    <None Include="bin\Debug\SkaldBot.Database.dll" />
-    <None Include="bin\Debug\SkaldBot.Database.pdb" />
   </ItemGroup>
 </Project>
