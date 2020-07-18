@@ -10,7 +10,12 @@ import threading
 home = os.getcwd()
 
 client = discord.Client()
-target_channel_id = 726640547019751458
+
+#Testing Server
+#target_channel_id = 726640547019751458
+
+#Production
+target_channel_id = 725880649356935192
 
 @client.event
 
@@ -80,7 +85,7 @@ async def wisdom_once_a_day():
     message_channel = client.get_channel(target_channel_id)
     print(f"Got channel {message_channel}")
     wisdom = random_wisdom()
-    await message_channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
+    await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
 
 @wisdom_once_a_day.before_loop
 async def before():
