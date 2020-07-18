@@ -32,7 +32,7 @@ async def on_message(message):
         await message.channel.send(str(story))
 
     if message.content.startswith('$why'):
-        await message.channel.send('Isaac lost his ship to the Fer De Lance mentioned in one of the stories so he drank over 6 ounces of rum and wrote a discord bot. \n\nI am a bot if you would like me to say something new please type "$newStory" but without the quotes.')
+        await message.channel.send('Isaac lost his ship to the Fer De Lance mentioned in one of the stories so he drank over 6 ounces of rum and wrote a discord bot.')
 
     if message.content.startswith('$wisdom'):
         wisdom = random_wisdom()
