@@ -17,6 +17,7 @@
     [has_refuel]                   NVARCHAR (MAX) NULL,
     [has_repair]                   NVARCHAR (MAX) NULL,
     [has_rearm]                    NVARCHAR (MAX) NULL,
+    [has_outfitting]               NVARCHAR (MAX) NULL,
     [has_shipyard]                 NVARCHAR (MAX) NULL,
     [has_docking]                  NVARCHAR (MAX) NULL,
     [has_commodities]              NVARCHAR (MAX) NULL,
@@ -39,4 +40,6 @@
     [ed_market_id]                 NVARCHAR (MAX) NULL,
     CONSTRAINT [PK_CodeStations] PRIMARY KEY CLUSTERED ([id] ASC)
 );
+
+
 

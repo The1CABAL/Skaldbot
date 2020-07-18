@@ -90,7 +90,9 @@ class SQL():
                     try:
                         newvalue = str(line[i])
                         if '{' in newvalue:
-                            newvalue.replace("'", "''''")
+                            newvalue = newvalue.replace("'", "''''")
+                        elif '[' in newvalue:
+                            newvalue = newvalue.replace("'", "''''")
                         elif newvalue == None:
                             newvalue = 'None'
 
@@ -113,16 +115,19 @@ class SQL():
                         values[n] = 'NULL'
 
                 #join necessary lists into comma separated string which can be used as the query input
-                col_name_string = ', '.join(keys)
+                #col_name_string = ', '.join(keys)
                 val_string = ', '.join(values)
+
+                upsertTable = 'Upsert' + table
 
                 #Insert values
                 try:
-                    sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
+                    sqlstring = ('EXEC ' + upsertTable + ' ' + val_string + '')
+                    #sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
                     c.execute(sqlstring)
                     values = []
                     keys = []
-                    col_name_string = ''
+                    #col_name_string = ''
                     val_string = ''
                 except pymssql.Error as ex:
                     print('Error Inserting JSON!')
@@ -132,7 +137,7 @@ class SQL():
                     print('ERROR:    '+str(ex))
                     values = []
                     keys = []
-                    col_name_string = ''
+                    #col_name_string = ''
                     val_string = ''
                 conn.commit()
 
