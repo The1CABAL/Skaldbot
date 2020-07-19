@@ -2,7 +2,7 @@
     <div id="app">
         <div class="container">
             <div class="logo">
-                <h3 class="titleLink">SkaldBot</h3>
+                <img :src="logoImage" style="height: 60px;"/>
             </div>
             <div class="navbar">
 
@@ -27,6 +27,12 @@
 <script>
     export default {
         name: "app",
+        data() {
+            return {
+                logoImage: require('@/assets/logo.png'),
+                background: require('@/assets/SbBackground.jpg')
+            }
+        },
         methods: {
             Show() {
                 document.getElementById("nav-lists").classList.add("_Menus-show");
@@ -48,7 +54,7 @@
 
     .container {
         height: 60px;
-        background-color: #333333;
+        background-color: #479194;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -64,6 +70,7 @@
             max-width: 250px;
             padding: 0 10px;
             overflow: hidden;
+            max-height: 60px;
         }
 
             .container .logo a {
@@ -92,7 +99,7 @@
             -webkit-box-flex: 1;
             -ms-flex: 1;
             flex: 1;
-            padding: 0 10px;
+            padding: 0 5px;
         }
 
             .container .navbar ul {
@@ -108,7 +115,7 @@
 
                 .container .navbar ul li a {
                     text-decoration: none;
-                    color: #999999;
+                    color: #fff;
                     font-size: 14px;
                     text-transform: uppercase;
                     display: block;
@@ -120,7 +127,7 @@
 
                     .container .navbar ul li a:hover {
                         color: #ffffff;
-                        background-color: rgba(23, 23, 23, 0.9);
+                        background-color: #3D8083;
                     }
 
                 .container .navbar ul .close {
@@ -215,7 +222,6 @@
                     left: 0;
                 }
     }
-
     .titleLink {
         text-decoration: none;
         color: white;
@@ -223,6 +229,10 @@
     }
 
     .activeLink {
-        background-color: #474747;
+        background-color: #59ACAF;
+    }
+
+    body {
+        background-color: #C9C9C9;
     }
 </style>
