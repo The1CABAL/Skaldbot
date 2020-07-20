@@ -1,3 +1,3 @@
 #!/bin/bash
-# docker stop skaldbot
-# docker rm skaldbot
+sudo docker stop skaldbot
+sudo docker rm skaldbot
