@@ -10,7 +10,7 @@ import threading
 import datetime
 
 home = os.getcwd()
-wisdom_hour = 15 #24Hour
+wisdom_hour = 8 #24Hour
 client = discord.Client()
 
 #Testing Server
