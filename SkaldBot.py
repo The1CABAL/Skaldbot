@@ -3,19 +3,21 @@ import discord
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Wisdom.Wisdom_List import random_wisdom
+from Helpers.Get_Nearest_Hour import round_to_hour as rth
 from discord.ext import commands, tasks
 import os
 import threading
+import datetime
 
 home = os.getcwd()
-
+wisdom_hour = 15 #24Hour
 client = discord.Client()
 
 #Testing Server
-#target_channel_id = 726640547019751458
+target_channel_id = 726640547019751458
 
 #Production
-target_channel_id = 725880649356935192
+#target_channel_id = 725880649356935192
 
 @client.event
 
@@ -80,12 +82,15 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
-@tasks.loop(hours=24)
+@tasks.loop(hours=1)
 async def wisdom_once_a_day():
-    message_channel = client.get_channel(target_channel_id)
-    print(f"Got channel {message_channel}")
-    wisdom = random_wisdom()
-    await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
+    now = datetime.datetime.now()
+    hour = rth(now).hour
+    if hour == wisdom_hour:
+        message_channel = client.get_channel(target_channel_id)
+        print(f"Got channel {message_channel}")
+        wisdom = random_wisdom()
+        await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
 
 @wisdom_once_a_day.before_loop
 async def before():
