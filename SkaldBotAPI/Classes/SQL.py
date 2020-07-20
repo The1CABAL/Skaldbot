@@ -224,5 +224,41 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting closest coordinates. Error: " + e)
 
+    def get_all_forms():
+        sql = "SELECT FormKey, FormName FROM CodeVueForms WHERE IsActive = 1 FOR JSON AUTO"
+        
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            forms = c.fetchall()[0]
+
+            c.close()
+            conn.close()
+
+            return forms;
+        except pymssql.Error as e:
+            print("Error getting forms. Error: " + e)
+            print("SQL" + sql)
+
+    def get_form_schema(formKey):
+        sql = "SELECT FieldSchema FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1"
+        sql = sql.replace("@formKey", formKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            forms = c.fetchall()
+            c.close()
+            conn.close()
+                
+            return forms
+        except pymssql.Error as e:
+            print("Error getting form for FormKey " + formKey + ". Error: " + e)
+   
+
 
 

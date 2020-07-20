@@ -41,5 +41,3 @@
     CONSTRAINT [PK_CodeStations] PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
-
-

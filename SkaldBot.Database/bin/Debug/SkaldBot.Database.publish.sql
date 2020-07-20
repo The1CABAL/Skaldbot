@@ -259,24 +259,7 @@ PRINT N'Creating [dbo].[CodeModules]...';
 
 
 GO
-CREATE TABLE [dbo].[CodeModules] (
-    [id]           INT            NOT NULL,
-    [group_id]     INT            NOT NULL,
-    [class]        NVARCHAR (MAX) NULL,
-    [rating]       NVARCHAR (MAX) NULL,
-    [price]        INT            NULL,
-    [weapon_mode]  NVARCHAR (MAX) NULL,
-    [missile_type] NVARCHAR (MAX) NULL,
-    [name]         NVARCHAR (MAX) NULL,
-    [belongs_to]   NVARCHAR (MAX) NULL,
-    [ed_id]        NVARCHAR (MAX) NULL,
-    [ed_symbol]    NVARCHAR (MAX) NULL,
-    [game_context] NVARCHAR (MAX) NULL,
-    [mass]         NVARCHAR (MAX) NULL,
-    [ship]         NVARCHAR (MAX) NULL,
-    [group]        NVARCHAR (MAX) NULL,
-    CONSTRAINT [PK_CodeModules] PRIMARY KEY CLUSTERED ([group_id] ASC)
-);
+
 
 
 GO
@@ -284,47 +267,7 @@ PRINT N'Creating [dbo].[CodeStations]...';
 
 
 GO
-CREATE TABLE [dbo].[CodeStations] (
-    [id]                           INT            NOT NULL,
-    [name]                         NVARCHAR (MAX) NULL,
-    [system_id]                    NVARCHAR (MAX) NULL,
-    [updated_at]                   NVARCHAR (MAX) NULL,
-    [max_landing_pad]              NVARCHAR (MAX) NULL,
-    [distance_to_star]             NVARCHAR (MAX) NULL,
-    [government_id]                NVARCHAR (MAX) NULL,
-    [government]                   NVARCHAR (MAX) NULL,
-    [allegiance_id]                NVARCHAR (MAX) NULL,
-    [allegiance]                   NVARCHAR (MAX) NULL,
-    [states]                       NVARCHAR (MAX) NULL,
-    [type_id]                      NVARCHAR (MAX) NULL,
-    [type]                         NVARCHAR (MAX) NULL,
-    [has_blackmarket]              NVARCHAR (MAX) NULL,
-    [has_market]                   NVARCHAR (MAX) NULL,
-    [has_refuel]                   NVARCHAR (MAX) NULL,
-    [has_repair]                   NVARCHAR (MAX) NULL,
-    [has_rearm]                    NVARCHAR (MAX) NULL,
-    [has_shipyard]                 NVARCHAR (MAX) NULL,
-    [has_docking]                  NVARCHAR (MAX) NULL,
-    [has_commodities]              NVARCHAR (MAX) NULL,
-    [import_commodities]           NVARCHAR (MAX) NULL,
-    [export_commodities]           NVARCHAR (MAX) NULL,
-    [prohibited_commodities]       NVARCHAR (MAX) NULL,
-    [economies]                    NVARCHAR (MAX) NULL,
-    [shipyard_updated_at]          NVARCHAR (MAX) NULL,
-    [outfitting_updated_at]        NVARCHAR (MAX) NULL,
-    [market_updated_at]            NVARCHAR (MAX) NULL,
-    [is_planetary]                 NVARCHAR (MAX) NULL,
-    [selling_ships]                NVARCHAR (MAX) NULL,
-    [selling_modules]              NVARCHAR (MAX) NULL,
-    [settlement_size_id]           NVARCHAR (MAX) NULL,
-    [settlement_size]              NVARCHAR (MAX) NULL,
-    [settlement_security_id]       NVARCHAR (MAX) NULL,
-    [settlement_security]          NVARCHAR (MAX) NULL,
-    [body_id]                      NVARCHAR (MAX) NULL,
-    [controlling_minor_faction_id] NVARCHAR (MAX) NULL,
-    [ed_market_id]                 NVARCHAR (MAX) NULL,
-    CONSTRAINT [PK_CodeStations] PRIMARY KEY CLUSTERED ([id] ASC)
-);
+
 
 
 GO
@@ -332,35 +275,7 @@ PRINT N'Creating [dbo].[CodeSystems]...';
 
 
 GO
-CREATE TABLE [dbo].[CodeSystems] (
-    [id]                           INT             NOT NULL,
-    [edsm_id]                      NVARCHAR (MAX)  NULL,
-    [name]                         NVARCHAR (MAX)  NULL,
-    [x]                            DECIMAL (10, 5) NULL,
-    [y]                            DECIMAL (10, 5) NULL,
-    [z]                            DECIMAL (10, 5) NULL,
-    [population]                   NVARCHAR (MAX)  NULL,
-    [is_populated]                 NVARCHAR (MAX)  NULL,
-    [government_id]                NVARCHAR (MAX)  NULL,
-    [government]                   NVARCHAR (MAX)  NULL,
-    [allegiance]                   NVARCHAR (MAX)  NULL,
-    [security_id]                  NVARCHAR (MAX)  NULL,
-    [security]                     NVARCHAR (MAX)  NULL,
-    [primary_economy_id]           NVARCHAR (MAX)  NOT NULL,
-    [primary_economy]              NVARCHAR (MAX)  NULL,
-    [power]                        NVARCHAR (MAX)  NULL,
-    [power_state]                  NVARCHAR (MAX)  NULL,
-    [power_state_id]               NVARCHAR (MAX)  NULL,
-    [needs_permit]                 NVARCHAR (MAX)  NULL,
-    [updated_at]                   NVARCHAR (MAX)  NULL,
-    [simbad_ref]                   NVARCHAR (MAX)  NULL,
-    [controlling_minor_faction_id] NVARCHAR (MAX)  NULL,
-    [controlling_minor_faction]    NVARCHAR (MAX)  NULL,
-    [reserve_type_id]              NVARCHAR (MAX)  NULL,
-    [reserve_type]                 NVARCHAR (MAX)  NULL,
-    [ed_system_address]            NVARCHAR (MAX)  NULL,
-    CONSTRAINT [PK_CodeSystems] PRIMARY KEY CLUSTERED ([id] ASC)
-);
+
 
 
 GO

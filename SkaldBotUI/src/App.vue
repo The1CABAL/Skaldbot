@@ -5,19 +5,17 @@
                 <img :src="logoImage" style="height: 60px;"/>
             </div>
             <div class="navbar">
-
                 <div class="icon-bar" @click="Show()">
                     <i></i>
                     <i></i>
                     <i></i>
                 </div>
-
                 <ul id="nav-lists">
                     <li class="close"><span @click="Hide()">&times;</span></li>
                     <li><router-link to="/">Home</router-link></li>
                     <li><router-link to="/about">About</router-link></li>
+                    <li><router-link to="/suggestions">Submit Ideas</router-link></li>
                 </ul>
-
             </div>
         </div>
         <router-view></router-view>

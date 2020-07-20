@@ -36,7 +36,16 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="src\assets\SbBackground.jpg" />
+    <Content Include="src\global.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\home\About.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\home\Forms\Form.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\home\Forms\SelectForm.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\home\HomePage.vue">
@@ -48,10 +57,13 @@
     <Content Include="src\helpers\router.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\shared\Header.vue">
+    <Content Include="src\home\Suggestions.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\store\index.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
@@ -62,8 +74,9 @@
     <Folder Include="src\assets\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
-    <Folder Include="src\shared\" />
+    <Folder Include="src\home\Forms\" />
     <Folder Include="src\store\" />
+    <Folder Include="src\store\modules\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="babel.config.js" />

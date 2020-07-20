@@ -1,0 +1,4 @@
+﻿IF NOT EXISTS(SELECT 1 FROM VueFormFields WHERE FormKey = 'NewStory')
+BEGIN
+	INSERT INTO VueFormFields (FormKey, FieldSchema, IsActive) VALUES ('NewStory', '{"fields":[{"type":"input","inputType":"text","label":"Story Title","model":"title","inputName":"title","readonly":false,"featured":true,"required":true,"disabled":false,"placeholder":"Title Name"},{"type":"textArea","inputType":"text","label":"Story","model":"story","inputName":"story","required":true,"placeholder":"Story..."},{"type":"input","inputType":"email","label":"E-mail","model":"email","inputName":"email","placeholder":"Users e-mail address","required":true},{"type":"input","inputType":"email","label":"Confirm E-mail","model":"confirmEmail","inputName":"email","placeholder":"Users e-mail address","required":true,"validator":[null,null]},{"type":"submit","label":"","buttonText":"Submit","validateBeforeSubmit":true}]}', 1)
+END

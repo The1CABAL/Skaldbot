@@ -1,0 +1,41 @@
+<template>
+    <div class="suggestions">
+        <SelectForm v-on:formKey="onChildChange" />
+        <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error"/>
+    </div>
+</template>
+
+<script>
+    import SelectForm from './Forms/SelectForm';
+    import Form from './Forms/Form';
+
+    export default {
+        name: "Suggestions",
+        components: {
+            SelectForm,
+            Form
+        },
+        data() {
+            return {
+                formKey: ''
+            }
+        },
+        methods: {
+            onChildChange(value) {
+                console.log('Parent function called');
+                if (this.formKey != '') {
+                    this.formKey = '';
+                }
+                this.formKey = value;
+            },
+            error(value) {
+                if (value == true) {
+                    this.formKey = '';
+                }
+            }
+        }
+    }
+</script>
+
+<style scoped>
+</style>

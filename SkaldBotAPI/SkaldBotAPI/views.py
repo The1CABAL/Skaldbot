@@ -3,7 +3,7 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template, json
+from flask import render_template, json, request
 from flask_cors import CORS
 from SkaldBotAPI import app
 from Classes.SQL import SQL
@@ -32,6 +32,48 @@ def populatedbo():
         data = {'Status': 'Fail'}
         response = app.response_class(
             response=json.dumps(data),
+            status=424,
+            mimetype='application/json'
+        )
+        return response
+
+@app.route('/api/getForms', methods=['GET'])
+def getForms():
+    if VerifyConnection():
+        print('Getting Forms')
+        forms = SQL.get_all_forms()
+        forms = forms[0]
+        response = app.response_class(
+            response = json.dumps(forms),
+            status=200,
+            mimetype='application/json'
+          )
+        return response
+    else:
+        response = app.response_class(
+            status=424,
+            mimetype='application/json'
+        )
+        return response
+
+@app.route('/api/getFormSchema', methods=['GET'])
+def getFormSchema():
+    if VerifyConnection():
+        formKey = request.args.get('formKey')
+        print('Getting Form Data for FormKey: {}'.format(formKey))
+        
+        data = SQL.get_form_schema(formKey)
+        print(data)
+
+        response = app.response_class(
+            response = json.dumps(data),
+            status=200,
+            mimetype='application/json'
+          )
+
+        return response
+    else:
+        response = app.response_class(
             status=424,
             mimetype='application/json'
         )

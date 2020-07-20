@@ -62,16 +62,19 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="bin" />
     <Folder Include="bin\Debug" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Seed" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\CodeSystems.sql" />
-    <Build Include="dbo\Tables\CodeStations.sql" />
-    <Build Include="dbo\Tables\CodeModules.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeSystems.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeStations.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeModules.sql" />
-    <Build Include="bin\Debug\SkaldBot.Database.publish.sql" />
-    <Build Include="bin\Debug\SkaldBot.Database_1.publish.sql" />
+    <Build Include="dbo\Tables\VueFormFields.sql" />
+    <Build Include="dbo\Tables\CodeVueForms.sql" />
+    <Build Include="dbo\Tables\CodeSystems.sql" />
+    <Build Include="dbo\Tables\CodeStations.sql" />
+    <Build Include="dbo\Tables\CodeModules.sql" />
+    <Build Include="dbo\Stored Procedures\UpsertCodeVueForms.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
@@ -80,5 +83,10 @@
     <None Include="bin\Debug\SkaldBot.Database.dacpac" />
     <None Include="bin\Debug\SkaldBot.Database.dll" />
     <None Include="bin\Debug\SkaldBot.Database.pdb" />
+    <None Include="Scripts\Seed\VueFormFields.sql" />
+    <None Include="Scripts\Seed\CodeVueForms.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Seed\Seed.PostDeploy.sql" />
   </ItemGroup>
 </Project>
