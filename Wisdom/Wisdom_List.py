@@ -9,7 +9,8 @@ wisdom_list=[
     'You need to prospect to see things.',
     'We are all egg.',
     'Jormungandr in English is Jormungandr.',
-    'A jumo is approximately 6 jumps. Only a Diamondback Explorer is capable of a jumo.'
+    'A jumo is approximately 6 jumps. Only a Diamondback Explorer is capable of a jumo.',
+    'Everything is either a banana or not a banana.'
     ]
 
 def random_wisdom():
