@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>SkaldBot</Name>
     <RootNamespace>SkaldBot</RootNamespace>
-    <InterpreterId>MSBuild|devin|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\decisionMaker.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\Get_Nearest_Hour.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SkaldBot.py" />
@@ -63,6 +66,7 @@
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="Myths\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
   </ItemGroup>
