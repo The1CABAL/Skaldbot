@@ -1,13 +1,13 @@
 <template>
     <div class="suggestions">
         <SelectForm v-on:formKey="onChildChange" />
-        <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error"/>
+        <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error" />
     </div>
 </template>
 
 <script>
-    import SelectForm from './Forms/SelectForm';
-    import Form from './Forms/Form';
+    import SelectForm from '../components/Forms/SelectForm';
+    import Form from '../components/Forms/Form';
 
     export default {
         name: "Suggestions",

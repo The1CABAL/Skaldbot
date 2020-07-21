@@ -1,3 +1,3 @@
 import collections
 
-Suggestion = collections.namedtuple('suggestion', ['title', 'story', 'email'])
+Suggestion = collections.namedtuple('suggestion', ['typeId', 'title', 'story', 'email'])

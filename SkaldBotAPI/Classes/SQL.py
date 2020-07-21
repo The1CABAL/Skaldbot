@@ -277,14 +277,14 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
-    def submit_item_suggestion(itemTypeId, suggestion):
+    def submit_item_suggestion(suggestion):
         sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')";
         current_date = datetime.now()
 
-        sql = sql.replace("@itemType", str(itemTypeId))
-        sql = sql.replace("@title", suggestion[0])
-        sql = sql.replace("@text", suggestion[1])
-        sql = sql.replace("@email", suggestion[2])
+        sql = sql.replace("@itemType", suggestion[0])
+        sql = sql.replace("@title", suggestion[1])
+        sql = sql.replace("@text", suggestion[2])
+        sql = sql.replace("@email", suggestion[3])
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         try:

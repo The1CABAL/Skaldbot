@@ -1,8 +1,10 @@
+aniso8601==8.0.0
 asgiref==3.2.10
 click==7.1.2
 configparser==5.0.0
 Flask==0.12.5
 Flask-Cors==3.0.8
+Flask-RESTful==0.3.8
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1

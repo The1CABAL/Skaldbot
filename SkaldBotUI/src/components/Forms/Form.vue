@@ -1,11 +1,20 @@
 <template>
     <div class="form">
-        <div class="panel">
+        <div v-if="!loaded">
+            <VueLoading></VueLoading>
+        </div>
+
+        <div v-if="submitted" v-bind:class="[{isError: 'errorMsg'}, 'successMsg']">
+            <p style="font-weight: bold;">{{msg}}</p>
+            <button class="close" @click="closeNotification">x</button>
+        </div>
+
+        <div v-if="loaded" class="panel">
             <div class="panel-heading">Details</div>
             <hr />
             <div class="panel-body">
                 <form action="" v-on:submit="formSubmit">
-                    <vue-form-generator :schema="schema" :model="model"></vue-form-generator>
+                    <vue-form-generator v-if="loaded" :schema="schema" :model="model"></vue-form-generator>
                 </form>
             </div>
         </div>
@@ -29,6 +38,7 @@
     import axios from 'axios'
     import Vue from 'vue'
     import VueFormGenerator from "vue-form-generator";
+    import VueLoading from '../VueLoading';
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapGetters, mapActions } from "vuex";
 
@@ -59,6 +69,9 @@
 
     export default {
         name: "Form",
+        components: {
+            VueLoading
+        },
         props: {
             formKey: {
                 type: String,
@@ -80,18 +93,22 @@
                 var actionLink = data[0];
                 //console.log(actionLink.ActionLink);
                 that.action = baseUrl + actionLink.ActionLink;
+                that.loaded = true;
             }).catch(error => { console.log(error) });
         },
         watch: {
             formKey: function () {
-                console.log("Watching key" + this.formKey);
+                this.loaded = false;
                 let baseUrl = "http://127.0.0.1:5000"
                 let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
                 let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
                 var that = this;
                 axios.get(schemaUrl).then(function (response) {
                     that.schema = JSON.parse(response.data);
-                }).catch(error => { this.$emit('error', true) });
+                }).catch(function (error) {
+                    console.log(error);
+                    this.$emit('error', true)
+                });
 
                 axios.get(actionUrl).then(function (response) {
                     //console.log(JSON.parse(response.data));
@@ -99,7 +116,19 @@
                     var actionLink = data[0];
                     //console.log(actionLink.ActionLink);
                     that.action = baseUrl + actionLink.ActionLink;
+                    that.loaded = true;
                 }).catch(error => { console.log(error) });
+            },
+            loaded: function () {
+                if (this.loaded) {
+                    this.newModel();
+                }
+            },
+            submitted: function () {
+                if (this.submitted) {
+                    setTimeout(
+                        this.closeNotification, 5000);
+                }
             }
         },
         data() {
@@ -110,11 +139,15 @@
                 options: {
                     validatedAfterLoad: false,
                     validatedAfterChange: true
-                }
+                },
+                loaded: false,
+                msg: '',
+                isError: false,
+                submitted: false
             }
         },
         methods: {
-            ...mapActions(["fetchFormData"]), 
+            ...mapActions(["fetchFormData"]),
             prettyJSON: function (json) {
                 if (json) {
                     json = JSON.stringify(json, undefined, 4);
@@ -135,13 +168,41 @@
                         return '<span class="' + cls + '">' + match + '</span>';
                     });
                 }
-            }, 
+            },
+            newModel() {
+                this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
+            },
             formSubmit() {
-
-                console.log(JSON.stringify(this.model));
                 var url = this.action;
-                axios.post(url, this.model);
+                let that = this;
+                axios.post(url, this.model).then(function (response) {
+                    var returnVal = response.data;
+                    console.log(returnVal.Message.toString())
+                    if (returnVal.Message.toString() == "Success") {
+                        console.log("Setting success to true");
+                        that.setNotification(true);
+                    }
+                    else {
+                        console.log("Setting success to false");
+                        that.setNotification(false);
+                    }
+                });
                 event.preventDefault();
+            },
+            setNotification(success) {
+                if (success) {
+                    this.submitted = true;
+                    this.msg = "Successfully submitted the suggestion!";
+                }
+                else {
+                    this.submitted = true;
+                    this.isError = true;
+                    this.msg = "There was an error submitting the suggestion. Please try again.";
+                }
+            },
+            closeNotification() {
+                this.msg = '';
+                this.submitted = false;
             }
         },
         computed: {
@@ -151,6 +212,38 @@
 </script>
 
 <style scoped>
+    .close {
+        position: absolute;
+        font-size: 15px;
+        top: 1px;
+        right: 0;
+        border: 0;
+        padding-right: 5px;
+        background-color: rgba(0,0,0,0.0);
+    }
+
+    .successMsg {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: auto;
+        background: #93FFA1;
+        border-radius: 10px 10px 10px 10px;
+        overflow: hidden;
+        padding-left: 10px;
+    }
+
+    .errorMsg {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: auto;
+        background: #FF9393;
+        border-radius: 10px 10px 10px 10px;
+        overflow: hidden;
+        padding-left: 10px;
+    }
+
     .form {
         padding-top: 15px;
     }

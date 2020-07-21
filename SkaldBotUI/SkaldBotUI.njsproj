@@ -32,20 +32,21 @@
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
     <Content Include="src\App.vue" />
+    <Content Include="src\assets\loading.gif" />
     <Content Include="src\assets\logo.png" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="src\assets\SbBackground.jpg" />
-    <Content Include="src\global.js">
+    <Content Include="src\components\VueLoading.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\home\About.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\home\Forms\Form.vue">
+    <Content Include="src\components\Forms\Form.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\home\Forms\SelectForm.vue">
+    <Content Include="src\components\Forms\SelectForm.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\home\HomePage.vue">
@@ -74,7 +75,8 @@
     <Folder Include="src\assets\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
-    <Folder Include="src\home\Forms\" />
+    <Folder Include="src\components\Forms\" />
+    <Folder Include="src\components\" />
     <Folder Include="src\store\" />
     <Folder Include="src\store\modules\" />
   </ItemGroup>
