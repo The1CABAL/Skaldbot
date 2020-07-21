@@ -4,11 +4,24 @@
             <div class="panel-heading">Details</div>
             <hr />
             <div class="panel-body">
-                <form action="" v-on:submit.prevent>
+                <form action="" v-on:submit="formSubmit">
                     <vue-form-generator :schema="schema" :model="model"></vue-form-generator>
                 </form>
             </div>
         </div>
+        <!--<div class="panel panel-default">
+            <div class="panel-heading">Model</div>
+            <div class="panel-body">
+                <pre v-if="model" v-html="prettyJSON(model)"></pre>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Schema</div>
+            <div class="panel-body">
+                <pre v-if="model" v-html="prettyJSON(schema)"></pre>
+            </div>
+        </div>-->
     </div>
 </template>
 
@@ -21,6 +34,29 @@
 
     Vue.use(VueFormGenerator)
 
+    VueFormGenerator.validators.emailValidation = function (value, field, model) {
+        let email = model.email;
+        let confEmail = value;
+
+        if (email != confEmail) {
+            return ["Emails do not match!"];
+        } else {
+            return [];
+        }
+    }
+
+    VueFormGenerator.validators.passwordValidation = function (value, field, model) {
+        let password = model.password;
+        let confPassword = value;
+
+        if (password != confPassword) {
+            return ["Passwords do not match!"];
+        }
+        else {
+            return [];
+        }
+    }
+
     export default {
         name: "Form",
         props: {
@@ -30,25 +66,45 @@
             }
         },
         mounted: function () {
-            let url = "http://127.0.0.1:5000/api" + "/getFormSchema?formKey=" + this.formKey;
+            let baseUrl = "http://127.0.0.1:5000"
+            let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
+            let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
             var that = this;
-            axios.get(url).then(function (response) {
+            axios.get(schemaUrl).then(function (response) {
                 that.schema = JSON.parse(response.data);
             });
 
+            axios.get(actionUrl).then(function (response) {
+                //console.log(JSON.parse(response.data));
+                var data = JSON.parse(response.data);
+                var actionLink = data[0];
+                //console.log(actionLink.ActionLink);
+                that.action = baseUrl + actionLink.ActionLink;
+            }).catch(error => { console.log(error) });
         },
         watch: {
             formKey: function () {
                 console.log("Watching key" + this.formKey);
-                let url = "http://127.0.0.1:5000/api" + "/getFormSchema?formKey=" + this.formKey;
+                let baseUrl = "http://127.0.0.1:5000"
+                let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
+                let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
                 var that = this;
-                axios.get(url).then(function (response) {
+                axios.get(schemaUrl).then(function (response) {
                     that.schema = JSON.parse(response.data);
                 }).catch(error => { this.$emit('error', true) });
+
+                axios.get(actionUrl).then(function (response) {
+                    //console.log(JSON.parse(response.data));
+                    var data = JSON.parse(response.data);
+                    var actionLink = data[0];
+                    //console.log(actionLink.ActionLink);
+                    that.action = baseUrl + actionLink.ActionLink;
+                }).catch(error => { console.log(error) });
             }
         },
         data() {
             return {
+                action: '',
                 model: {},
                 schema: null,
                 options: {
@@ -58,7 +114,35 @@
             }
         },
         methods: {
-            ...mapActions(["fetchFormData"])
+            ...mapActions(["fetchFormData"]), 
+            prettyJSON: function (json) {
+                if (json) {
+                    json = JSON.stringify(json, undefined, 4);
+                    json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+                    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                        var cls = 'number';
+                        if (/^"/.test(match)) {
+                            if (/:$/.test(match)) {
+                                cls = 'key';
+                            } else {
+                                cls = 'string';
+                            }
+                        } else if (/true|false/.test(match)) {
+                            cls = 'boolean';
+                        } else if (/null/.test(match)) {
+                            cls = 'null';
+                        }
+                        return '<span class="' + cls + '">' + match + '</span>';
+                    });
+                }
+            }, 
+            formSubmit() {
+
+                console.log(JSON.stringify(this.model));
+                var url = this.action;
+                axios.post(url, this.model);
+                event.preventDefault();
+            }
         },
         computed: {
             ...mapGetters(["formSchema"])
@@ -67,9 +151,10 @@
 </script>
 
 <style scoped>
-    .form{
+    .form {
         padding-top: 15px;
     }
+
     .panel {
         margin-bottom: 20px;
         background-color: #fff;

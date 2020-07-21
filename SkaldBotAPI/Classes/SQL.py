@@ -1,6 +1,7 @@
 
 import json, urllib.request, pymssql
 import pandas as pd
+from datetime import datetime
 from time import sleep
 from Classes.ConfigParser import *
 
@@ -258,6 +259,52 @@ class SQL():
             return forms
         except pymssql.Error as e:
             print("Error getting form for FormKey " + formKey + ". Error: " + e)
+
+    def get_form_actionlink(formKey):
+        sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+        sql = sql.replace("@formKey", formKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            forms = c.fetchall()[0]
+            c.close()
+            conn.close()
+                
+            return forms
+        except pymssql.Error as e:
+            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+
+    def submit_item_suggestion(itemTypeId, suggestion):
+        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')";
+        current_date = datetime.now()
+
+        sql = sql.replace("@itemType", str(itemTypeId))
+        sql = sql.replace("@title", suggestion[0])
+        sql = sql.replace("@text", suggestion[1])
+        sql = sql.replace("@email", suggestion[2])
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error submitting story. Error {}".format(e))
+            print(sql)
+            return False
+
+        
    
 
 

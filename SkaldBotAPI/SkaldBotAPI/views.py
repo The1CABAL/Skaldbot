@@ -8,6 +8,7 @@ from flask_cors import CORS
 from SkaldBotAPI import app
 from Classes.SQL import SQL
 import threading
+from Models.Models import *
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
@@ -40,7 +41,7 @@ def populatedbo():
 @app.route('/api/getForms', methods=['GET'])
 def getForms():
     if VerifyConnection():
-        print('Getting Forms')
+        #print('Getting Forms')
         forms = SQL.get_all_forms()
         forms = forms[0]
         response = app.response_class(
@@ -60,10 +61,10 @@ def getForms():
 def getFormSchema():
     if VerifyConnection():
         formKey = request.args.get('formKey')
-        print('Getting Form Data for FormKey: {}'.format(formKey))
+        #print('Getting Form Data for FormKey: {}'.format(formKey))
         
         data = SQL.get_form_schema(formKey)
-        print(data)
+        #print(data)
 
         response = app.response_class(
             response = json.dumps(data),
@@ -78,3 +79,79 @@ def getFormSchema():
             mimetype='application/json'
         )
         return response
+
+@app.route('/api/getActionLink', methods=['GET'])
+def getFormActionLink():
+    if VerifyConnection():
+        formKey = request.args.get('formKey')
+
+        data = SQL.get_form_actionlink(formKey)
+        #print(json.dumps(data))
+
+        response = app.response_class(
+            response = json.dumps(data),
+            status = 200,
+            mimetype='application/json'
+        )
+
+        return response
+    else:
+        response = app.response_class(
+            status=424,
+            mimetype='application/json'
+        )
+        return response
+
+
+@app.route('/api/submitstory', methods=['POST'])
+def submitStory():
+    print('subimt story called')
+    req_data = request.get_json()
+
+    suggestion = Suggestion(req_data['title'], req_data['story'], req_data['email'])
+    
+    isSubmitted = submitSuggestion(1, suggestion);
+
+    if isSubmitted:
+        response = app.response_class(
+                status = 200,
+                mimetype='application/json'
+            )
+        return response
+    else:
+        response = app.response_class(
+            status=424,
+            mimetype='application/json'
+        )
+        return response
+
+@app.route('/api/submitwisdom', methods=['POST'])
+def submitWisdom():
+    print('submit wisdom called')
+    req_data = request.get_json()
+
+    suggestion = Suggestion(req_data['title'], req_data['story'], req_data['email'])
+    
+    isSubmitted = submitSuggestion(2, suggestion);
+
+    if isSubmitted:
+        response = app.response_class(
+                status = 200,
+                mimetype='application/json'
+            )
+        return response
+    else:
+        response = app.response_class(
+            status=424,
+            mimetype='application/json'
+        )
+        return response
+
+
+def submitSuggestion(itemTypeId, suggestion):
+    isSubmitted = SQL.submit_item_suggestion(itemTypeId, suggestion);
+
+    if isSubmitted:
+        return True
+    else:
+        return False
