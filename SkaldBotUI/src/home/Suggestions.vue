@@ -1,6 +1,6 @@
 <template>
     <div class="suggestions">
-        <SelectForm v-on:formKey="onChildChange" />
+        <SelectForm v-on:formKey="onChildChange" :pageId="pageId" />
         <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error" />
     </div>
 </template>
@@ -17,7 +17,8 @@
         },
         data() {
             return {
-                formKey: ''
+                formKey: '',
+                pageId: '1'
             }
         },
         methods: {

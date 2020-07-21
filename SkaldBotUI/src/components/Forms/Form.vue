@@ -10,7 +10,7 @@
         </div>
 
         <div v-if="loaded" class="panel">
-            <div class="panel-heading">Details</div>
+            <div class="panel-heading">{{formName}}</div>
             <hr />
             <div class="panel-body">
                 <form action="" v-on:submit="formSubmit">
@@ -18,19 +18,19 @@
                 </form>
             </div>
         </div>
-        <!--<div class="panel panel-default">
+        <div v-if="admin" class="panel panel-default">
             <div class="panel-heading">Model</div>
             <div class="panel-body">
                 <pre v-if="model" v-html="prettyJSON(model)"></pre>
             </div>
         </div>
 
-        <div class="panel panel-default">
+        <div v-if="admin" class="panel panel-default">
             <div class="panel-heading">Schema</div>
             <div class="panel-body">
                 <pre v-if="model" v-html="prettyJSON(schema)"></pre>
             </div>
-        </div>-->
+        </div>
     </div>
 </template>
 
@@ -79,12 +79,17 @@
             }
         },
         mounted: function () {
+            this.loaded = false;
             let baseUrl = "http://127.0.0.1:5000"
             let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
             let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
+            let nameUrl = baseUrl + "/api/getFormName?formKey=" + this.formKey;
             var that = this;
             axios.get(schemaUrl).then(function (response) {
                 that.schema = JSON.parse(response.data);
+            }).catch(function (error) {
+                console.log(error);
+                this.$emit('error', true)
             });
 
             axios.get(actionUrl).then(function (response) {
@@ -93,6 +98,12 @@
                 var actionLink = data[0];
                 //console.log(actionLink.ActionLink);
                 that.action = baseUrl + actionLink.ActionLink;
+            }).catch(error => { console.log(error) });
+
+            axios.get(nameUrl).then(function (response) {
+                var data = JSON.parse(response.data);
+                var name = data[0].FormName;
+                that.formName = name;
                 that.loaded = true;
             }).catch(error => { console.log(error) });
         },
@@ -102,6 +113,7 @@
                 let baseUrl = "http://127.0.0.1:5000"
                 let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
                 let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
+                let nameUrl = baseUrl + "/api/getFormName?formKey=" + this.formKey;
                 var that = this;
                 axios.get(schemaUrl).then(function (response) {
                     that.schema = JSON.parse(response.data);
@@ -116,6 +128,12 @@
                     var actionLink = data[0];
                     //console.log(actionLink.ActionLink);
                     that.action = baseUrl + actionLink.ActionLink;
+                }).catch(error => { console.log(error) });
+
+                axios.get(nameUrl).then(function (response) {
+                    var data = JSON.parse(response.data);
+                    var name = data[0].FormName;
+                    that.formName = name;
                     that.loaded = true;
                 }).catch(error => { console.log(error) });
             },
@@ -143,7 +161,9 @@
                 loaded: false,
                 msg: '',
                 isError: false,
-                submitted: false
+                submitted: false,
+                admin: false,
+                formName: 'Test'
             }
         },
         methods: {
@@ -170,23 +190,31 @@
                 }
             },
             newModel() {
-                this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
+                if (this.formKey != "LoginForm")
+                    this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
             },
             formSubmit() {
                 var url = this.action;
                 let that = this;
-                axios.post(url, this.model).then(function (response) {
-                    var returnVal = response.data;
-                    console.log(returnVal.Message.toString())
-                    if (returnVal.Message.toString() == "Success") {
-                        console.log("Setting success to true");
-                        that.setNotification(true);
-                    }
-                    else {
-                        console.log("Setting success to false");
-                        that.setNotification(false);
-                    }
-                });
+                if (this.formKey == "LoginForm") {
+                    var username = this.model.username;
+                    var password = this.model.password;
+                    this.$store.dispatch('login', { username, password }).then(() => this.$emit("LoginSuccess", true)).catch(err => console.log(err))
+                }
+                else {
+                    axios.post(url, this.model).then(function (response) {
+                        var returnVal = response.data;
+                        console.log(returnVal.Message.toString())
+                        if (returnVal.Message.toString() == "Success") {
+                            console.log("Setting success to true");
+                            that.setNotification(true);
+                        }
+                        else {
+                            console.log("Setting success to false");
+                            that.setNotification(false);
+                        }
+                    });
+                }
                 event.preventDefault();
             },
             setNotification(success) {

@@ -17,6 +17,7 @@ class Login(Resource):
 
             if isAuth:
                 response = app.response_class(
+                        response = json.dumps({"Message": "LoginSuccess"}),
                         status = 200,
                         mimetype='application/json'
                     )

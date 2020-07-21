@@ -3,7 +3,7 @@
         <div>
             <select @change="setKey($event)" class="select-css">
                 <option value="select">Select</option>
-                <option v-for="form in allForms" :value="form.FormKey">{{form.FormName}}</option>
+                <option v-for="form in allForms" :key="form.FormKey" :value="form.FormKey">{{form.FormName}}</option>
             </select>
         </div>
     </div>
@@ -14,13 +14,15 @@
 
     export default {
         name: "SelectForm",
+        props: ['pageId'],
         data() {
             return {
-                formKey: ''
+                formKey: '',
+                thePageId: { ...this.pageId }
             }
         },
         methods: {
-            ...mapActions(["fetchAllForms"]),
+            ...mapActions(["fetchAllForms", "fetchAllFormsByPageId"]),
             setKey(e) {
                 const key = e.target.options[e.target.options.selectedIndex].value;
 
@@ -36,7 +38,12 @@
         },
         computed: mapGetters(["allForms"]),
         created() {
-            this.fetchAllForms();
+            if (this.pageId == 0 || this.pageId == undefined)
+                this.fetchAllForms();
+            else {
+                console.log(this.pageId);
+                this.fetchAllFormsByPageId(this.pageId);
+            }
         }
     }
 </script>

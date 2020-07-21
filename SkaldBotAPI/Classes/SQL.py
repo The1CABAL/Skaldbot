@@ -244,6 +244,26 @@ class SQL():
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
 
+    def get_all_forms_by_pageId(pageId):
+        sql = "SELECT FormKey, FormName FROM CodeVueForms WHERE IsActive = 1 AND PageId = @pageId FOR JSON AUTO"
+        
+        sql = sql.replace("@pageId", pageId)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            forms = c.fetchall()[0]
+
+            c.close()
+            conn.close()
+
+            return forms;
+        except pymssql.Error as e:
+            print("Error getting forms. Error: " + e)
+            print("SQL" + sql)
+
     def get_form_schema(formKey):
         sql = "SELECT FieldSchema FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1"
         sql = sql.replace("@formKey", formKey)
@@ -263,6 +283,23 @@ class SQL():
 
     def get_form_actionlink(formKey):
         sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+        sql = sql.replace("@formKey", formKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            forms = c.fetchall()[0]
+            c.close()
+            conn.close()
+                
+            return forms
+        except pymssql.Error as e:
+            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+
+    def get_form_name(formKey):
+        sql = "SELECT FormName FROM CodeVueForms WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
         sql = sql.replace("@formKey", formKey)
 
         try:

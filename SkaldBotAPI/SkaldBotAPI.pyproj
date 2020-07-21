@@ -43,6 +43,12 @@
     <Compile Include="Resource\GenerateFernetKey.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\GetFormName.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Resource\GetFormsByPageId.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Login.py">
       <SubType>Code</SubType>
     </Compile>
