@@ -10,12 +10,12 @@ _ConfigDefault = {
     "database.password":            ""
     }
 
-def LoadConfig(file, config={}, getConfigFor="database"):
+def LoadConfig(file, getConfigFor="database"):
     """
     returns a dictionary with keys of the form
     <section>.<option> and the corresponding values
     """
-    config = config.copy()
+    config = {}
     cp = configparser.ConfigParser()
     cp.read(file)
     for sec in cp.sections():
@@ -26,4 +26,4 @@ def LoadConfig(file, config={}, getConfigFor="database"):
     return config
 
 if __name__=="__main__":
-    print(LoadConfig("some.ini", _ConfigDefault))
+    print(LoadConfig("some.ini"))

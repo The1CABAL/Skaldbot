@@ -2,7 +2,7 @@
     <div id="app">
         <div class="container">
             <div class="logo">
-                <img :src="logoImage" style="height: 60px;"/>
+                <img :src="logoImage" style="height: 60px;" />
             </div>
             <div class="navbar">
                 <div class="icon-bar" @click="Show()">
@@ -15,21 +15,60 @@
                     <li><router-link to="/">Home</router-link></li>
                     <li><router-link to="/about">About</router-link></li>
                     <li><router-link to="/suggestions">Submit Ideas</router-link></li>
+                    <li><router-link to="/" v-if="authenticated" v-on:click.native="logout()">Logout</router-link></li>
+                    <li><router-link to="/login" v-if="!authenticated">Login</router-link></li>
                 </ul>
             </div>
         </div>
-        <router-view></router-view>
+        <router-view @authenticated="setAuthenticated"></router-view>
     </div>
 </template>
 
 <script>
+    import { mapGetters } from "vuex";
     export default {
         name: "app",
         data() {
             return {
+                authenticated: false,
                 logoImage: require('@/assets/logo.png'),
                 background: require('@/assets/SbBackground.jpg')
             }
+        },
+        mounted() {
+            if (!this.isLoggedIn) {
+                if (this.authenticated)
+                    this.authenticated = false;
+            }
+            else {
+                if (!this.authenticated) {
+                    this.authenticated = true;
+                }
+            }
+        },
+        watch: {
+            isLoggedIn: function () {
+                if (this.isLoggedIn && !this.authenticated) {
+                    this.setAuthenticated;
+                }
+                else if (!this.isLoggedIn && this.authenticated) {
+                    this.setAuthenticated;
+                }
+            }
+        },
+        computed: {
+            ...mapGetters(["isLoggedIn"])
+        },
+        created: function () {
+            this.$http.interceptors.response.use(undefined, function (err) {
+                return new Promise(function (resolve, reject) {
+                    if (err.status == 401 && err.config && !err.config__isRetryRequest) {
+                        console.log("Dispatching logout");
+                        this.$store.dispatch(logout)
+                    }
+                    throw err;
+                });
+            });
         },
         methods: {
             Show() {
@@ -37,6 +76,16 @@
             },
             Hide() {
                 document.getElementById("nav-lists").classList.remove("_Menus-show");
+            },
+            setAuthenticated() {
+                console.log("Setting authentication")
+                this.authenticated = true;
+
+                if (this.authenticated)
+                    this.$router.push('/')
+            },
+            logout() {
+                this.$store.dispatch('logout').then(() => { this.authenticated = false })
             }
         }
     }
@@ -220,6 +269,7 @@
                     left: 0;
                 }
     }
+
     .titleLink {
         text-decoration: none;
         color: white;

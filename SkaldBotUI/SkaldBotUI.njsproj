@@ -31,6 +31,9 @@
   <ItemGroup>
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
+    <Content Include="src\home\Login.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\App.vue" />
     <Content Include="src\assets\loading.gif" />
     <Content Include="src\assets\logo.png" />
@@ -64,6 +67,9 @@
     <Content Include="src\store\index.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\authentication.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
@@ -77,6 +83,8 @@
     <Folder Include="src\helpers\" />
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
+    <Folder Include="src\account\" />
+    <Folder Include="src\secured\" />
     <Folder Include="src\store\" />
     <Folder Include="src\store\modules\" />
   </ItemGroup>

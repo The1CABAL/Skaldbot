@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 from time import sleep
 from Classes.ConfigParser import *
+from Classes.Cryptography import Cryptography
 
 class SQL():
     #Creates database
@@ -302,6 +303,39 @@ class SQL():
         except pymssql.Error as e:
             print("Error submitting story. Error {}".format(e))
             print(sql)
+            return False
+
+    def login(user):
+        sql = "SELECT PasswordHash FROM Users WHERE Username = '@username'";
+
+        sql = sql.replace("@username", user[0])
+
+        print(user);
+        username = user[0]
+        passedPassword = user[1]
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+            c.execute(sql)
+
+            password = c.fetchone()
+
+            if password:
+                password = password[0]
+                password = Cryptography.dehashPassword(password)
+            else:
+                return False
+
+            c.close()
+            conn.close()
+
+            if passedPassword == password:
+                return True
+            else:
+                return False
+        except pymssql.Error as e:
+            print("Error authenticating user. Error {}".format(e))
             return False
 
         
