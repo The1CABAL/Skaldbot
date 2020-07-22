@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{e0599bac-0fed-4ef6-b179-c9723e67bb78}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -22,6 +22,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <GenerateCreateScript>True</GenerateCreateScript>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -70,6 +71,7 @@
     <Build Include="dbo\Stored Procedures\UpsertCodeSystems.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeStations.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCodeModules.sql" />
+    <Build Include="bin\Debug\SkaldBot.Database_Create.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
