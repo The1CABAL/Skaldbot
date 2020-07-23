@@ -5,15 +5,17 @@ from flask import json, request
 from Models.Models import *
 
 
-class Login(Resource):
+class Register(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
-            #print('Authenticating user...')
+            #print('Registering user...')
             req_data = request.get_json()
 
+            #print(req_data);
+            
             user = User(req_data['username'], req_data['password'])
     
-            isAuth = SQL.login(user)
+            isAuth = SQL.register(user)
 
             if isAuth:
                 response = app.response_class(
@@ -28,3 +30,4 @@ class Login(Resource):
                     mimetype='application/json'
                 )
                 return response
+

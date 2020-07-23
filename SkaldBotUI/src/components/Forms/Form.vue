@@ -14,7 +14,7 @@
             <hr />
             <div class="panel-body">
                 <form action="" v-on:submit="formSubmit">
-                    <vue-form-generator v-if="loaded" :schema="schema" :model="model"></vue-form-generator>
+                    <vue-form-generator v-if="loaded" :schema="schema" :model="model" :options="formOptions" v-on:validated="validateForm"></vue-form-generator>
                 </form>
             </div>
         </div>
@@ -37,12 +37,10 @@
 <script>
     import axios from 'axios'
     import Vue from 'vue'
-    import VueFormGenerator from "vue-form-generator";
     import VueLoading from '../VueLoading';
+    import VueFormGenerator from 'vue-form-generator'
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapGetters, mapActions } from "vuex";
-
-    Vue.use(VueFormGenerator)
 
     VueFormGenerator.validators.emailValidation = function (value, field, model) {
         let email = model.email;
@@ -70,7 +68,7 @@
     export default {
         name: "Form",
         components: {
-            VueLoading
+            VueLoading,
         },
         props: {
             formKey: {
@@ -98,6 +96,7 @@
                 var actionLink = data[0];
                 //console.log(actionLink.ActionLink);
                 that.action = baseUrl + actionLink.ActionLink;
+                //console.log(that.action);
             }).catch(error => { console.log(error) });
 
             axios.get(nameUrl).then(function (response) {
@@ -163,7 +162,12 @@
                 isError: false,
                 submitted: false,
                 admin: false,
-                formName: 'Test'
+                formName: 'Test',
+                isValid: false,
+                formOptions: {
+                    validateAfterLoad: false,
+                    validateAfterChanged: true
+                },
             }
         },
         methods: {
@@ -193,29 +197,40 @@
                 if (this.formKey != "LoginForm")
                     this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
             },
+            validateForm(isValid) {
+                this.isValid = isValid;
+            },
             formSubmit() {
-                var url = this.action;
-                let that = this;
-                if (this.formKey == "LoginForm") {
-                    var username = this.model.username;
-                    var password = this.model.password;
-                    this.$store.dispatch('login', { username, password }).then(() => this.$emit("LoginSuccess", true)).catch(err => console.log(err))
-                }
-                else {
-                    axios.post(url, this.model).then(function (response) {
-                        var returnVal = response.data;
-                        console.log(returnVal.Message.toString())
-                        if (returnVal.Message.toString() == "Success") {
-                            console.log("Setting success to true");
-                            that.setNotification(true);
-                        }
-                        else {
-                            console.log("Setting success to false");
-                            that.setNotification(false);
-                        }
-                    });
+                if (this.isValid) {
+                    var url = this.action;
+                    let that = this;
+                    //console.log(url);
+                    if (this.formKey == "LoginForm" || this.formKey == "RegisterForm") {
+                        var username = this.model.username;
+                        var password = this.model.password;
+                        //console.log(this.formKey);
+                        if (this.formKey == "LoginForm")
+                            this.$store.dispatch('login', { username, password }).then(() => this.$emit("LoginSuccess", true)).catch(err => console.log(err))
+                        else
+                            this.$store.dispatch('register', { username, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
+                    }
+                    else {
+                        axios.post(url, this.model).then(function (response) {
+                            var returnVal = response.data;
+                            //console.log(returnVal.Message.toString())
+                            if (returnVal.Message.toString() == "Success") {
+                                //console.log("Setting success to true");
+                                that.setNotification(true);
+                            }
+                            else {
+                                //console.log("Setting success to false");
+                                that.setNotification(false);
+                            }
+                        });
+                    }
                 }
                 event.preventDefault();
+
             },
             setNotification(success) {
                 if (success) {

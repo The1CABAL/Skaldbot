@@ -347,7 +347,7 @@ class SQL():
 
         sql = sql.replace("@username", user[0])
 
-        print(user);
+        #print(user);
         username = user[0]
         passedPassword = user[1]
 
@@ -373,6 +373,65 @@ class SQL():
                 return False
         except pymssql.Error as e:
             print("Error authenticating user. Error {}".format(e))
+            return False
+
+    def register(user):
+        sql = "INSERT INTO Users (Username, PasswordHash, CreateDate) VALUES ('@username', '@password', '@date');"
+        
+        userExists = SQL.userExists(user[0])
+
+        #print(userExists);
+
+        if userExists == False:
+            #print("Starting to create user");
+            current_date = datetime.now()
+            password = Cryptography.hashPassword(user[1])
+
+            #print(password.decode())
+        
+            sql = sql.replace("@username", user[0])
+            sql = sql.replace("@password", password.decode())
+            sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+
+            try:
+                conn = SQL.open_connection()
+                c = conn.cursor()
+                c.execute(sql)
+
+                conn.commit()
+
+                c.close()
+                conn.close()
+
+                return True
+            except pymssql.Error as e:
+                print("Error authenticating user. Error {}".format(e))
+                #print(sql)
+                return False
+        else:
+            return False
+
+    def userExists(username):
+        sql = "SELECT 1 FROM Users WHERE Username = '@username'"
+
+        sql = sql.replace("@username", username)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+            c.execute(sql)
+
+            any = c.fetchone()
+
+            #print(any)
+
+            if any == None:
+                #print("No matching users exist");
+                return False
+            else:
+                return True
+        except pymssql.Error as e:
+            print("Error finding if user exists. Error {}".format(e))
             return False
 
         

@@ -23,7 +23,7 @@
         },
         methods: {
             onChildChange(value) {
-                console.log('Parent function called');
+                //console.log('Parent function called');
                 if (this.formKey != '') {
                     this.formKey = '';
                 }

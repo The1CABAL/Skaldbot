@@ -20,13 +20,13 @@ const getters = {
 
 const actions = {
     async login({ commit }, user) {
-        console.log(user);
+        //console.log(user);
         return new Promise((resolve, reject) => {
             commit('auth_request')
             axios.post('http://127.0.0.1:5000/api/login', user).then(resp => {
                 const token = resp.data.token
                 const user = resp.data.user
-                console.log(token);
+                //console.log(token);
                 localStorage.setItem('token', token)
                 axios.defaults.headers.common['Authorization'] = token
                 commit('auth_success', token, user)
@@ -42,7 +42,7 @@ const actions = {
     async register({ commit }, user) {
         return new Promise((resolve, reject) => {
             commit('auth_request')
-            axios.post('http://127.0.0.1:5000/api/login', user).then(resp => {
+            axios.post('http://127.0.0.1:5000/api/register', user).then(resp => {
                 const token = resp.data.token
                 const user = resp.data.user
                 localStorage.setItem('token', token)

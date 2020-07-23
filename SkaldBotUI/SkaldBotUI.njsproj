@@ -31,7 +31,8 @@
   <ItemGroup>
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
-    <Content Include="src\home\Login.vue">
+    <Content Include="src\account\Register.vue" />
+    <Content Include="src\account\Login.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\App.vue" />
@@ -40,6 +41,9 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="src\assets\SbBackground.jpg" />
+    <Content Include="src\components\CustomFields\fieldPassword.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\components\VueLoading.vue">
       <SubType>Code</SubType>
     </Content>
@@ -79,6 +83,7 @@
     <Folder Include="public\" />
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
+    <Folder Include="src\components\CustomFields\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
     <Folder Include="src\components\Forms\" />

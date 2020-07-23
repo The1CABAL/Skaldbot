@@ -10,5 +10,10 @@ END
 
 IF NOT EXISTS(SELECT 1 FROM VueFormFields WHERE FormKey = 'LoginForm')
 BEGIN
-	INSERT INTO VueFormFields (FormKey, FieldSchema, ActionLink, IsActive) VALUES ('LoginForm', '{"fields":[{"type":"input","inputType":"text","label":"Username: ","model":"username","inputName":"username","readonly":false,"featured":true,"required":true,"disabled":false,"placeholder":"Username..."},{"type":"input","inputType":"text","label":"Password: ","model":"password","inputName":"password","required":true,"placeholder":"Password..."},{"type":"submit","label":"","buttonText":"Submit"}]}', '/api/login', 1)
+	INSERT INTO VueFormFields (FormKey, FieldSchema, ActionLink, IsActive) VALUES ('LoginForm', '{"fields":[{"type":"input","inputType":"text","label":"Username: ","model":"username","inputName":"username","readonly":false,"featured":true,"required":true,"disabled":false,"placeholder":"Username..."},{"type":"Password","label":"Password: ","model":"password","inputName":"password","required":true,"placeholder":"Password...","showButton":true},{"type":"submit","label":"","buttonText":"Submit"}]}', '/api/login', 1)
+END
+
+IF NOT EXISTS(SELECT 1 FROM VueFormFields WHERE FormKey = 'RegisterForm')
+BEGIN
+	INSERT INTO VueFormFields (FormKey, FieldSchema, ActionLink, IsActive) VALUES ('RegisterForm', '{"fields":[{"type":"input","inputType":"text","label":"Username: ","model":"username","inputName":"username","readonly":false,"featured":true,"required":true,"disabled":false,"placeholder":"Username..."},{"type":"password","inputType":"password","label":"Password: ","model":"password","inputName":"password","required":true,"placeholder":"Password...","showButton":false},{"type":"password","inputType":"password","label":"Confirm Password: ","model":"confirmPassword","inputName":"confirmPassword","required":true,"placeholder":"Password...","showButton":false,"validator":"passwordValidation"},{"type":"submit","label":"","buttonText":"Submit"}]}', '/api/register', 1)
 END

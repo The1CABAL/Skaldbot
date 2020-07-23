@@ -52,6 +52,9 @@
     <Compile Include="Resource\Login.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\Register.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="runserver.py" />
     <Compile Include="Resource\GetActionLink.py">
       <SubType>Code</SubType>

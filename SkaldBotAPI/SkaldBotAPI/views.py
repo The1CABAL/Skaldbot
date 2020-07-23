@@ -12,6 +12,7 @@ from Resource.GetFormSchema import GetFormSchema
 from Resource.GetFormName import GetFormName
 from Resource.SubmitItem import SubmitItem
 from Resource.Login import Login
+from Resource.Register import Register
 from Resource.GenerateFernetKey import GenerateFernetKey
 
 api_bp = Blueprint('api', __name__)
@@ -26,4 +27,5 @@ api.add_resource(GetActionLink, '/getActionLink')
 api.add_resource(GetFormName, '/getFormName')
 api.add_resource(SubmitItem, '/submititem')
 api.add_resource(Login, '/login')
+api.add_resource(Register, '/register')
 api.add_resource(GenerateFernetKey, '/generatefernetkey')
