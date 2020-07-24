@@ -35,8 +35,23 @@
                 background: require('@/assets/SbBackground.jpg'),
                 masterAdmin: false,
                 admin: false,
-                user: true
+                user: true,
+                isInactive: false,
+                userActivityThrottlerTimeout: null,
+                userActivityTimeout: null
             }
+        },
+        beforeMount() {
+            this.activateActivityTracker();
+        },
+        beforeDestroy() {
+            window.removeEventListener("mousemove", this.userActivityThrottler);
+            window.removeEventListener("scroll", this.userActivityThrottler);
+            window.removeEventListener("keydown", this.userActivityThrottler);
+            window.removeEventListener("resize", this.userActivityThrottler);
+
+            clearTimeout(this.userActivityTimeout);
+            clearTimeout(this.userActivityThrottlerTimeout);
         },
         mounted() {
             if (!this.isLoggedIn) {
@@ -97,6 +112,35 @@
             },
             logout() {
                 this.$store.dispatch('logout').then(() => { this.authenticated = false })
+            },
+            activateActivityTracker() {
+                window.addEventListener("mousemove", this.userActivityThrottler);
+                window.addEventListener("mousemove", this.resetUserActivityTimeout);
+                window.addEventListener("scroll", this.resetUserActivityTimeout);
+                window.addEventListener("keydown", this.resetUserActivityTimeout);
+                window.addEventListener("resize", this.resetUserActivityTimeout);
+            },
+            resetUserActivityTimeout() {
+                clearTimeout(this.userActivityTimeout);
+                this.userActivityTimeout = setTimeout(() => {
+                    this.inactiveUserAction();
+                }, 1800000);
+            },
+            userActivityThrottler() {
+                if (!this.userActivityThrottlerTimeout) {
+                    this.userActivityThrottlerTimeout = setTimeout(() => {
+                        this.resetUserActivityTimeout();
+
+                        clearTimeout(this.userActivityThrottlerTimeout);
+                        this.userActivityThrottlerTimeout = null;
+                    }, 1800000);
+                }
+            },
+            inactiveUserAction() {
+                if (this.authenticated) {
+                    this.$store.dispatch('logout')
+                    location.reload();
+                }
             }
         }
     }
