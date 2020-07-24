@@ -32,7 +32,10 @@
             return {
                 authenticated: false,
                 logoImage: require('@/assets/logo.png'),
-                background: require('@/assets/SbBackground.jpg')
+                background: require('@/assets/SbBackground.jpg'),
+                masterAdmin: false,
+                admin: false,
+                user: true
             }
         },
         mounted() {
@@ -57,7 +60,7 @@
             }
         },
         computed: {
-            ...mapGetters(["isLoggedIn"])
+            ...mapGetters(["isLoggedIn", "isAdmin", "isMasterAdmin", "isUser"])
         },
         created: function () {
             this.$http.interceptors.response.use(undefined, function (err) {
@@ -69,6 +72,14 @@
                     throw err;
                 });
             });
+
+            if (this.$store.getters.isMasterAdmin) {
+                this.masterAdmin = true;
+                this.admin = true;
+            }
+            else if (this.$store.getters.isAdmin) {
+                this.admin = true;
+            }
         },
         methods: {
             Show() {

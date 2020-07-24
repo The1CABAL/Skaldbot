@@ -434,6 +434,25 @@ class SQL():
             print("Error finding if user exists. Error {}".format(e))
             return False
 
+    def get_user_role(username):
+        sql = "SELECT r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON ur.UserId = u.Id JOIN Roles r WITH (NOLOCK) ON r.Id = ur.RoleId WHERE u.Username = '@username' FOR JSON AUTO"
+        sql = sql.replace('@username', username)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+            c.execute(sql)
+
+            role = c.fetchall()
+
+            if role != None:
+                role = role[0]
+                return role
+            else:
+                return None
+        except pymssql.Error as e:
+            print("Error getting users roles. Error {}".format(e))
+            return None
         
    
 

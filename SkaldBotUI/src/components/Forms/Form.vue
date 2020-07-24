@@ -18,14 +18,18 @@
                 </form>
             </div>
         </div>
-        <div v-if="admin" class="panel panel-default">
+        <div v-if="admin">
+            <input type="checkbox" id="cbShowFormDetails" name="cbShowFormDetails" v-on:change="showFormDetails" />
+            <label for="cbShowFormDetails">Show Form Information</label>
+        </div>
+        <div v-if="showFormExtras" class="panel panel-default">
             <div class="panel-heading">Model</div>
             <div class="panel-body">
                 <pre v-if="model" v-html="prettyJSON(model)"></pre>
             </div>
         </div>
 
-        <div v-if="admin" class="panel panel-default">
+        <div v-if="showFormExtras" class="panel panel-default">
             <div class="panel-heading">Schema</div>
             <div class="panel-body">
                 <pre v-if="model" v-html="prettyJSON(schema)"></pre>
@@ -163,11 +167,19 @@
                 submitted: false,
                 admin: false,
                 formName: 'Test',
+                showFormExtras: false,
                 isValid: false,
                 formOptions: {
                     validateAfterLoad: false,
                     validateAfterChanged: true
                 },
+            }
+        },
+        created() {
+            console.log(this.$store.getters.isAdmin);
+            console.log(this.$store.getters.isMasterAdmin);
+            if (this.$store.getters.isAdmin || this.$store.getters.isMasterAdmin) {
+                this.admin = true
             }
         },
         methods: {
@@ -246,10 +258,16 @@
             closeNotification() {
                 this.msg = '';
                 this.submitted = false;
+            },
+            showFormDetails() {
+                if (this.showFormExtras)
+                    this.showFormExtras = false;
+                else
+                    this.showFormExtras = true;
             }
         },
         computed: {
-            ...mapGetters(["formSchema"])
+            ...mapGetters(["formSchema", "isAdmin", "isMasterAdmin", "isUser"])
         }
     }
 </script>

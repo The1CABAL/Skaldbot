@@ -10,12 +10,18 @@ if (token) {
 const state = {
     token: localStorage.getItem('token') || '',
     status: '',
-    user: []
+    user: [],
+    isMasterAdmin: localStorage.getItem('isMasterAdmin') || false,
+    isAdmin: localStorage.getItem('isAdmin') || false,
+    isUser: true
 };
 
 const getters = {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    isMasterAdmin: state => state.isMasterAdmin,
+    isAdmin: state => state.isAdmin,
+    isUser: state => state.isUser
 };
 
 const actions = {
@@ -36,7 +42,17 @@ const actions = {
                     commit('auth_error')
                     localStorage.removeItem('token')
                     reject(err)
-                })
+                });
+
+            var userUrl = 'http://127.0.0.1:5000/api/roles?username=' + user.username
+            axios.get(userUrl).then(resp => {
+                const role = JSON.parse(resp.data);
+                commit('user_roles', role[0].Role)
+                resolve(resp)
+            })
+                .catch(err => {
+                    reject(err)
+                });
         })
     },
     async register({ commit }, user) {
@@ -76,12 +92,27 @@ const mutations = {
         state.token = token
         state.user = user
     },
+    user_roles(state, role) {
+        if (role == "MasterAdmin") {
+            state.isMasterAdmin = true
+            localStorage.setItem('isMasterAdmin', true)
+        }
+        if (role == "Admin") {
+            state.isAdmin = true
+            localStorage.setItem('isAdmin', true)
+        }
+    },
     auth_error(state) {
         state.status = 'error'
     },
     logout(state) {
         state.status = ''
         state.token = ''
+        state.isMasterAdmin = false
+        localStorage.removeItem('isMasterAdmin')
+        state.isAdmin = false
+        localStorage.removeItem('isAdmin')
+        state.isUser = true
     },
 };
 

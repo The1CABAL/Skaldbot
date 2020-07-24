@@ -14,6 +14,7 @@ from Resource.SubmitItem import SubmitItem
 from Resource.Login import Login
 from Resource.Register import Register
 from Resource.GenerateFernetKey import GenerateFernetKey
+from Resource.UserRoles import GetUserRoles
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -29,3 +30,4 @@ api.add_resource(SubmitItem, '/submititem')
 api.add_resource(Login, '/login')
 api.add_resource(Register, '/register')
 api.add_resource(GenerateFernetKey, '/generatefernetkey')
+api.add_resource(GetUserRoles, '/roles')
