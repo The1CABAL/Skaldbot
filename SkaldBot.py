@@ -6,6 +6,7 @@ from Classes.decisionMaker import YesNo
 from Classes.SQL import SQL as SQL
 from Wisdom.Wisdom_List import random_wisdom
 
+#PreLaunch Startup Functions
 home = os.getcwd()
 
 SUM_IsSent = False

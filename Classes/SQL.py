@@ -5,19 +5,6 @@ from time import sleep
 from Classes.ConfigParser import *
 
 class SQL():
-    #Creates database
-    #def create_dbo():
-    #    conn = sqlite3.connect('SB_EDDB.sqlite3')
-    #    c = conn.cursor()
-
-    #    c.execute("CREATE TABLE IF NOT EXISTS CodeModules (id INT NOT NULL, group_id INT, class TEXT, rating TEXT, price INT, weapon_mode TEXT, missile_type TEXT, name TEXT, belongs_to TEXT, ed_id TEXT, ed_symbol TEXT, game_context_id TEXT, mass TEXT, ship TEXT, 'group' TEXT, PRIMARY KEY(id, group_id) ON CONFLICT REPLACE)")
-    #    c.execute("CREATE TABLE IF NOT EXISTS CodeStations (id INT NOT NULL, name TEXT, system_id TEXT, updated_at TEXT, max_landing_pad_size TEXT, distance_to_star TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, states TEXT, type_id TEXT, type TEXT, has_blackmarket TEXT, has_market TEXT, has_refuel TEXT, has_repair TEXT, has_rearm TEXT, has_outfitting TEXT, has_shipyard TEXT, has_docking TEXT, has_commodities TEXT, import_commodities TEXT, export_commodities TEXT, prohibited_commodities TEXT, economies TEXT, shipyard_updated_at TEXT, outfitting_updated_at TEXT, market_updated_at TEXT, is_planetary TEXT, selling_ships TEXT, selling_modules TEXT, settlement_size_id TEXT, settlement_size TEXT, settlement_security_id TEXT, settlement_security TEXT, body_id TEXT, controlling_minor_faction_id TEXT, ed_market_id TEXT, PRIMARY KEY(id) ON CONFLICT REPLACE)")
-    #    c.execute("CREATE TABLE IF NOT EXISTS CodeSystems (id INT NOT NULL, edsm_id TEXT, name TEXT, x TEXT, y TEXT, z TEXT, population TEXT, is_populated TEXT, government_id TEXT, government TEXT, allegiance_id TEXT, allegiance TEXT, security_id TEXT, security TEXT, primary_economy_id TEXT, primary_economy TEXT, power TEXT, power_state TEXT, power_state_id TEXT, needs_permit TEXT, updated_at TEXT, simbad_ref TEXT, controlling_minor_faction_id TEXT, controlling_minor_faction TEXT, reserve_type_id TEXT, reserve_type TEXT, ed_system_address, PRIMARY KEY(id) ON CONFLICT REPLACE)")
-
-
-    #    conn.commit()
-    #    c.close()
-    #    conn.close()
 
     #Test connection to database
     def test_connect_to_dbo():
@@ -222,4 +209,27 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting closest coordinates. Error: " + e)
 
+
+    def open_master_connection():
+        config = LoadConfig('config.ini')
+
+        if config:
+            integrated = config['database.integratedsecurity']
+
+            if (integrated.lower() == "true"):
+                try:
+                    conn = pymssql.connect(server = config['database.server'], database='master')
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+            else:
+                try:
+                    conn = pymssql.connect(server = config['database.server'], user=config['database.user'], password=config['database.password'], database='master')
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+
+            return conn
+        else:
+            return None
 
