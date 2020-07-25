@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "element-ui": "^2.13.2",
     "vue": "2.5.17",
+    "vue-data-tables": "^3.4.5",
     "vue-router": "^3.3.4",
     "vuex": "^3.5.1"
   },
@@ -35,7 +37,7 @@
       "plugin:vue/essential"
     ],
     "rules": {
-      "no-console":  "off"
+      "no-console": "off"
     },
     "parserOptions": {
       "parser": "babel-eslint"

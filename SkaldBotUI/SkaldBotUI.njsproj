@@ -68,6 +68,18 @@
     <Content Include="src\home\Suggestions.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\Dashboard.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\DashboardHome.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\ManageUsers.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\Unauthorized.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\store\index.js">
       <SubType>Code</SubType>
     </Content>

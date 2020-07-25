@@ -5,16 +5,9 @@ from flask import Blueprint
 from flask_restful import Api
 from flask_cors import CORS
 from SkaldBotAPI import app
-from Resource.GetActionLink import GetActionLink
-from Resource.GetForms import GetForms
-from Resource.GetFormsByPageId import GetFormsByPageId
-from Resource.GetFormSchema import GetFormSchema
-from Resource.GetFormName import GetFormName
-from Resource.SubmitItem import SubmitItem
-from Resource.Login import Login
-from Resource.Register import Register
+from Resource.Forms import *
+from Resource.Users import *
 from Resource.GenerateFernetKey import GenerateFernetKey
-from Resource.UserRoles import GetUserRoles
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -31,3 +24,4 @@ api.add_resource(Login, '/login')
 api.add_resource(Register, '/register')
 api.add_resource(GenerateFernetKey, '/generatefernetkey')
 api.add_resource(GetUserRoles, '/roles')
+api.add_resource(GetAllUsers, '/getUsers')

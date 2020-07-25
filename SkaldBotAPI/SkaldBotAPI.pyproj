@@ -40,37 +40,16 @@
     <Compile Include="Models\Models.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\Forms.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\GenerateFernetKey.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Resource\GetFormName.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\GetFormsByPageId.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\Login.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\Register.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\UserRoles.py">
+    <Compile Include="Resource\Users.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="runserver.py" />
-    <Compile Include="Resource\GetActionLink.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\GetForms.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\GetFormSchema.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Resource\SubmitItem.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SkaldBotAPI\__init__.py" />
     <Compile Include="SkaldBotAPI\views.py" />
   </ItemGroup>

@@ -15,6 +15,7 @@
                     <li><router-link to="/">Home</router-link></li>
                     <li><router-link to="/about">About</router-link></li>
                     <li><router-link to="/suggestions">Submit Ideas</router-link></li>
+                    <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)">Dashboard</router-link></li>
                     <li><router-link to="/" v-if="authenticated" v-on:click.native="logout()">Logout</router-link></li>
                     <li><router-link to="/login" v-if="!authenticated">Login</router-link></li>
                 </ul>
@@ -119,6 +120,10 @@
                 window.addEventListener("scroll", this.resetUserActivityTimeout);
                 window.addEventListener("keydown", this.resetUserActivityTimeout);
                 window.addEventListener("resize", this.resetUserActivityTimeout);
+                window.addEventListener("beforeunload", function () {
+                    console.log("Unloading");
+                    this.inactiveUserAction();
+                })
             },
             resetUserActivityTimeout() {
                 clearTimeout(this.userActivityTimeout);
@@ -289,11 +294,12 @@
                     flex-wrap: nowrap;
                     position: fixed;
                     left: 100%;
+                    z-index: 2;
                     -webkit-box-orient: vertical;
                     -webkit-box-direction: normal;
                     -ms-flex-direction: column;
                     flex-direction: column;
-                    background: #ffffff;
+                    background: #479194;
                     width: 100%;
                     height: 100%;
                     overflow: auto;
@@ -307,7 +313,7 @@
                         font-size: 16px;
                         height: auto;
                         line-height: normal;
-                        color: #555555;
+                        color: white;
                     }
 
                     .container .navbar ul .close {

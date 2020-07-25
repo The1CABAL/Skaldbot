@@ -6,6 +6,10 @@ import Register from '../account/Register'
 import HomePage from '../home/HomePage'
 import About from '../home/About'
 import Suggestions from '../home/Suggestions'
+import Dashboard from '../secured/Dashboard'
+import ManageUsers from '../secured/ManageUsers'
+import Unauthorized from '../secured/Unauthorized'
+import DashboardHome from '../secured/DashboardHome'
 
 Vue.use(Router);
 
@@ -17,6 +21,8 @@ export const router = new Router({
         { path: '/register', name: "register", component: Register },
         { path: '/about', component: About },
         { path: '/suggestions', component: Suggestions },
+        { path: '/dashboard', component: Dashboard, children: [{ path: '/dashboardhome', name: "dashboardhome", component: DashboardHome }, { path: '/manageusers', name: "manageusers", component: ManageUsers }] },
+        { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home
         { path: '*', redirect: '/home' }

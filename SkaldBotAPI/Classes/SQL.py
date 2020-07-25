@@ -453,6 +453,25 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting users roles. Error {}".format(e))
             return None
+
+    def get_all_users():
+        sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            users = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return users
+        except pymssql.Error as e:
+            print("Error getting all users: Error {}".format(e))
+            return None
         
    
 
