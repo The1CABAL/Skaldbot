@@ -1,1 +1,0 @@
-sudo docker inspect -f {{.State.Running}} skaldbot && echo "Container is running."
