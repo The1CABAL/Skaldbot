@@ -30,8 +30,9 @@
 
 <script>
     // fake server
-    import VueLoading from '../components/VueLoading';
+    import VueLoading from '../../components/VueLoading';
     import axios from 'axios';
+    import { BaseUrl } from '../../helpers/constants';
 
     export default {
         name: "ManageUsers",
@@ -40,7 +41,7 @@
         },
         data() {
             return {
-                selectedUserId: '',
+                userId: '',
                 loaded: false,
                 data: [],
                 titles: [
@@ -78,8 +79,8 @@
                                 type: 'primary'
                             },
                             handler: row => {
-                                this.selectedUserId = row.Id
-                                this.$message('Feature not yet implemented!')
+                                this.userId = row.Id
+                                this.$router.push('/userprofile/' + this.userId)
                             },
                             label: 'Edit'
                         }
@@ -90,8 +91,7 @@
         },
         mounted: function () {
             this.loaded = false;
-            let baseUrl = "http://127.0.0.1:5000"
-            let userUrl = baseUrl + "/api/getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
+            let userUrl = BaseUrl + "getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
             var that = this;
             axios.get(userUrl).then(function (response) {
                 that.data = JSON.parse(response.data);

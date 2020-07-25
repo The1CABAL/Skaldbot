@@ -47,6 +47,9 @@
     <Content Include="src\components\VueLoading.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\helpers\constants.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\home\About.vue">
       <SubType>Code</SubType>
     </Content>
@@ -68,16 +71,19 @@
     <Content Include="src\home\Suggestions.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\secured\Dashboard.vue">
+    <Content Include="src\secured\Dashboard\Dashboard.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\secured\DashboardHome.vue">
+    <Content Include="src\secured\Dashboard\DashboardHome.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\secured\ManageUsers.vue">
+    <Content Include="src\secured\Dashboard\ManageUsers.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\secured\Unauthorized.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\user\UserProfile.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\store\index.js">
@@ -89,6 +95,18 @@
     <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\style\bootstrap-grid.css" />
+    <Content Include="src\style\bootstrap-grid.css.map" />
+    <Content Include="src\style\bootstrap-grid.min.css" />
+    <Content Include="src\style\bootstrap-grid.min.css.map" />
+    <Content Include="src\style\bootstrap-reboot.css" />
+    <Content Include="src\style\bootstrap-reboot.css.map" />
+    <Content Include="src\style\bootstrap-reboot.min.css" />
+    <Content Include="src\style\bootstrap-reboot.min.css.map" />
+    <Content Include="src\style\bootstrap.css" />
+    <Content Include="src\style\bootstrap.css.map" />
+    <Content Include="src\style\bootstrap.min.css" />
+    <Content Include="src\style\bootstrap.min.css.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
@@ -101,7 +119,10 @@
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
+    <Folder Include="src\style\" />
     <Folder Include="src\secured\" />
+    <Folder Include="src\secured\Dashboard\" />
+    <Folder Include="src\secured\user\" />
     <Folder Include="src\store\" />
     <Folder Include="src\store\modules\" />
   </ItemGroup>

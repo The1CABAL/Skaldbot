@@ -4,7 +4,7 @@
             <VueLoading></VueLoading>
         </div>
 
-        <div v-if="submitted" v-bind:class="[{isError: 'errorMsg'}, 'successMsg']">
+        <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
             <p style="font-weight: bold;">{{msg}}</p>
             <button class="close" @click="closeNotification">x</button>
         </div>
@@ -40,11 +40,11 @@
 
 <script>
     import axios from 'axios'
-    import Vue from 'vue'
     import VueLoading from '../VueLoading';
     import VueFormGenerator from 'vue-form-generator'
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapGetters, mapActions } from "vuex";
+    import { BaseUrl } from '../../helpers/constants';
 
     VueFormGenerator.validators.emailValidation = function (value, field, model) {
         let email = model.email;
@@ -82,10 +82,9 @@
         },
         mounted: function () {
             this.loaded = false;
-            let baseUrl = "http://127.0.0.1:5000"
-            let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
-            let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
-            let nameUrl = baseUrl + "/api/getFormName?formKey=" + this.formKey;
+            let schemaUrl = BaseUrl + "getFormSchema?formKey=" + this.formKey;
+            let actionUrl = BaseUrl + "getActionLink?formKey=" + this.formKey;
+            let nameUrl = BaseUrl + "getFormName?formKey=" + this.formKey;
             var that = this;
             axios.get(schemaUrl).then(function (response) {
                 that.schema = JSON.parse(response.data);
@@ -114,9 +113,9 @@
             formKey: function () {
                 this.loaded = false;
                 let baseUrl = "http://127.0.0.1:5000"
-                let schemaUrl = baseUrl + "/api/getFormSchema?formKey=" + this.formKey;
-                let actionUrl = baseUrl + "/api/getActionLink?formKey=" + this.formKey;
-                let nameUrl = baseUrl + "/api/getFormName?formKey=" + this.formKey;
+                let schemaUrl = BaseUrl + "getFormSchema?formKey=" + this.formKey;
+                let actionUrl = baseUrl + "getActionLink?formKey=" + this.formKey;
+                let nameUrl = BaseUrl + "getFormName?formKey=" + this.formKey;
                 var that = this;
                 axios.get(schemaUrl).then(function (response) {
                     that.schema = JSON.parse(response.data);
@@ -223,15 +222,16 @@
                         //console.log(this.formKey);
                         if (this.formKey == "LoginForm")
                             this.$store.dispatch('login', { username, password }).then(() => this.$emit("LoginSuccess", true)).catch(err => console.log(err))
-                        else
-                            this.$store.dispatch('register', { username, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
+                        else {
+                            var firstname = this.model.firstname;
+                            var lastname = this.model.lastname;
+                            this.$store.dispatch('register', { username, firstname, lastname, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
+                        }
                     }
                     else {
                         axios.post(url, this.model).then(function (response) {
                             var returnVal = response.data;
-                            //console.log(returnVal.Message.toString())
                             if (returnVal.Message.toString() == "Success") {
-                                //console.log("Setting success to true");
                                 that.setNotification(true);
                             }
                             else {

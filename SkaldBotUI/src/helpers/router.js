@@ -6,10 +6,11 @@ import Register from '../account/Register'
 import HomePage from '../home/HomePage'
 import About from '../home/About'
 import Suggestions from '../home/Suggestions'
-import Dashboard from '../secured/Dashboard'
-import ManageUsers from '../secured/ManageUsers'
+import Dashboard from '../secured/Dashboard/Dashboard'
+import ManageUsers from '../secured/Dashboard/ManageUsers'
 import Unauthorized from '../secured/Unauthorized'
-import DashboardHome from '../secured/DashboardHome'
+import DashboardHome from '../secured/Dashboard/DashboardHome'
+import UserProfile from '../secured/user/UserProfile'
 
 Vue.use(Router);
 
@@ -21,11 +22,12 @@ export const router = new Router({
         { path: '/register', name: "register", component: Register },
         { path: '/about', component: About },
         { path: '/suggestions', component: Suggestions },
-        { path: '/dashboard', component: Dashboard, children: [{ path: '/dashboardhome', name: "dashboardhome", component: DashboardHome }, { path: '/manageusers', name: "manageusers", component: ManageUsers }] },
+        { path: '/dashboard', component: Dashboard, redirect: '/dashboardhome', children: [{ path: '/dashboardhome', name: "dashboardhome", component: DashboardHome }, { path: '/manageusers', name: "manageusers", component: ManageUsers }] },
+        { path: '/userprofile/:userId', component: UserProfile, props: true },
         { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home
-        { path: '*', redirect: '/home' }
+        { path: '*', redirect: '/home' },
     ],
     linkExactActiveClass: "activeLink"
 });

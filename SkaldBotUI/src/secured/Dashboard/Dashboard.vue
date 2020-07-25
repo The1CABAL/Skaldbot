@@ -16,21 +16,13 @@
 </template>
 
 <script>
-    import { mapGetters } from "vuex";
-
     export default {
         name: "Dashboard",
-        created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+        data() {
+            return {
+                isLoaded: false
             }
-            else {
-                this.$router.push('/dashboardhome')
-            }
-        },
-        computed: {
-            ...mapGetters(["isLoggedIn", "isAdmin", "isMasterAdmin", "isUser"])
-        },
+        }
     }
 </script>
 

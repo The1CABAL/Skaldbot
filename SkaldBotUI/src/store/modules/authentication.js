@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios';
+import { BaseUrl } from '../../helpers/constants';
 
 Vue.prototype.$http = axios
 const token = localStorage.getItem('token')
@@ -29,7 +30,8 @@ const actions = {
         //console.log(user);
         return new Promise((resolve, reject) => {
             commit('auth_request')
-            axios.post('http://127.0.0.1:5000/api/login', user).then(resp => {
+            let url = BaseUrl + 'login'
+            axios.post(url, user).then(resp => {
                 const token = resp.data.token
                 const user = resp.data.user
                 //console.log(token);
@@ -44,7 +46,7 @@ const actions = {
                     reject(err)
                 });
 
-            var userUrl = 'http://127.0.0.1:5000/api/roles?username=' + user.username
+            var userUrl = BaseUrl + 'roles?username=' + user.username
             axios.get(userUrl).then(resp => {
                 const role = JSON.parse(resp.data);
                 commit('user_roles', role[0].Role)
@@ -58,7 +60,8 @@ const actions = {
     async register({ commit }, user) {
         return new Promise((resolve, reject) => {
             commit('auth_request')
-            axios.post('http://127.0.0.1:5000/api/register', user).then(resp => {
+            let url = BaseUrl + 'register'
+            axios.post(url, user).then(resp => {
                 const token = resp.data.token
                 const user = resp.data.user
                 localStorage.setItem('token', token)

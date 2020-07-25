@@ -7,6 +7,7 @@ from flask_cors import CORS
 from SkaldBotAPI import app
 from Resource.Forms import *
 from Resource.Users import *
+from Resource.Roles import *
 from Resource.GenerateFernetKey import GenerateFernetKey
 
 api_bp = Blueprint('api', __name__)
@@ -25,3 +26,5 @@ api.add_resource(Register, '/register')
 api.add_resource(GenerateFernetKey, '/generatefernetkey')
 api.add_resource(GetUserRoles, '/roles')
 api.add_resource(GetAllUsers, '/getUsers')
+api.add_resource(GetUserForProfile, '/getUser')
+api.add_resource(GetAllRoles, '/getRoles')

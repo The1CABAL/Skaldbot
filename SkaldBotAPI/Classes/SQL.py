@@ -5,7 +5,7 @@ from datetime import datetime
 from time import sleep
 from Classes.ConfigParser import *
 from Classes.Cryptography import Cryptography
-
+from Classes.Helpers import Helpers
 class SQL():
     #Creates database
     #def create_dbo():
@@ -347,7 +347,6 @@ class SQL():
 
         sql = sql.replace("@username", user[0])
 
-        #print(user);
         username = user[0]
         passedPassword = user[1]
 
@@ -376,20 +375,20 @@ class SQL():
             return False
 
     def register(user):
-        sql = "INSERT INTO Users (Username, PasswordHash, CreateDate) VALUES ('@username', '@password', '@date');"
+        sql = "INSERT INTO Users (Username, FirstName, LastName, PasswordHash, CreateDate) VALUES ('@username', '@firstname', '@lastname', '@password', '@date');"
+        insertRole = "INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), 3)"
         
         userExists = SQL.userExists(user[0])
-
-        #print(userExists);
 
         if userExists == False:
             #print("Starting to create user");
             current_date = datetime.now()
-            password = Cryptography.hashPassword(user[1])
-
-            #print(password.decode())
+            password = Cryptography.hashPassword(user[3])
         
             sql = sql.replace("@username", user[0])
+            insertRole = insertRole.replace("@username", user[0])
+            sql = sql.replace("@firstname", user[1])
+            sql = sql.replace("@lastname", user[2])
             sql = sql.replace("@password", password.decode())
             sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
@@ -400,13 +399,15 @@ class SQL():
 
                 conn.commit()
 
+                c.execute(insertRole)
+                conn.commit()
+
                 c.close()
                 conn.close()
 
                 return True
             except pymssql.Error as e:
                 print("Error authenticating user. Error {}".format(e))
-                #print(sql)
                 return False
         else:
             return False
@@ -478,8 +479,90 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting all users: Error {}".format(e))
             return None
+
+    def get_user_by_id(userId):
+        sql = "SELECT u.Username, u.FirstName, u.LastName, u.IsActive, u.IsLocked, u.CreateDate, r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Id = '@userId' FOR JSON AUTO"
+
+        sql = sql.replace("@userId", userId)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            user = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            if user:
+                user = user[0]
+                return user
+            else:
+                return None
+        except pymssql.Error as e:
+            print("Error getting user data. Error {}".format(e))
+            return None
         
+    def get_all_roles():
+        sql = "SELECT Role, RoleName FROM Roles WHERE IsActive = 1 FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            roles = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return roles
+        except pymssql.Error as e:
+            print("Error getting roles. Error {}".format(e))
+            return None
    
+    def update_user(userprofile):
+        username = userprofile[0]
+        currentRole = "SELECT r.RoleName FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Username = '@username'"
+        currentRole = currentRole.replace("@username", username)
+
+        updateUser = "UPDATE Users SET Username = '@username', FirstName = '@firstName', LastName = '@lastName', IsActive = @isActive, IsLocked = @isLocked WHERE Id = (SELECT Id FROM Users WHERE Username = '@username')";
+        updateUser = updateUser.replace("@username", username)
+        updateUser = updateUser.replace("@firstName", userprofile[1])
+        updateUser = updateUser.replace("@lastName", userprofile[2])
+        updateUser = updateUser.replace("@isActive", Helpers.bool_to_int(userprofile[3]))
+        updateUser = updateUser.replace("@isLocked", Helpers.bool_to_int(userprofile[4]))
+
+        updateRole = "DELETE FROM UserRoles WHERE UserId = (SELECT Id FROM Users WHERE Username = '@username'); INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), (SELECT Id FROM Roles WHERE Role = '@role'))"
+        updateRole = updateRole.replace("@username", username)
+        updateRole = updateRole.replace("@role", userprofile[5])
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(currentRole)
+
+            userRole = c.fetchone()[0]
+
+            if userRole != userprofile[5]:
+                print('Updating Role')
+                c.execute(updateRole)
+                conn.commit()
+            
+            print('Updating user')
+            c.execute(updateUser)
+            conn.commit()
+
+            c.close()
+            conn.close()
+        except pymssql.Error as e:
+            print('Error updating user. Error {}'.format(e))
+
+    
 
 
 
