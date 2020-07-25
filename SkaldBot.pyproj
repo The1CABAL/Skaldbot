@@ -26,9 +26,6 @@
     <Compile Include="Classes\ConfigParser.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\DBO_Deployer.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Classes\decisionMaker.py">
       <SubType>Code</SubType>
     </Compile>
