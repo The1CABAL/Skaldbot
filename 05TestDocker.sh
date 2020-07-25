@@ -1,0 +1,1 @@
+sudo docker inspect -f {{.State.Running}} skaldbot
