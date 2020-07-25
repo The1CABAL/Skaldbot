@@ -1,1 +1,1 @@
-..\..\sqlpackage\sqlpackage.exe /Action:Publish /tsn:"ib-2020.ib.local" /tu:"sa" /tp:"pwd4dsn_ib2020" /tdn:"SkaldBot.Database" /SourceFile:"\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac"
+..\..\sqlpackage\sqlpackage.exe /Action:Publish /tsn:"ib-2020.ib.local" /tu:"sa" /tp:"pwd4dsn_ib2020" /tdn:"SkaldBot.Database" /SourceFile:"C:\Program Files (x86)\Go Agent\pipelines\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac"
