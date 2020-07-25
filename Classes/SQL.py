@@ -223,3 +223,26 @@ class SQL():
             print("Error getting closest coordinates. Error: " + e)
 
 
+    def open_master_connection():
+        config = LoadConfig('config.ini')
+
+        if config:
+            integrated = config['database.integratedsecurity']
+
+            if (integrated.lower() == "true"):
+                try:
+                    conn = pymssql.connect(server = config['database.server'], database='master')
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+            else:
+                try:
+                    conn = pymssql.connect(server = config['database.server'], user=config['database.user'], password=config['database.password'], database='master')
+                except pymssql.Error as conn_er:
+                    print("Connection Error!")
+                    print(conn_er)
+
+            return conn
+        else:
+            return None
+

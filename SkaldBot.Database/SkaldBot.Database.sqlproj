@@ -60,8 +60,6 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="Profiles" />
     <Folder Include="dbo\Stored Procedures\" />
-    <Folder Include="bin" />
-    <Folder Include="bin\Debug" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\CodeSystems.sql" />
@@ -73,6 +71,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
-    <None Include="bin\Debug\SkaldBot.Database.dacpac" />
   </ItemGroup>
 </Project>

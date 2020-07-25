@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>SkaldBot</Name>
     <RootNamespace>SkaldBot</RootNamespace>
-    <InterpreterId>MSBuild|devin|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
     <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -24,6 +24,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\ConfigParser.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\DBO_Deployer.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\decisionMaker.py">
