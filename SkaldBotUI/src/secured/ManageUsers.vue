@@ -91,7 +91,7 @@
         mounted: function () {
             this.loaded = false;
             let baseUrl = "http://127.0.0.1:5000"
-            let userUrl = baseUrl + "/api/getUsers";
+            let userUrl = baseUrl + "/api/getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
             var that = this;
             axios.get(userUrl).then(function (response) {
                 that.data = JSON.parse(response.data);

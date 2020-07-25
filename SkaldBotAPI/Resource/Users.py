@@ -81,7 +81,8 @@ class GetUserRoles(Resource):
 class GetAllUsers(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
-            data = SQL.get_all_users()
+            isMaster = request.args.get('isMaster')
+            data = SQL.get_all_users(isMaster)
 
             response = app.response_class(
                 response = json.dumps(data),

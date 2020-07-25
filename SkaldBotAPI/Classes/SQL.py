@@ -454,8 +454,14 @@ class SQL():
             print("Error getting users roles. Error {}".format(e))
             return None
 
-    def get_all_users():
-        sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) FOR JSON AUTO"
+    def get_all_users(isMaster):
+        sql = ''
+
+        if isMaster.lower() == "true":
+            sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) FOR JSON AUTO"
+        else:
+            sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) WHERE Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F' FOR JSON AUTO"
+            
 
         try:
             conn = SQL.open_connection()
