@@ -25,6 +25,9 @@
     <Compile Include="Classes\decisionMaker.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\Get_Nearest_Hour.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Classes\Music\Music.py">
       <SubType>Code</SubType>
     </Compile>
@@ -40,6 +43,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Interpreter Include="devin\">
+      <Id>devin</Id>
+      <Version>3.7</Version>
+      <Description>devin (Python 3.7 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
     <Interpreter Include="env\">
       <Id>env</Id>
       <Version>3.7</Version>
@@ -61,6 +73,7 @@
     <Folder Include="Classes\" />
     <Folder Include="Classes\Music\" />
     <Folder Include="Myths\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
   </ItemGroup>
