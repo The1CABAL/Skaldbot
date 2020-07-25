@@ -1,1 +1,1 @@
-..\..\sqlpackage\sqlpackage.exe /Action:Publish /SourceFile:"\pipelines\build\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac" /Profile:"/Skaldbot.Database/Profiles/SkaldBot.Database.publish.xml"
+..\..\sqlpackage\sqlpackage.exe /Action:Publish /SourceFile:"\pipelines\build\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac" /Profile:"C:\Program Files (x86)\Go Agent\pipelines\Skaldbot.Database\Profiles\SkaldBot.Database.publish.xml"
