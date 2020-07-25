@@ -1,6 +1,1 @@
-if sudo docker inspect -f {{.State.Running}} skaldbot
-then
-    exit 0
-else
-    exit 1
-fi
+sudo docker inspect -f {{.State.Running}} skaldbot && echo "Container is running."
