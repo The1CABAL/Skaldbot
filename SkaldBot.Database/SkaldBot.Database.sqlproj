@@ -60,8 +60,6 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="Profiles" />
     <Folder Include="dbo\Stored Procedures\" />
-    <Folder Include="bin" />
-    <Folder Include="bin\Debug" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Seed" />
   </ItemGroup>
@@ -88,11 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
-    <None Include="bin\Debug\DeploymentReport.txt" />
-    <None Include="bin\Debug\DeploymentReport_1.txt" />
-    <None Include="bin\Debug\SkaldBot.Database.dacpac" />
-    <None Include="bin\Debug\SkaldBot.Database.dll" />
-    <None Include="bin\Debug\SkaldBot.Database.pdb" />
     <None Include="Scripts\Seed\VueFormFields.sql" />
     <None Include="Scripts\Seed\CodeVueForms.sql" />
     <None Include="Scripts\Seed\CodeItemType.sql" />
