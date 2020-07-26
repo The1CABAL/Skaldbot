@@ -148,15 +148,7 @@ async def join(ctx):
             voice = await channel.connect()
             print(f"Connected to channel {channel}")
 
-        #await voice.disconnect()
-
-        #if voice and voice.is_connected():
-        #    await voice.move_to(channel)
-        #else:
-        #    voice = await channel.connect()
-        #    print(f"Connected to channel {channel}")
-
-        await ctx.send(f"I have arrived in channel {channel} and I am awaiting requests! Presently I only accept requests from YouTube...")
+        await ctx.send(f"I have arrived in channel {channel} and I am awaiting requests! Presently, I only accept single song requests from YouTube...")
     except:
         await ctx.send("I cannot possibly know what channel to join unless you are already in that channel...")
 
@@ -175,27 +167,19 @@ async def thanks(ctx):
         await ctx.send("I can't tell if I am in a voice channel...")
 
 #play music from youtube
-@client.command(pass_contect=True, aliases=['s', 'sin'])
+@client.command(pass_context=True, aliases=['s', 'sin'])
 async def sing(ctx, url: str):
 
-    while True:
-        try:
-            try:
-                os.chdir(home+"\\Songs")
-                os.chdir(home)
-            except:
-                break
-            shutil.rmtree(home+'\\Songs')
-            break
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+            print("Removed old song file")
+    except PermissionError:
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("Excuse you, I am in the middle of a piece!")
+        return
 
-        except PermissionError as ex:
-            print(ex)
-            await ctx.send("Excuse me, but I am presently in the middle of a piece!")
-            return
-
-    os.mkdir(home+'/Songs')
-
-    #this is just a joke for me lol
     coinflip = random.randint(1,2)
     if coinflip == 1:
         await ctx.send("*AHEM*")
@@ -203,32 +187,50 @@ async def sing(ctx, url: str):
         await ctx.send("May I have everyone's attention please? I am about to begin...")
 
     voice = get(client.voice_clients, guild=ctx.guild)
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec':'mp3',
-            'preferredquality': '192',
+    if 'youtube' in url:
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
             }],
         }
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        os.chdir(home+'/Songs')
-        print('Downloading url')
-        ydl.download([url])
-        
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            print("Downloading audio now\n")
+            ydl.download([url])
 
-    for file in os.listdir("./Songs"):
-        if file.endswith(".mp3"):
-            voice.play(discord.FFmpegAudio(file), after=lambda e: print(f"Done singing {file}"))
-            voice.source = discord.PCMVolumeTransformer(voice.source)
-            voice.source.volume = 0.07
+        for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+                name = file
+                print(f"Renamed File: {file}\n")
+                os.rename(file, "song.mp3")
 
-            nname = name.rsplit("-", 2)
-            await ctx.send(f"I call this piece... {nname[0]}")
-    os.chdir(home)
-'''
+        voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("Song done!"))
+        voice.source = discord.PCMVolumeTransformer(voice.source)
+        voice.source.volume = 0.07
+
+        nname = name.rsplit("-", 2)
+        await ctx.send(f"I call this piece {nname[0]}")
+    elif 'spotify' in url:
+        await ctx.send('... Or not... Becuase, unfortunately, I cannot sing requests from Spotify at this time...')
+    else:
+        await ctx.send('I dont think you are asking me to sing a song...')
+
+    #Stop
+#    @client.command(pass_context=True, aliases=['s', 'sto'])
+#    async def stop(ctx):
+#        voice = get(client.voice_clients, guild=ctx.guild)
+
+#        queues.clear()
+
+#        if voice and voice.is_playing():
+#            print("music stopped")
+#        else:
+#            print('no music to stop')
+#            await ctx.send()
+#'''
 ======================
 END PLAYBACK FUNCTIONS
 ======================
