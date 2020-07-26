@@ -98,7 +98,7 @@
                 var data = JSON.parse(response.data);
                 var actionLink = data[0];
                 //console.log(actionLink.ActionLink);
-                that.action = baseUrl + actionLink.ActionLink;
+                that.action = BaseUrl + actionLink.ActionLink;
                 //console.log(that.action);
             }).catch(error => { console.log(error) });
 
@@ -112,9 +112,8 @@
         watch: {
             formKey: function () {
                 this.loaded = false;
-                let baseUrl = "http://127.0.0.1:5000"
                 let schemaUrl = BaseUrl + "getFormSchema?formKey=" + this.formKey;
-                let actionUrl = baseUrl + "getActionLink?formKey=" + this.formKey;
+                let actionUrl = BaseUrl + "getActionLink?formKey=" + this.formKey;
                 let nameUrl = BaseUrl + "getFormName?formKey=" + this.formKey;
                 var that = this;
                 axios.get(schemaUrl).then(function (response) {
@@ -129,7 +128,7 @@
                     var data = JSON.parse(response.data);
                     var actionLink = data[0];
                     //console.log(actionLink.ActionLink);
-                    that.action = baseUrl + actionLink.ActionLink;
+                    that.action = BaseUrl + actionLink.ActionLink;
                 }).catch(error => { console.log(error) });
 
                 axios.get(nameUrl).then(function (response) {

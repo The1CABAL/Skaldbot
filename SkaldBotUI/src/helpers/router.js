@@ -11,6 +11,7 @@ import ManageUsers from '../secured/Dashboard/ManageUsers'
 import Unauthorized from '../secured/Unauthorized'
 import DashboardHome from '../secured/Dashboard/DashboardHome'
 import UserProfile from '../secured/user/UserProfile'
+import PendingItems from '../secured/Dashboard/PendingItems'
 
 Vue.use(Router);
 
@@ -22,7 +23,19 @@ export const router = new Router({
         { path: '/register', name: "register", component: Register },
         { path: '/about', component: About },
         { path: '/suggestions', component: Suggestions },
-        { path: '/dashboard', component: Dashboard, redirect: '/dashboardhome', children: [{ path: '/dashboardhome', name: "dashboardhome", component: DashboardHome }, { path: '/manageusers', name: "manageusers", component: ManageUsers }] },
+        {
+            path: '/dashboard', component: Dashboard, redirect: '/dashboardhome',
+            children: [
+                {
+                    path: '/dashboardhome', name: "dashboardhome", component: DashboardHome
+                },
+                {
+                    path: '/manageusers', name: "manageusers", component: ManageUsers
+                },
+                {
+                    path: '/pendingitems', name: "pendingitems", component: PendingItems
+                }]
+        },
         { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
         { path: '/unauthorized', component: Unauthorized },
 

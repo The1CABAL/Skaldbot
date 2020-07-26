@@ -555,7 +555,68 @@ class SQL():
         except pymssql.Error as e:
             print('Error updating user. Error {}'.format(e))
 
-    
+    def get_submitted_items():
+        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO";
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            items = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return items
+        except pymssql.Error as e:
+            print('Error getting submitted items. Error {}'.format(e))
+
+    def get_submitted_item_by_id(id):
+        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
+        sql = sql.replace("@id", id);
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            item = c.fetchone()
+
+            if item:
+                item = item[0]
+                return item
+            else:
+                return None
+        except pymssql.Error as e:
+            print('Error getting submitted item. Error {}'.format(e))
+            return None
+
+    def update_submitted_item(isApproved, id, userId):
+        sql = "EXEC UpdateSubmittedItem @isApproved, @id, '@userId'"
+
+        sql = sql.replace("@isApproved", str(isApproved))
+        sql = sql.replace("@id", str(id))
+        sql = sql.replace("@userId", userId)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print('Error updating the submitted item. Error {}'.format(e))
+            return False
+        
 
 
 

@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from Classes.SQL import SQL
 from SkaldBotAPI import app
+from Models.Models import *
 from flask import json, request
 
 class GetFormName(Resource):
@@ -129,4 +130,71 @@ class SubmitItem(Resource):
                     mimetype='application/json'
                 )
                 return response
+    def get(self):
+        if SQL.test_connect_to_dbo():
+            id = request.args.get('id')
 
+            suggestion = SQL.get_submitted_item_by_id(id)
+
+            if suggestion:
+                response = app.response_class(
+                        response = json.dumps(suggestion),
+                        status = 200,
+                        mimetype='application/json'
+                    )
+                return response
+            else:
+                response = app.response_class(
+                    status=424,
+                    mimetype='application/json'
+                )
+                return response
+        else:
+            response = app.response_class(
+                    status=424,
+                    mimetype='application/json'
+                )
+            return response
+
+
+class ManageSubmittedItems(Resource):
+    def get(self):
+        if SQL.test_connect_to_dbo():
+            
+            items = SQL.get_submitted_items()
+
+            response = app.response_class(
+                response = json.dumps(items),
+                status = 200,
+                mimetype='application/json'
+               )
+            return response
+        else:
+            response = app.response_class(
+                    status=424,
+                    mimetype='application/json'
+                )
+            return response
+    
+    def post(self):
+        if SQL.test_connect_to_dbo():
+            req_data = request.get_json()
+
+            isApproved = req_data['IsApproved']
+            id = req_data['Id']
+            userId = req_data['UserId']
+
+            isUpdated = SQL.update_submitted_item(isApproved, id, userId)
+
+            response = app.response_class(
+                response = json.dumps({"Message": "Success"}),
+                status = 200,
+                mimetype='application/json')
+            
+            return response
+        else:
+            response = app.response_class(
+                response = json.dumps({"Message": "Failure"}), 
+                status=424, 
+                mimetype='application/json')
+            return response
