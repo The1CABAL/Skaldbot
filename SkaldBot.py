@@ -26,9 +26,9 @@ wisdom_hour = 8 #24Hour
 client = commands.Bot(command_prefix='$')
 
 #Testing Server
-target_channel_id = 726640547019751458
+#target_channel_id = 726640547019751458
 #Production
-#target_channel_id = 725880649356935192
+target_channel_id = 725880649356935192
 
 '''
 ================================
