@@ -22,7 +22,7 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = 8 #24Hour
+wisdom_hour = 3 #24Hour UTC Time. I cannot stress this enough. UTC TIME
 client = commands.Bot(command_prefix='$')
 
 #Testing Server
