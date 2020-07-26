@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker build --tag skaldbot-test .
+sudo docker build --tag skaldbot .
