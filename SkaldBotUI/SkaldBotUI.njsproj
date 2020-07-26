@@ -95,18 +95,6 @@
     <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\style\bootstrap-grid.css" />
-    <Content Include="src\style\bootstrap-grid.css.map" />
-    <Content Include="src\style\bootstrap-grid.min.css" />
-    <Content Include="src\style\bootstrap-grid.min.css.map" />
-    <Content Include="src\style\bootstrap-reboot.css" />
-    <Content Include="src\style\bootstrap-reboot.css.map" />
-    <Content Include="src\style\bootstrap-reboot.min.css" />
-    <Content Include="src\style\bootstrap-reboot.min.css.map" />
-    <Content Include="src\style\bootstrap.css" />
-    <Content Include="src\style\bootstrap.css.map" />
-    <Content Include="src\style\bootstrap.min.css" />
-    <Content Include="src\style\bootstrap.min.css.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
@@ -119,7 +107,6 @@
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
-    <Folder Include="src\style\" />
     <Folder Include="src\secured\" />
     <Folder Include="src\secured\Dashboard\" />
     <Folder Include="src\secured\user\" />
