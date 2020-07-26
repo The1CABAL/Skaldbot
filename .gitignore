@@ -341,3 +341,6 @@ healthchecksdb
 /devin
 /env
 /Songs
+/ffprobe.exe
+/ffplay.exe
+/ffmpeg.exe
