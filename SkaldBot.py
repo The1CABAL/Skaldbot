@@ -230,7 +230,7 @@ async def sing(ctx, url: str):
 #        else:
 #            print('no music to stop')
 #            await ctx.send()
-'''
+#'''
 ======================
 END PLAYBACK FUNCTIONS
 ======================
