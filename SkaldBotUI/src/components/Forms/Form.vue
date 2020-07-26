@@ -221,7 +221,7 @@
                         var password = this.model.password;
                         //console.log(this.formKey);
                         if (this.formKey == "LoginForm")
-                            this.$store.dispatch('login', { username, password }).then(() => this.$emit("LoginSuccess", true)).catch(err => console.log(err))
+                            this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))
                         else {
                             var firstname = this.model.firstname;
                             var lastname = this.model.lastname;

@@ -107,12 +107,15 @@
             setAuthenticated() {
                 console.log("Setting authentication")
                 this.authenticated = true;
-
-                if (this.authenticated)
-                    this.$router.push('/')
+                this.$router.push('/')
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
             },
             logout() {
                 this.$store.dispatch('logout').then(() => { this.authenticated = false })
+                this.masterAdmin = false;
+                this.admin = false;
             },
             activateActivityTracker() {
                 window.addEventListener("mousemove", this.userActivityThrottler);

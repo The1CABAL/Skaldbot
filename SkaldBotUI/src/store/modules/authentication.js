@@ -28,6 +28,7 @@ const getters = {
 const actions = {
     async login({ commit }, user) {
         //console.log(user);
+        let baseUser = user;
         return new Promise((resolve, reject) => {
             commit('auth_request')
             let url = BaseUrl + 'login'
@@ -38,21 +39,24 @@ const actions = {
                 localStorage.setItem('token', token)
                 axios.defaults.headers.common['Authorization'] = token
                 commit('auth_success', token, user)
+
+                var userUrl = BaseUrl + 'roles?username=' + baseUser.username
+                axios.get(userUrl).then(resp => {
+                    const role = JSON.parse(resp.data);
+                    commit('user_roles', role[0].Role)
+                    resolve(resp)
+                })
+                    .catch(err => {
+                        commit('auth_error')
+                        localStorage.removeItem('token')
+                        reject(err)
+                    });
+
                 resolve(resp)
             })
                 .catch(err => {
                     commit('auth_error')
                     localStorage.removeItem('token')
-                    reject(err)
-                });
-
-            var userUrl = BaseUrl + 'roles?username=' + user.username
-            axios.get(userUrl).then(resp => {
-                const role = JSON.parse(resp.data);
-                commit('user_roles', role[0].Role)
-                resolve(resp)
-            })
-                .catch(err => {
                     reject(err)
                 });
         })
@@ -97,11 +101,9 @@ const mutations = {
     },
     user_roles(state, role) {
         if (role == "MasterAdmin") {
-            state.isMasterAdmin = true
             localStorage.setItem('isMasterAdmin', true)
         }
         if (role == "Admin") {
-            state.isAdmin = true
             localStorage.setItem('isAdmin', true)
         }
     },
