@@ -16,8 +16,9 @@
                     <li><router-link to="/about">About</router-link></li>
                     <li><router-link to="/suggestions">Submit Ideas</router-link></li>
                     <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)">Dashboard</router-link></li>
+                    <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile()">User Profile</router-link></li>
                     <li><router-link to="/" v-if="authenticated" v-on:click.native="logout()">Logout</router-link></li>
-                    <li><router-link to="/login" v-if="!authenticated">Login</router-link></li>
+                    <li><router-link to="login" v-if="!authenticated">Login</router-link></li>
                 </ul>
             </div>
         </div>
@@ -39,7 +40,8 @@
                 user: true,
                 isInactive: false,
                 userActivityThrottlerTimeout: null,
-                userActivityTimeout: null
+                userActivityTimeout: null,
+                userId: ''
             }
         },
         beforeMount() {
@@ -68,10 +70,10 @@
         watch: {
             isLoggedIn: function () {
                 if (this.isLoggedIn && !this.authenticated) {
-                    this.setAuthenticated;
+                    this.setAuthenticated(true);
                 }
                 else if (!this.isLoggedIn && this.authenticated) {
-                    this.setAuthenticated;
+                    this.setAuthenticated(false);
                 }
             }
         },
@@ -89,12 +91,18 @@
                 });
             });
 
-            if (this.$store.getters.isMasterAdmin) {
-                this.masterAdmin = true;
-                this.admin = true;
-            }
-            else if (this.$store.getters.isAdmin) {
-                this.admin = true;
+            if (this.$store.getters.isLoggedIn) {
+                if (!this.authenticated) {
+                    this.authenticated = true;
+                }
+                if (this.$store.getters.isMasterAdmin) {
+                    this.masterAdmin = true;
+                    this.admin = true;
+                }
+                else if (this.$store.getters.isAdmin) {
+                    this.admin = true;
+                }
+                this.userId = this.$store.getters.userId;
             }
         },
         methods: {
@@ -104,9 +112,19 @@
             Hide() {
                 document.getElementById("nav-lists").classList.remove("_Menus-show");
             },
-            setAuthenticated() {
+            setAuthenticated(state) {
                 console.log("Setting authentication")
-                this.authenticated = true;
+                this.authenticated = state;
+
+                if (!state) {
+                    this.userId = '';
+                }
+                else {
+                    if (this.userId == '') {
+
+                    }
+                }
+
                 this.$router.push('/')
                 setTimeout(() => {
                     location.reload();
@@ -123,10 +141,6 @@
                 window.addEventListener("scroll", this.resetUserActivityTimeout);
                 window.addEventListener("keydown", this.resetUserActivityTimeout);
                 window.addEventListener("resize", this.resetUserActivityTimeout);
-                window.addEventListener("beforeunload", function () {
-                    console.log("Unloading");
-                    this.inactiveUserAction();
-                })
             },
             resetUserActivityTimeout() {
                 clearTimeout(this.userActivityTimeout);
@@ -149,6 +163,9 @@
                     this.$store.dispatch('logout')
                     location.reload();
                 }
+            },
+            profile() {
+                this.$router.push('/userprofile/' + this.userId)
             }
         }
     }

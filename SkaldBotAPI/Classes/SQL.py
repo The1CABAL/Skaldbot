@@ -350,16 +350,22 @@ class SQL():
             else:
                 return False
 
-            c.close()
-            conn.close()
-
             if passedPassword == password:
-                return True
+                getUserData = "SELECT Id, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
+                getUserData = getUserData.replace("@username", user[0])
+
+                c.execute(getUserData)
+                userData = c.fetchone()[0]
+                c.close()
+                conn.close()
+                return userData
             else:
-                return False
+                c.close()
+                conn.close()
+                return None
         except pymssql.Error as e:
             print("Error authenticating user. Error {}".format(e))
-            return False
+            return None
 
     def register(user):
         sql = "INSERT INTO Users (Username, FirstName, LastName, PasswordHash, CreateDate) VALUES ('@username', '@firstname', '@lastname', '@password', '@date');"

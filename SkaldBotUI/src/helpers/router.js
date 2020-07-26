@@ -23,7 +23,7 @@ export const router = new Router({
         { path: '/about', component: About },
         { path: '/suggestions', component: Suggestions },
         { path: '/dashboard', component: Dashboard, redirect: '/dashboardhome', children: [{ path: '/dashboardhome', name: "dashboardhome", component: DashboardHome }, { path: '/manageusers', name: "manageusers", component: ManageUsers }] },
-        { path: '/userprofile/:userId', component: UserProfile, props: true },
+        { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
         { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home

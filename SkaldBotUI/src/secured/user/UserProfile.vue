@@ -85,6 +85,13 @@
         mounted: function () {
             this.getData();
         },
+        created: function () {
+            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                if (this.userId != this.$store.getters.userId) {
+                    this.$router.push('/unauthorized')
+                }
+            }
+        },
         methods: {
             getDate(date) {
                 let elDate = new Date(date)
@@ -100,8 +107,6 @@
             },
             formSubmit() {
                 event.preventDefault();
-                console.log(this.userData)
-                console.log(this.oldUserData);
                 if (!this.objectsAreSame(this.userData, this.oldUserData)) {
                     var url = BaseUrl + 'getUser'
                     var postData = [];
@@ -135,9 +140,9 @@
                 this.isError = false;
             },
             setNotification(success) {
-                console.log("Success value: " + success)
                 if (success) {
                     this.submitted = true;
+                    this.isError = false;
                     this.msg = "Successfully updated the user!";
                 }
                 else {

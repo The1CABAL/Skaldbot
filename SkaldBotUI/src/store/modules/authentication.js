@@ -11,13 +11,13 @@ if (token) {
 const state = {
     token: localStorage.getItem('token') || '',
     status: '',
-    user: [],
     isMasterAdmin: localStorage.getItem('isMasterAdmin') || false,
     isAdmin: localStorage.getItem('isAdmin') || false,
     isUser: true
 };
 
 const getters = {
+    userId: state => state.token,
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     isMasterAdmin: state => state.isMasterAdmin,
@@ -33,9 +33,7 @@ const actions = {
             commit('auth_request')
             let url = BaseUrl + 'login'
             axios.post(url, user).then(resp => {
-                const token = resp.data.token
-                const user = resp.data.user
-                //console.log(token);
+                const token = JSON.parse(resp.data)[0].Id
                 localStorage.setItem('token', token)
                 axios.defaults.headers.common['Authorization'] = token
                 commit('auth_success', token, user)
@@ -94,10 +92,9 @@ const mutations = {
     auth_request(state) {
         state.status = 'loading'
     },
-    auth_success(state, token, user) {
+    auth_success(state, token) {
         state.status = 'success'
         state.token = token
-        state.user = user
     },
     user_roles(state, role) {
         if (role == "MasterAdmin") {
