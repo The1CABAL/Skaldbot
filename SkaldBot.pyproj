@@ -32,6 +32,15 @@
     <Compile Include="Classes\SQL.py">
       <SubType>Code</SubType>
     </Compile>
+	<Compile Include="Helpers\Get_Nearest_Hour.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\Music\Music.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\Music\YTDLSource.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Helpers\distanceCalculator.py">
       <SubType>Code</SubType>
     </Compile>
@@ -51,8 +60,9 @@
     <Content Include="Stories\The Great Famine.txt" />
     <Content Include="Stories\The Tragedy of The Gungnir.txt" />
   </ItemGroup>
-  <ItemGroup>
+   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="Classes\Music\" />
     <Folder Include="Myths\" />
     <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
