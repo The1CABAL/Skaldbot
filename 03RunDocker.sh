@@ -1,5 +1,7 @@
 #!/bin/bash
 sudo docker run -it -p 5478:5478 --name skaldbot -d skaldbot && \ 
 sleep 5 && \
-sudo docker inspect -f {{.State.Running}} skaldbot && \
-echo "Container is running."
+state = sudo docker inspect -f {{.State.Running}} skaldbot && \
+if [$state == False] then
+	exit 1
+fi
