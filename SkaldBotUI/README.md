@@ -6,6 +6,10 @@ HOW TO SET UP
 First you may need to have node.js installed on your machine.
 Next, I recommend creating a bat file to run the SkaldBotAPI through cmd so you can have the webapi running while testing the UI. This is needed for many UI functions
 
-Secondly, you need to run the SkaldBotUI project in visual studio. If you have NodeJS installed, it should automatically build the project, start the development server, and provide you the link to access the page. 
+Then run the following commands through your command window:
 
-Once you go to the URL, the site should be loaded and you can start using. 
+npm install -g vue-cli
+Point directory to the SkaldbotUI project
+npm run dev
+
+If these steps do not work, reach out to me and I will see if I can help.
