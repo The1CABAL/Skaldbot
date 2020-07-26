@@ -10,6 +10,7 @@ import threading
 import datetime
 import youtube_dl
 import random
+import shutil
 
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -147,13 +148,13 @@ async def join(ctx):
             voice = await channel.connect()
             print(f"Connected to channel {channel}")
 
-        await voice.disconnect()
+        #await voice.disconnect()
 
-        if voice and voice.is_connected():
-            await voice.move_to(channel)
-        else:
-            voice = await channel.connect()
-            print(f"Connected to channel {channel}")
+        #if voice and voice.is_connected():
+        #    await voice.move_to(channel)
+        #else:
+        #    voice = await channel.connect()
+        #    print(f"Connected to channel {channel}")
 
         await ctx.send(f"I have arrived in channel {channel} and I am awaiting requests! Presently I only accept requests from YouTube...")
     except:
@@ -184,9 +185,11 @@ async def sing(ctx, url: str):
                 os.chdir(home)
             except:
                 break
-            os.remove(home+'\\Songs')
+            shutil.rmtree(home+'\\Songs')
+            break
 
-        except PermissionError:
+        except PermissionError as ex:
+            print(ex)
             await ctx.send("Excuse me, but I am presently in the middle of a piece!")
             return
 
