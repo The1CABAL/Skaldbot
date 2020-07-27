@@ -8,6 +8,7 @@ import discord
 import os
 import threading
 import datetime
+import json
 import youtube_dl
 import random
 import shutil
@@ -22,7 +23,7 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = 3 #24Hour UTC Time. I cannot stress this enough. UTC TIME
+wisdom_hour = 16 #24Hour UTC Time. I cannot stress this enough. UTC TIME
 client = commands.Bot(command_prefix='$')
 
 #Testing Server
@@ -236,4 +237,8 @@ END PLAYBACK FUNCTIONS
 ======================
 '''
 
-client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
+token_file = open('SkaldBotToken.json')
+data = json.load(token_file)
+
+token = data['token']
+client.run(token)
