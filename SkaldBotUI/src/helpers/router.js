@@ -14,6 +14,7 @@ import UserProfile from '../secured/user/UserProfile'
 import PendingItems from '../secured/Dashboard/PendingItems'
 import ManageStories from '../secured/Dashboard/ManageStories'
 import ManageWisdoms from '../secured/Dashboard/ManageWisdoms'
+import ManageForms from '../secured/Dashboard/ManageForms'
 
 Vue.use(Router);
 
@@ -42,6 +43,9 @@ export const router = new Router({
                 },
                 {
                     path: '/managewisdoms', name: "managewisdoms", component: ManageWisdoms
+                },
+                {
+                    path: '/manageforms', name: "manageforms", component: ManageForms
                 }]
         },
         { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },

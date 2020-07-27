@@ -1,12 +1,11 @@
 <template>
-    <div id="ManageWisdoms">
+    <div id="ManageForms">
         <VueLoading v-if="!loaded"></VueLoading>
-        <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
         <div v-if="loaded">
             <div style="margin-bottom: 10px">
                 <el-row>
                     <el-col :span="6">
-                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
+                        <el-input placeholder="Form Name..." v-model="filters[0].value"></el-input>
                     </el-col>
                 </el-row>
             </div>
@@ -28,34 +27,29 @@
     import VueLoading from '../../components/VueLoading';
     import axios from 'axios';
     import { BaseUrl } from '../../helpers/constants';
-    import Modal from '../../components/ModalComponent';
 
     export default {
-        name: "ManageWisdoms",
+        name: "ManageForms",
         components: {
-            VueLoading,
-            Modal
+            VueLoading
         },
         data() {
             return {
-                modalDisplayTypeId: 3,
-                lookupId: 0,
                 loaded: false,
-                isModalVisible: false,
                 data: [],
                 titles: [
                     {
-                        prop: "Id",
-                        label: "Wisdom Id"
+                        prop: "FormKey",
+                        label: "Form Key"
                     },
                     {
-                        prop: "Title",
-                        label: "Wisdom Title"
+                        prop: "FormName",
+                        label: "Form Name"
                     }
                 ],
                 filters: [
                     {
-                        prop: 'Title',
+                        prop: 'FormName',
                         value: ''
                     }
                 ],
@@ -70,8 +64,7 @@
                                 type: 'primary'
                             },
                             handler: row => {
-                                this.lookupId = row.Id
-                                this.showModal();
+                                this.$message("This feature is not yet implemented");
                             },
                             label: 'View'
                         }
@@ -88,23 +81,15 @@
                 this.$router.push('/unauthorized')
             }
             else {
+                this.$store.dispatch("fetchAllForms")
                 this.isLoaded = true
             }
         },
         methods: {
             getData() {
                 this.loaded = false;
-                let url = BaseUrl + "getWisdoms";
-                var that = this;
-                axios.get(url).then(function (response) {
-                    if (response.data.length > 0) {
-                        that.data = JSON.parse(response.data);
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('There was an error getting the submitted items')
-                });
-                that.loaded = true;
+                this.data = this.$store.getters.allForms
+                this.loaded = true;
             },
             handleSelectionChange(val) {
                 this.selectedRow = val
@@ -114,14 +99,6 @@
                     return "True"
                 else
                     return "False"
-            },
-            showModal() {
-                this.isModalVisible = true
-            },
-            closeModal() {
-                this.isModalVisible = false;
-                this.lookupId = 0;
-                this.getData();
             }
         }
     }

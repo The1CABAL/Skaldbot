@@ -214,7 +214,7 @@ class SQL():
             print("Error getting closest coordinates. Error: " + e)
 
     def get_all_forms():
-        sql = "SELECT FormKey, FormName FROM CodeVueForms WHERE IsActive = 1 FOR JSON AUTO"
+        sql = "SELECT FormKey, FormName, IsActive FROM CodeVueForms FOR JSON AUTO"
         
         try:
             conn = SQL.open_connection()
