@@ -12,6 +12,7 @@ import Unauthorized from '../secured/Unauthorized'
 import DashboardHome from '../secured/Dashboard/DashboardHome'
 import UserProfile from '../secured/user/UserProfile'
 import PendingItems from '../secured/Dashboard/PendingItems'
+import ManageStories from '../secured/Dashboard/ManageStories'
 
 Vue.use(Router);
 
@@ -34,6 +35,9 @@ export const router = new Router({
                 },
                 {
                     path: '/pendingitems', name: "pendingitems", component: PendingItems
+                },
+                {
+                    path: '/managestories', name: "managestories", component: ManageStories
                 }]
         },
         { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },

@@ -616,7 +616,74 @@ class SQL():
         except pymssql.Error as e:
             print('Error updating the submitted item. Error {}'.format(e))
             return False
-        
+
+    def get_all_stories():
+        sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            stories = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return stories
+        except pymssql.Error as e:
+            print("Error getting stories. Error {}".format(e))
+            return None
+
+    def get_story_by_id(id):
+        sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+
+        sql = sql.replace("@id", str(id));
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            story = c.fetchone()
+
+            c.close()
+            conn.close()
+            if story:
+                story = story[0]
+                return story
+            else:
+                return None
+        except pymssql.Error as e:
+            print("Error getting story by id. Error {}".format(e))
+            return None
+
+    def update_story(story):
+        sql = "UPDATE Stories SET Title = '@title', Story = '@story', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        current_date = datetime.now()
+
+        sql = sql.replace("@title", story[1])
+        sql = sql.replace("@story", story[2])
+        sql = sql.replace("@isActive", Helpers.bool_to_int(story[3]))
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        sql = sql.replace("@Id", str(story[0]))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            conn.commit()
+            c.close()
+            conn.close()
+            
+            return True
+        except pymssql.Error as e:
+            print("Error updating story. Error {}".format(e))
+            return False
 
 
 

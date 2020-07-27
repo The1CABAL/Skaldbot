@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div id="ManageStories">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
         <div v-if="loaded">
             <div style="margin-bottom: 10px">
                 <el-row>
                     <el-col :span="6">
-                        <el-input placeholder="Filter Item Type" v-model="filters[0].value"></el-input>
+                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
                     </el-col>
                 </el-row>
             </div>
@@ -14,9 +14,9 @@
             <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
                 <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
                 </el-table-column>
-                <el-table-column prop="CreateDate" label="Date Created">
+                <el-table-column prop="IsActive" label="Is Active">
                     <template slot-scope="scope">
-                        <div>{{getDate(scope.row.CreateDate)}}</div>
+                        <div>{{getBool(scope.row.IsActive)}}</div>
                     </template>
                 </el-table-column>
             </data-tables>
@@ -25,21 +25,20 @@
 </template>
 
 <script>
-    // fake server
     import VueLoading from '../../components/VueLoading';
     import axios from 'axios';
     import { BaseUrl } from '../../helpers/constants';
     import Modal from '../../components/ModalComponent';
 
     export default {
-        name: "PendingItems",
+        name: "ManageStories",
         components: {
             VueLoading,
             Modal
         },
         data() {
             return {
-                modalDisplayTypeId: 1,
+                modalDisplayTypeId: 2,
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
@@ -47,20 +46,16 @@
                 titles: [
                     {
                         prop: "Id",
-                        label: "Submitted Item Id"
-                    },
-                    {
-                        prop: "ItemType",
-                        label: "Submitted Item Type"
+                        label: "Story Id"
                     },
                     {
                         prop: "Title",
-                        label: "Title"
+                        label: "Story Title"
                     }
                 ],
                 filters: [
                     {
-                        prop: 'ItemType',
+                        prop: 'Title',
                         value: ''
                     }
                 ],
@@ -99,14 +94,11 @@
         methods: {
             getData() {
                 this.loaded = false;
-                let userUrl = BaseUrl + "submittedItems";
+                let url = BaseUrl + "getStories";
                 var that = this;
-                axios.get(userUrl).then(function (response) {
+                axios.get(url).then(function (response) {
                     if (response.data.length > 0) {
                         that.data = JSON.parse(response.data);
-                        for (var i = 0; i < that.data.length; i++) {
-                            that.data[i].ItemType = that.data[i].luIT[0].ActualItemType
-                        }
                     }
                 }).catch(function (error) {
                     console.log(error);
@@ -117,11 +109,11 @@
             handleSelectionChange(val) {
                 this.selectedRow = val
             },
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
+            getBool(value) {
+                if (value)
+                    return "True"
+                else
+                    return "False"
             },
             showModal() {
                 this.isModalVisible = true
@@ -134,3 +126,6 @@
         }
     }
 </script>
+
+<style scoped>
+</style>

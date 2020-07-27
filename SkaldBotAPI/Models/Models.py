@@ -4,3 +4,4 @@ Suggestion = collections.namedtuple('suggestion', ['typeId', 'title', 'story', '
 User = collections.namedtuple('user', ['username', 'password'])
 RegisterUser = collections.namedtuple('registeruser', ['username', 'firstname', 'lastname', 'password'])
 UserProfile = collections.namedtuple('userprofile', ['username', 'firstname', 'lastname', 'isactive', 'islocked', 'role'])
+StoryModel = collections.namedtuple('story', ['id', 'title', 'story', 'isactive'])

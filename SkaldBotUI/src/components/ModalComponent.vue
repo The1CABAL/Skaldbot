@@ -18,7 +18,9 @@
                                 <label for="itemType">Suggestion Type:</label>
                                 <input type="text" id="itemType" v-model="lookupData[0].ItemType" disabled />
                                 <label for="itemText">Content:</label>
-                                <textarea id="itemText" disabled>{{lookupData[0].ItemText}}</textarea>
+                                <br />
+                                <textarea id="itemText" v-model="lookupData[0].ItemText" disabled></textarea>
+                                <br />
                                 <hr />
                                 <label for="dateCreated">Date Submitted:</label>
                                 <input type="text" id="dateCreated" :value="getDate(lookupData[0].CreateDate)" disabled />
@@ -34,6 +36,44 @@
                                     </button>
                                     <button type="button" class="btn-button reject" @click="rejectSuggestion">
                                         Reject
+                                    </button>
+                                </slot>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+                <div v-if="modalDisplayTypeId == 2">
+                    <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+                        <div>
+                            <button type="button" class="btn-close topright" @click="close" aria-label="Close modal">x</button>
+                        </div>
+                        <header class="modal-header" id="modalTitle">
+                            <div>
+                                <h4>Manage Story</h4>
+                            </div>
+                        </header>
+                        <section class="modal-body" id="modalDescription">
+                            <slot name="body">
+                                <div>
+                                    <label for="title">Title:</label>
+                                    <input type="text" id="title" v-model="lookupData[0].Title" />
+                                    <label for="itemText">Content:</label>
+                                    <br />
+                                    <textarea id="itemText" v-model="lookupData[0].Story"></textarea>
+                                    <br />
+                                    <label for="isActive">Is Active:</label>
+                                    <input type="checkbox" id="isActive" v-model="lookupData[0].IsActive" />
+                                </div>
+                            </slot>
+                        </section>
+                        <footer class="modal-footer">
+                            <div>
+                                <slot name="footer">
+                                    <button type="button" class="btn-button approve" @click="saveItem">
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn-button" @click="close">
+                                        Close
                                     </button>
                                 </slot>
                             </div>
@@ -73,20 +113,31 @@
         },
         watch: {
             lookupId: function () {
-                if (this.lookupId != 0) {
+                if (this.lookupId != 0 || this.lookupId != null) {
                     let id = this.modalDisplayTypeId;
                     switch (id) {
                         case 1:
                             //Lookup suggested item
-                            let url = BaseUrl + "submititem?id=" + this.lookupId;
+                            let itemUrl = BaseUrl + "submititem?id=" + this.lookupId;
                             var that = this;
-                            axios.get(url).then(function (response) {
+                            axios.get(itemUrl).then(function (response) {
                                 that.lookupData = JSON.parse(response.data);
                                 that.lookupData[0].ItemType = that.lookupData[0].luIT[0].ItemType
                                 that.isLoaded = true;
                             }).catch(function (error) {
                                 console.log(error);
                                 that.$message("There was an error getting the suggestion data");
+                            });
+                        case 2:
+                            //Get story information
+                            let storyUrl = BaseUrl + "story?id=" + this.lookupId;
+                            var that = this;
+                            axios.get(storyUrl).then(function (response) {
+                                that.lookupData = JSON.parse(response.data);
+                                that.isLoaded = true;
+                            }).catch(function (error) {
+                                console.log(error);
+                                that.$message("There was an error getting the story data");
                             });
                     }
                 }
@@ -137,6 +188,26 @@
                         that.$message('Error updating submitted item!');
                     }
                 });
+            },
+            saveItem() {
+                switch (this.modalDisplayTypeId) {
+                    case 2:
+                        let url = BaseUrl + 'story'
+                        let that = this;
+                        axios.post(url, this.lookupData).then(function (response) {
+                            var returnVal = response.data;
+                            if (returnVal.Message.toString() == "Success") {
+                                that.$message('Successfully updated submitted item!');
+                                setTimeout(function () {
+                                    that.close()
+                                }, 2000)
+                            }
+                            else {
+                                //console.log("Setting success to false");
+                                that.$message('Error updating submitted item!');
+                            }
+                        });
+                }
             }
         },
     };

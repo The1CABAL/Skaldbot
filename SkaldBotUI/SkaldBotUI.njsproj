@@ -80,6 +80,9 @@
     <Content Include="src\secured\Dashboard\DashboardHome.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\Dashboard\ManageStories.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\Dashboard\ManageUsers.vue">
       <SubType>Code</SubType>
     </Content>
