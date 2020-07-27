@@ -1,11 +1,46 @@
 <template>
     <div id="ModifyForm">
+        <div v-if="modalVisible">
+            <transition name="modal-fade">
+                <div class="modal-backdrop">
+                    <div>
+                        <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+                            <div>
+                                <button type="button" class="btn-close topright" @click="close" aria-label="Close modal">x</button>
+                            </div>
+                            <header class="modal-header" id="modalTitle">
+                                <div>
+                                    <h4>Confirm Submit</h4>
+                                </div>
+                            </header>
+                            <section class="modal-body" id="modalDescription">
+                                <slot name="body">
+                                    <p>Are you sure you want to submit?</p>
+                                </slot>
+                            </section>
+                            <footer class="modal-footer">
+                                <div>
+                                    <slot name="footer">
+                                        <button type="button" class="btn-button" @click="formSubmit">
+                                            Yes
+                                        </button>
+                                        <button type="button" class="btn-button" @click="close">
+                                            No
+                                        </button>
+                                    </slot>
+                                </div>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
         <div class="panel">
             <div class="panel-heading"><h4>Modify Form</h4></div>
             <div class="panel-body">
                 <h4 class="sectionHeading">{{formName}} Form</h4>
                 <hr />
-                <form>
+                <form v-on:submit="showModal">
                     <label for="formName">Form Name:</label>
                     <input type="text" id="formName" name="formName" v-model="formName" />
                     <label for="formKey">Form Key:</label>
@@ -16,6 +51,8 @@
                     <br />
                     <textarea id="formSchema" v-model="formData.FieldSchema"></textarea>
                     <button type="button" @click="updateFieldSchema" class="btn-button">Refresh Form</button>
+                    <br />
+                    <button type="submit" class="btn-button">Submit</button>
                 </form>
                 <hr />
                 <h4 class="sectionHeading">Form View</h4>
@@ -38,6 +75,7 @@
             return {
                 loaded: false,
                 formName: '',
+                modalVisible: false,
                 formData: [],
                 schema: [],
                 model: {}
@@ -107,6 +145,31 @@
             updateFieldSchema() {
                 this.clearWhitespace();
                 this.prettyJSON();
+            },
+            formSubmit() {
+                this.$message("Not yet implemented");
+                this.modalVisible = false;
+
+                this.formData.luVF.formName = this.formName;
+                this.formData.FieldSchema = this.schema;
+
+                var data = this.formData;
+                var userId = this.$store.getters.userId;
+
+                console.log(userId);
+
+                this.$store.dispatch('updateForm', { data, userId })
+                    .then(resp => { resp.statusText == "OK" ? this.$message("Success") : this.$message("Error"); this.fetchData(); })
+                    .catch(err => console.log(err));
+
+                event.preventDefault();
+            },
+            showModal() {
+                this.modalVisible = true;
+                event.preventDefault();
+            },
+            close() {
+                this.modalVisible = false;
             }
         }
     }
@@ -210,5 +273,61 @@
 
     .sectionHeading {
         color: #00b1b1;
+    }
+
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3;
+    }
+
+    .modal {
+        background: #FFFFFF;
+        box-shadow: 2px 2px 20px 1px;
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    .modal-header,
+    .modal-footer {
+        padding-left: 10px;
+        display: flex;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #eeeeee;
+        color: #479194;
+        justify-content: space-between;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #eeeeee;
+        justify-content: center;
+    }
+
+    .modal-body {
+        position: relative;
+        padding: 20px 10px;
+    }
+
+    .topright {
+        position: initial;
+        margin-left: 90%;
+        margin-right: 0;
+        margin-top: 2px;
     }
 </style>

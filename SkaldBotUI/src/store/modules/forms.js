@@ -33,6 +33,17 @@ const actions = {
         );
 
         commit('setForm', JSON.parse(response.data));
+    },
+
+    async updateForm({ commit }, formData) {
+        return new Promise((resolve, reject) => {
+            let url = BaseUrl + 'form'
+            axios.post(url, formData).then(resp => {
+                resolve(resp)
+            }).catch(err => {
+                reject(err);
+            })
+        })
     }
 };
 

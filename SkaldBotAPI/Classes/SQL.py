@@ -778,4 +778,42 @@ class SQL():
             print("Error getting form by form key. Error {}".format(e))
             return None
 
+    def update_form(form, userId):
+        field = "UPDATE VueFormFields SET FieldSchema = '@schema', ActionLink = '@actionlink', IsActive = @isActive, UpdatedByUserId = '@userId', UpdateDate = '@date' WHERE FormKey = '@formKey'"
+        formInfo = "UPDATE CodeVueForms SET FormName = '@formName' WHERE FormKey = '@formKey'"
+        current_date = datetime.now()
 
+        schema = str(form[1])
+        schema = schema.replace("'", '"')
+        schema = schema.replace("True", "true")
+        schema = schema.replace("False", "false")
+
+        field = field.replace("@formKey", form[0])
+        formInfo = formInfo.replace("@formKey", form[0])
+        field = field.replace("@schema", schema)
+        field = field.replace("@actionlink", form[2])
+        field = field.replace("@isActive", Helpers.bool_to_int(form[3]))
+        field = field.replace("@userId", userId)
+        field = field.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        formInfo = formInfo.replace("@formName", form[4])
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(field)
+            conn.commit()
+
+            c.execute(formInfo)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error updating form. Error {}".format(e))
+            print("SQL")
+            print(field)
+            print(formInfo)
+            return False

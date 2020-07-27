@@ -218,3 +218,33 @@ class Form(Resource):
                 mimetype='application/json'
             )
             return response
+    def post(self):
+        if SQL.test_connect_to_dbo():
+            req_data = request.get_json()
+            data = req_data['data']
+            userId = req_data['userId']
+            form = FormModel(data['FormKey'], data['FieldSchema'], data['ActionLink'], data['IsActive'], data['luVF'][0]['FormName'])
+
+            isUpdated = SQL.update_form(form, userId);
+
+            if isUpdated:
+                response = app.response_class(
+                        response = json.dumps({"Message": "Success"}),
+                        status = 200,
+                        mimetype='application/json'
+                    )
+                return response
+            else:
+                response = app.response_class(
+                    response = json.dumps({"Message": "Failure"}),
+                    status=424,
+                    mimetype='application/json'
+                )
+                return response
+        else:
+            response = app.response_class(
+                    response = json.dumps({"Message": "Failure"}),
+                    status=424,
+                    mimetype='application/json'
+                )
+            return response

@@ -6,3 +6,4 @@ RegisterUser = collections.namedtuple('registeruser', ['username', 'firstname', 
 UserProfile = collections.namedtuple('userprofile', ['username', 'firstname', 'lastname', 'isactive', 'islocked', 'role'])
 StoryModel = collections.namedtuple('story', ['id', 'title', 'story', 'isactive'])
 WisdomModel = collections.namedtuple('wisdom', ['id', 'title', 'wisdom', 'isactive'])
+FormModel = collections.namedtuple('formmodel', ['formkey', 'fieldschema', 'actionlink', 'isactive', 'formname'])
