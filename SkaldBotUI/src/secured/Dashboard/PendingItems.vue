@@ -88,6 +88,15 @@
         mounted: function () {
             this.getData();
         },
+        created: function () {
+            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                this.$router.push('/unauthorized')
+            }
+            else {
+                this.isLoaded = true,
+                    this.$router.push('/dashboardhome')
+            }
+        },
         methods: {
             getData() {
                 this.loaded = false;

@@ -89,6 +89,15 @@
                 selectedRow: []
             }
         },
+        created: function () {
+            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                this.$router.push('/unauthorized')
+            }
+            else {
+                this.isLoaded = true,
+                    this.$router.push('/dashboardhome')
+            }
+        },
         mounted: function () {
             this.loaded = false;
             let userUrl = BaseUrl + "getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
