@@ -6,6 +6,7 @@
                 <el-row>
                     <el-col :span="6">
                         <el-input placeholder="Form Name..." v-model="filters[0].value"></el-input>
+                        <button type="button" @click="newForm">New Form</button>
                     </el-col>
                 </el-row>
             </div>
@@ -103,6 +104,9 @@
                     return "True"
                 else
                     return "False"
+            },
+            newForm() {
+                this.$router.push('/modifyform')
             }
         }
     }

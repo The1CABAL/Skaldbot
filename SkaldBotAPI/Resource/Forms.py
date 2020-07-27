@@ -223,9 +223,19 @@ class Form(Resource):
             req_data = request.get_json()
             data = req_data['data']
             userId = req_data['userId']
-            form = FormModel(data['FormKey'], data['FieldSchema'], data['ActionLink'], data['IsActive'], data['luVF'][0]['FormName'])
+            isNew = req_data['isNew']
 
-            isUpdated = SQL.update_form(form, userId);
+            print(req_data);
+
+            form = FormModel(data['FormKey'], data['FieldSchema'], data['ActionLink'], data['IsActive'], req_data['formName'])
+            isUpdated = False;
+
+            #print(isNew);
+
+            if isNew:
+                isUpdated = SQL.create_form(form, userId);
+            else:
+                isUpdated = SQL.update_form(form, userId);
 
             if isUpdated:
                 response = app.response_class(

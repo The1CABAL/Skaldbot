@@ -42,21 +42,21 @@
                 <hr />
                 <form v-on:submit="showModal">
                     <label for="formName">Form Name:</label>
-                    <input type="text" id="formName" name="formName" v-model="formName" />
+                    <input type="text" id="formName" name="formName" v-model="formName" required />
                     <label for="formKey">Form Key:</label>
-                    <input type="text" id="formKey" name="formKey" v-model="formData.FormKey" disabled />
+                    <input type="text" id="formKey" name="formKey" v-model="formData.FormKey" v-bind:disabled="formKey != null" required />
                     <label for="actionLink">Action Link:</label>
-                    <input type="text" id="actionLink" name="actionLink" v-model="formData.ActionLink" />
+                    <input type="text" id="actionLink" name="actionLink" v-model="formData.ActionLink" required />
                     <label for="formSchema">Field Schema</label>
                     <br />
-                    <textarea id="formSchema" v-model="formData.FieldSchema"></textarea>
+                    <textarea id="formSchema" v-model="formData.FieldSchema" required></textarea>
                     <button type="button" @click="updateFieldSchema" class="btn-button">Refresh Form</button>
                     <br />
                     <button type="submit" class="btn-button">Submit</button>
                 </form>
                 <hr />
                 <h4 class="sectionHeading">Form View</h4>
-                <vue-form-generator v-if="loaded" :schema="schema" :model="model" disabled></vue-form-generator>
+                <vue-form-generator v-if="loaded" :schema="schema" :model="model"></vue-form-generator>
             </div>
         </div>
     </div>
@@ -75,6 +75,9 @@
             return {
                 loaded: false,
                 formName: '',
+                isNewForm: false,
+                newFormKey: '',
+                newFormAction: '',
                 modalVisible: false,
                 formData: [],
                 schema: [],
@@ -86,15 +89,25 @@
                 this.$router.push('/unauthorized')
             }
             else {
-                this.fetchData();
+                if (this.formKey != null && this.formKey != '')
+                    this.fetchData();
+                else {
+                    this.loaded = true;
+                    this.isNewForm = true;
+                }
             }
         },
         created: function () {
-            this.fetchData();
+            if (this.formKey != null && this.formKey != '')
+                this.fetchData();
+            else {
+                this.loaded = true;
+                this.isNewForm = true;
+            }
         },
         methods: {
             fetchData() {
-                if (this.formKey != '') {
+                if (this.formKey != null && this.formKey != '') {
                     return this.$store.dispatch('fetchFormByFormKey', this.formKey).then(() => {
                         this.getData();
                     });
@@ -127,38 +140,44 @@
                 }
             },
             clearWhitespace() {
-                var json = document.getElementById('formSchema').innerHTML;
+                var json = document.getElementById('formSchema').value;
+                console.log(json);
 
                 if (json) {
                     json = JSON.parse(json)
                     this.formData.FieldSchema = json;
+                    console.log(this.formData.FieldSchema);
                     this.schema = json;
+                    console.log(this.schema);
                 }
                 else {
-                    json = this.formData.FieldSchema;
-                    json = JSON.parse(json);
-                    this.formData.FieldSchema = json;
-                    this.schema = json;
+                    var newJson = document.getElementById('formSchema').value;
+                    this.formData.FieldSchema = JSON.parse(newJson);
+                    this.schema = JSON.parse(newJson);
                 }
-                console.log(json);
             },
             updateFieldSchema() {
                 this.clearWhitespace();
                 this.prettyJSON();
             },
             formSubmit() {
-                this.$message("Not yet implemented");
                 this.modalVisible = false;
 
-                this.formData.luVF.formName = this.formName;
                 this.formData.FieldSchema = this.schema;
 
                 var data = this.formData;
                 var userId = this.$store.getters.userId;
+                var isNew = this.isNewForm;
+                var formName = this.formName;
 
-                console.log(userId);
+                if (this.isNewForm) {
+                    var formKey = document.getElementById('formKey').value;
+                    var actionLink = document.getElementById('actionLink').value;
 
-                this.$store.dispatch('updateForm', { data, userId })
+                    data = { "FormKey": formKey, "FieldSchema": this.schema, "ActionLink": actionLink, "IsActive": false }
+                }
+
+                this.$store.dispatch('updateForm', { data, userId, isNew, formName })
                     .then(resp => { resp.statusText == "OK" ? this.$message("Success") : this.$message("Error"); this.fetchData(); })
                     .catch(err => console.log(err));
 

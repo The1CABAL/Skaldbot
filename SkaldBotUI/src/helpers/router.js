@@ -55,6 +55,9 @@ export const router = new Router({
                     }
                 },
                 {
+                    path: '/modifyform', name: "modifyform", component: ModifyForm
+                },
+                {
                     path: '/modifyform/:formKey', name: "modifyform", component: ModifyForm, props: true
                 }]
         },
