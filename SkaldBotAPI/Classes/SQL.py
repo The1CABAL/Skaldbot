@@ -685,5 +685,73 @@ class SQL():
             print("Error updating story. Error {}".format(e))
             return False
 
+    def get_all_wisdoms():
+        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            stories = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return stories
+        except pymssql.Error as e:
+            print("Error getting stories. Error {}".format(e))
+            return None
+
+    def get_wisdom_by_id(id):
+        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+
+        sql = sql.replace("@id", str(id));
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            wisdom = c.fetchone()
+
+            c.close()
+            conn.close()
+            if wisdom:
+                wisdom = wisdom[0]
+                return wisdom
+            else:
+                return None
+        except pymssql.Error as e:
+            print("Error getting story by id. Error {}".format(e))
+            return None
+
+    def update_wisdom(wisdom):
+        sql = "UPDATE Wisdoms SET Title = '@title', Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        current_date = datetime.now()
+
+        sql = sql.replace("@title", wisdom[1])
+        sql = sql.replace("@wisdom", wisdom[2])
+        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[3]))
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        sql = sql.replace("@Id", str(wisdom[0]))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            conn.commit()
+            c.close()
+            conn.close()
+            
+            return True
+        except pymssql.Error as e:
+            print("Error updating story. Error {}".format(e))
+            return False
+
 
 

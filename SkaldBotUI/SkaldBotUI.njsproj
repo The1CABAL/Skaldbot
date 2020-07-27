@@ -86,6 +86,9 @@
     <Content Include="src\secured\Dashboard\ManageUsers.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\Dashboard\ManageWisdoms.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\Dashboard\PendingItems.vue">
       <SubType>Code</SubType>
     </Content>

@@ -42,14 +42,15 @@
                         </footer>
                     </div>
                 </div>
-                <div v-if="modalDisplayTypeId == 2">
+                <div v-if="modalDisplayTypeId == 2 || modalDisplayTypeId == 3">
                     <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
                         <div>
                             <button type="button" class="btn-close topright" @click="close" aria-label="Close modal">x</button>
                         </div>
                         <header class="modal-header" id="modalTitle">
                             <div>
-                                <h4>Manage Story</h4>
+                                <h4 v-if="modalDisplayTypeId == 2">Manage Story</h4>
+                                <h4 v-if="modalDisplayTypeId == 3">Manage Wisdom</h4>
                             </div>
                         </header>
                         <section class="modal-body" id="modalDescription">
@@ -59,7 +60,8 @@
                                     <input type="text" id="title" v-model="lookupData[0].Title" />
                                     <label for="itemText">Content:</label>
                                     <br />
-                                    <textarea id="itemText" v-model="lookupData[0].Story"></textarea>
+                                    <textarea id="itemText" v-if="modalDisplayTypeId == 2" v-model="lookupData[0].Story"></textarea>
+                                    <textarea id="itemText" v-if="modalDisplayTypeId == 3" v-model="lookupData[0].Wisdom"></textarea>
                                     <br />
                                     <label for="isActive">Is Active:</label>
                                     <input type="checkbox" id="isActive" v-model="lookupData[0].IsActive" />
@@ -113,7 +115,7 @@
         },
         watch: {
             lookupId: function () {
-                if (this.lookupId != 0 || this.lookupId != null) {
+                if (this.lookupId != 0 && this.lookupId != null) {
                     let id = this.modalDisplayTypeId;
                     switch (id) {
                         case 1:
@@ -138,6 +140,17 @@
                             }).catch(function (error) {
                                 console.log(error);
                                 that.$message("There was an error getting the story data");
+                            });
+                        case 3:
+                            //Get wisdom information
+                            let wisdomUrl = BaseUrl + "wisdom?id=" + this.lookupId;
+                            var that = this;
+                            axios.get(wisdomUrl).then(function (response) {
+                                that.lookupData = JSON.parse(response.data);
+                                that.isLoaded = true;
+                            }).catch(function (error) {
+                                console.log(error);
+                                that.$message("There was an error getting the wisdom data");
                             });
                     }
                 }
@@ -190,21 +203,36 @@
                 });
             },
             saveItem() {
+                let that = this;
                 switch (this.modalDisplayTypeId) {
                     case 2:
-                        let url = BaseUrl + 'story'
-                        let that = this;
-                        axios.post(url, this.lookupData).then(function (response) {
+                        let storyUrl = BaseUrl + 'story'
+                        axios.post(storyUrl, this.lookupData).then(function (response) {
                             var returnVal = response.data;
                             if (returnVal.Message.toString() == "Success") {
-                                that.$message('Successfully updated submitted item!');
+                                that.$message('Successfully updated story!');
                                 setTimeout(function () {
                                     that.close()
                                 }, 2000)
                             }
                             else {
                                 //console.log("Setting success to false");
-                                that.$message('Error updating submitted item!');
+                                that.$message('Error updating story!');
+                            }
+                        });
+                    case 3:
+                        let wisdomUrl = BaseUrl + 'wisdom'
+                        axios.post(wisdomUrl, this.lookupData).then(function (response) {
+                            var returnVal = response.data;
+                            if (returnVal.Message.toString() == "Success") {
+                                that.$message('Successfully updated wisdom!');
+                                setTimeout(function () {
+                                    that.close()
+                                }, 2000)
+                            }
+                            else {
+                                //console.log("Setting success to false");
+                                that.$message('Error updating wisdom!');
                             }
                         });
                 }
