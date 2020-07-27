@@ -344,3 +344,5 @@ healthchecksdb
 /ffprobe.exe
 /ffplay.exe
 /ffmpeg.exe
+/SkaldBotAPI/runUITest.bat
+/runUITest.bat
