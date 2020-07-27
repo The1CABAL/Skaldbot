@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 import os
 import threading
 import datetime
+import json
 
 home = os.getcwd()
 wisdom_hour = 8 #24Hour
@@ -99,4 +100,9 @@ async def before():
 
 wisdom_once_a_day.start()
 
-client.run('NzI2NjQwNzQ2MzU4MjQzNDA4.XvgPQA.QoyXYwl0fhGr6iVGWZy4ggbwHVw')
+
+token_file = open('SkaldBotToken.json')
+data = json.load(token_file)
+
+token = data['token']
+client.run(token)

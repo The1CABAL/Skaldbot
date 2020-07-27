@@ -59,6 +59,7 @@
   <ItemGroup>
     <Content Include="requirements.txt" />
     <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
+    <Content Include="SkaldBotToken.json" />
     <Content Include="Stories\Devins Adoption.txt" />
     <Content Include="Stories\The Great Famine.txt" />
     <Content Include="Stories\The Tragedy of The Gungnir.txt" />
