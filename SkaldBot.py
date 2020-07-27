@@ -1,37 +1,49 @@
 
-import discord
 from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Wisdom.Wisdom_List import random_wisdom
 from Helpers.Get_Nearest_Hour import round_to_hour as rth
-from discord.ext import commands, tasks
+
+import discord
 import os
 import threading
 import datetime
 import json
+import youtube_dl
+import random
+import shutil
 
+from discord.ext import commands, tasks
+from discord.utils import get
+from discord import FFmpegPCMAudio
+
+'''
+==================================
+BEGIN VARIABLES NEEDED PRE STARTUP
+==================================
+'''
 home = os.getcwd()
-wisdom_hour = 8 #24Hour
-client = discord.Client()
+wisdom_hour = 3 #24Hour UTC Time. I cannot stress this enough. UTC TIME
+client = commands.Bot(command_prefix='$')
 
 #Testing Server
 #target_channel_id = 726640547019751458
-
 #Production
 target_channel_id = 725880649356935192
 
-@client.event
+'''
+================================
+END VARIABLES NEEDED PRE STARTUP
+================================
+'''
 
+@client.event
 async def on_ready():
-
-    print('Hello, I am the skald bot! I am logged in as {0.user}'.format(client))
+    print('Logged in as {0.user}'.format(client))
 
 @client.event
-
 async def on_message(message):
-
     if message.author == client.user:
-
         return
 
     if message.content.startswith('$help'):
@@ -42,7 +54,7 @@ async def on_message(message):
         await message.channel.send(str(story))
 
     if message.content.startswith('$why'):
-        await message.channel.send('Isaac lost his ship to the Fer De Lance mentioned in one of the stories so he drank over 6 ounces of rum and wrote a discord bot.')
+        await message.channel.send('Isaac lost his ship in Elite: Dangerous so he drank over 6 ounces of rum and wrote a discord bot. \n\nWhat followed was a team effort of many ideas and abilities to create the entity that stands before you today.\n\nI am basically a digital Kvasir.')
 
     if message.content.startswith('$wisdom'):
         wisdom = random_wisdom()
@@ -83,6 +95,16 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
+    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
+        await client.process_commands(message)
+
+
+'''
+===================================
+BEGIN FUNCTIONS THAT RUN DAILY JOBS
+===================================
+'''
+#Loop Wisdom Once a day
 @tasks.loop(hours=1)
 async def wisdom_once_a_day():
     now = datetime.datetime.now()
@@ -93,6 +115,7 @@ async def wisdom_once_a_day():
         wisdom = random_wisdom()
         await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
 
+#Wait until bot is started to start loop
 @wisdom_once_a_day.before_loop
 async def before():
     await client.wait_until_ready()
@@ -100,6 +123,119 @@ async def before():
 
 wisdom_once_a_day.start()
 
+'''
+=================================
+END FUNCTIONS THAT RUN DAILY JOBS
+=================================
+'''
+
+
+'''
+=============================================
+BEGIN FUNCTIONS THAT ALLOW FOR MUSIC PLAYBACK
+=============================================
+'''
+#Join channel requesting author is in
+@client.command(pass_context=True, aliases=['j', 'joi'])
+async def join(ctx):
+    try:
+        global voice
+        channel  = ctx.message.author.voice.channel
+        voice = get(client.voice_clients, guild=ctx.guild)
+
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+            print(f"Connected to channel {channel}")
+
+        await ctx.send(f"I have arrived in channel {channel} and I am awaiting requests! Presently, I only accept single song requests from YouTube...")
+    except:
+        await ctx.send("I cannot possibly know what channel to join unless you are already in that channel...")
+
+#leave channel
+@client.command(pass_context=True, aliases=['t', 'tha'])
+async def thanks(ctx):
+    channel  = ctx.message.author.voice.channel
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.disconnect()
+        print(f"Bot has left channel {channel}")
+        await ctx.send(f"A pleasure to serve in channel {channel}, as always.")
+    else:
+        print("Bot failed to leave voice channel")
+        await ctx.send("I can't tell if I am in a voice channel...")
+
+#play music from youtube
+@client.command(pass_context=True, aliases=['s', 'sin'])
+async def sing(ctx, url: str):
+
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+            print("Removed old song file")
+    except PermissionError:
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("Excuse you, I am in the middle of a piece!")
+        return
+
+    coinflip = random.randint(1,2)
+    if coinflip == 1:
+        await ctx.send("*AHEM*")
+    else:
+        await ctx.send("May I have everyone's attention please? I am about to begin...")
+
+    voice = get(client.voice_clients, guild=ctx.guild)
+    if 'youtube' in url:
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            print("Downloading audio now\n")
+            ydl.download([url])
+
+        for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+                name = file
+                print(f"Renamed File: {file}\n")
+                os.rename(file, "song.mp3")
+
+        voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("Song done!"))
+        voice.source = discord.PCMVolumeTransformer(voice.source)
+        voice.source.volume = 0.07
+
+        nname = name.rsplit("-", 2)
+        await ctx.send(f"I call this piece {nname[0]}")
+    elif 'spotify' in url:
+        await ctx.send('... Or not... Becuase, unfortunately, I cannot sing requests from Spotify at this time...')
+    else:
+        await ctx.send('I dont think you are asking me to sing a song...')
+
+    #Stop
+#    @client.command(pass_context=True, aliases=['s', 'sto'])
+#    async def stop(ctx):
+#        voice = get(client.voice_clients, guild=ctx.guild)
+
+#        queues.clear()
+
+#        if voice and voice.is_playing():
+#            print("music stopped")
+#        else:
+#            print('no music to stop')
+#            await ctx.send()
+'''
+======================
+END PLAYBACK FUNCTIONS
+======================
+'''
 
 token_file = open('SkaldBotToken.json')
 data = json.load(token_file)

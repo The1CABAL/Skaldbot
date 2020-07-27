@@ -340,3 +340,8 @@ ASALocalRun/
 healthchecksdb
 /devin
 /SkaldBotToken.json
+/env
+/Songs
+/ffprobe.exe
+/ffplay.exe
+/ffmpeg.exe
