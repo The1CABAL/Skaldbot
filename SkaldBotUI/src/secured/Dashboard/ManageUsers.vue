@@ -94,8 +94,7 @@
                 this.$router.push('/unauthorized')
             }
             else {
-                this.isLoaded = true,
-                    this.$router.push('/dashboardhome')
+                this.isLoaded = true
             }
         },
         mounted: function () {

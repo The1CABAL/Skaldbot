@@ -8,6 +8,7 @@
                 <li><router-link to="/manageforms">Manage Forms</router-link></li>
                 <li><router-link to="/managestories">Manage Stories</router-link></li>
                 <li><router-link to="/managewisdoms">Manage Wisdoms</router-link></li>
+                <li><router-link to="/github">GitHub Project</router-link></li>
             </ul>
         </div>
         <div class="dashboardContainer">

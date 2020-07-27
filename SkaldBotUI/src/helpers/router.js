@@ -15,6 +15,7 @@ import PendingItems from '../secured/Dashboard/PendingItems'
 import ManageStories from '../secured/Dashboard/ManageStories'
 import ManageWisdoms from '../secured/Dashboard/ManageWisdoms'
 import ManageForms from '../secured/Dashboard/ManageForms'
+import GitHub from '../secured/Dashboard/GitHub'
 
 Vue.use(Router);
 
@@ -46,6 +47,11 @@ export const router = new Router({
                 },
                 {
                     path: '/manageforms', name: "manageforms", component: ManageForms
+                },
+                {
+                    path: '/github', name: "github", beforeEnter() {
+                        window.open("https://github.com/The1CABAL/SkaldBot/projects/1", '_blank')
+                    }
                 }]
         },
         { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
