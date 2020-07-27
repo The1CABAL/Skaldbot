@@ -1,18 +1,19 @@
 import axios from 'axios';
-
+import { BaseUrl } from '../../helpers/constants'
 const state = {
-    forms: []
+    forms: [],
+    form: []
 };
 
 const getters = {
     allForms: state => state.forms,
-    formSchema: state => state.formSchema
+    getForm: state => state.form
 };
 
 const actions = {
     async fetchAllForms({ commit }) {
         const response = await axios.get(
-            'http://127.0.0.1:5000/api/getForms'
+            BaseUrl + 'getForms'
         );
 
         commit('setForms', JSON.parse(response.data));
@@ -20,15 +21,24 @@ const actions = {
 
     async fetchAllFormsByPageId({ commit }, pageId) {
         const response = await axios.get(
-            `http://127.0.0.1:5000/api/getFormByPageId?pageId=${pageId}`
+            BaseUrl + `getFormByPageId?pageId=${pageId}`
         );
 
         commit('setForms', JSON.parse(response.data));
+    },
+
+    async fetchFormByFormKey({ commit }, formKey) {
+        const response = await axios.get(
+            BaseUrl + `form?formKey=${formKey}`
+        );
+
+        commit('setForm', JSON.parse(response.data));
     }
 };
 
 const mutations = {
-    setForms: (state, forms) => (state.forms = forms)
+    setForms: (state, forms) => (state.forms = forms),
+    setForm: (state, form) => (state.form = form)
 };
 
 export default {

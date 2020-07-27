@@ -156,7 +156,6 @@ class SubmitItem(Resource):
                 )
             return response
 
-
 class ManageSubmittedItems(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
@@ -197,4 +196,25 @@ class ManageSubmittedItems(Resource):
                 response = json.dumps({"Message": "Failure"}), 
                 status=424, 
                 mimetype='application/json')
+            return response
+
+class Form(Resource):
+    def get(self):
+        if SQL.test_connect_to_dbo():
+            formKey = request.args.get('formKey')
+
+            form = SQL.get_form_by_form_key(formKey)
+            
+            response = app.response_class(
+                response = json.dumps(form),
+                status = 200,
+                mimetype='application/json'
+            )
+
+            return response
+        else:
+            response = app.response_class(
+                status=424,
+                mimetype='application/json'
+            )
             return response

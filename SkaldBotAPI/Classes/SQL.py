@@ -753,5 +753,29 @@ class SQL():
             print("Error updating story. Error {}".format(e))
             return False
 
+    def get_form_by_form_key(formKey):
+        sql = "SELECT vff.FormKey, vff.FieldSchema, vff.ActionLink, vff.IsActive, luVF.FormName FROM VueFormFields vff WITH (NOLOCK) JOIN CodeVueForms luVF WITH (NOLOCK) ON vff.FormKey = luVF.FormKey WHERE vff.FormKey = '@formKey' FOR JSON AUTO"
+
+        sql = sql.replace("@formKey", formKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            form = c.fetchone()
+
+            c.close()
+            conn.close()
+
+            if form:
+                form = form[0]
+                return form
+            else:
+                return None
+        except pymssql.Error as e:
+            print("Error getting form by form key. Error {}".format(e))
+            return None
 
 

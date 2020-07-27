@@ -11,13 +11,13 @@ import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
 import VueDataTables from 'vue-data-tables'
 
-locale.use(lang)
+locale.use(lang);
 
 Vue.component("fieldPassword", fieldPassword);
 
-Vue.use(ElementUI)
+Vue.use(ElementUI);
 Vue.use(VueFormGenerator);
-Vue.use(VueDataTables)
+Vue.use(VueDataTables);
 
 new Vue({
     el: '#app',

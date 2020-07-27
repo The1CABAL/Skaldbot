@@ -64,7 +64,8 @@
                                 type: 'primary'
                             },
                             handler: row => {
-                                this.$message("This feature is not yet implemented");
+                                //this.$message("This feature is not yet implemented");
+                                this.$router.push('/modifyform/' + row.FormKey)
                             },
                             label: 'View'
                         }
@@ -74,20 +75,23 @@
             }
         },
         mounted: function () {
-            this.getData();
+            this.fetchData();
         },
         created: function () {
             if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                 this.$router.push('/unauthorized')
             }
             else {
-                this.$store.dispatch("fetchAllForms")
-                this.isLoaded = true
+                this.fetchData()
             }
         },
         methods: {
+            fetchData() {
+                return this.$store.dispatch('fetchAllForms').then(() => {
+                    this.getData();
+                });
+            },
             getData() {
-                this.loaded = false;
                 this.data = this.$store.getters.allForms
                 this.loaded = true;
             },

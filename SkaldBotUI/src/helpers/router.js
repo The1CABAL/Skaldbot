@@ -16,6 +16,7 @@ import ManageStories from '../secured/Dashboard/ManageStories'
 import ManageWisdoms from '../secured/Dashboard/ManageWisdoms'
 import ManageForms from '../secured/Dashboard/ManageForms'
 import GitHub from '../secured/Dashboard/GitHub'
+import ModifyForm from '../secured/Dashboard/ModifyForm'
 
 Vue.use(Router);
 
@@ -52,6 +53,9 @@ export const router = new Router({
                     path: '/github', name: "github", beforeEnter() {
                         window.open("https://github.com/The1CABAL/SkaldBot/projects/1", '_blank')
                     }
+                },
+                {
+                    path: '/modifyform/:formKey', name: "modifyform", component: ModifyForm, props: true
                 }]
         },
         { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
