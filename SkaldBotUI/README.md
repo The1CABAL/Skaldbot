@@ -18,8 +18,9 @@ Then run the following commands through your command window:
 ## TO RUN PRODUCTION
 
 * npm install -g serve **(only need to do this once)**
+* **(Confirm you have the two packages installed in the TO RUN DEVELOPMENT section)**
 * Point directory to the SkalbotUI project
-* npm run build **(You will need to run the first two commands in the TO RUN DEVELOPMENT section)**
+* npm run build
 
 **When build finishes**
 
