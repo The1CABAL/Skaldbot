@@ -88,6 +88,22 @@
       <Architecture>X64</Architecture>
     </Interpreter>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="requirements.txt" />
+    <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
+    <Content Include="SkaldBotToken.json" />
+    <Content Include="Stories\Devins Adoption.txt" />
+    <Content Include="Stories\The Great Famine.txt" />
+    <Content Include="Stories\The Tragedy of The Gungnir.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
+    <Folder Include="Classes\Music\" />
+    <Folder Include="Myths\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Wisdom\" />
+    <Folder Include="Stories\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
