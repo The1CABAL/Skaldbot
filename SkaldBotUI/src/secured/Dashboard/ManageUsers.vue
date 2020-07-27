@@ -115,9 +115,9 @@
             },
             getDate(date) {
                 let elDate = new Date(date)
-                return elDate.getFullYear() + '-'
-                    + (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate()
+                return (elDate.getMonth() + 1) + '-'
+                    + elDate.getDate() + '-'
+                    + elDate.getFullYear()
             },
             getBool(value) {
                 if (value)

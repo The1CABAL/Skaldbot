@@ -4,6 +4,9 @@
             <p style="font-weight: bold;">{{msg}}</p>
             <button class="close" @click="closeNotification">x</button>
         </div>
+        <div v-if="prevRoute.name == 'manageusers' && isAdmin">
+            <router-link to="/manageusers" class="btn-button">Go Back</router-link>
+        </div>
         <div class="panel">
             <div class="panel-heading"><h4>User Profile</h4></div>
             <div class="panel-body">
@@ -71,7 +74,8 @@
                 msg: '',
                 isError: true,
                 submitted: false,
-                success: false
+                success: false,
+                prevRoute: {}
             }
         },
         watch: {
@@ -81,6 +85,11 @@
                         this.closeNotification, 5000);
                 }
             }
+        },
+        beforeRouteEnter(to, from, next) {
+            next((vm) => {
+                vm.prevRoute = from
+            })
         },
         mounted: function () {
             this.getData();
@@ -197,6 +206,23 @@
 </script>
 
 <style scoped>
+    .btn-button {
+        border: 1px solid black;
+        display: inline-block;
+        padding: 8px 16px;
+        vertical-align: middle;
+        overflow: hidden;
+        text-decoration: none;
+        color: black;
+        background-color: lightgray;
+        text-align: center;
+        cursor: pointer;
+        white-space: nowrap;
+        padding: 5px;
+        margin: 5px;
+        border-radius: 4px;
+    }
+
     .close {
         position: absolute;
         font-size: 15px;
