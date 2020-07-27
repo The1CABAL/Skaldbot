@@ -1,2 +1,2 @@
 #!/bin/bash
-cp ../../scripts ./
+cp -avr ../../scripts ./
