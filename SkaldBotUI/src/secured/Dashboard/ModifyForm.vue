@@ -47,6 +47,10 @@
                     <input type="text" id="formKey" name="formKey" v-model="formData.FormKey" v-bind:disabled="formKey != null" required />
                     <label for="actionLink">Action Link:</label>
                     <input type="text" id="actionLink" name="actionLink" v-model="formData.ActionLink" required />
+                    <label for="isActive">Is Active</label>
+                    <br />
+                    <input type="checkbox" id="isActive" name="isActive" v-model="formData.IsActive" v-bind:disabled="formKey == null" />
+                    <br />
                     <label for="formSchema">Field Schema</label>
                     <br />
                     <textarea id="formSchema" v-model="formData.FieldSchema" required></textarea>
@@ -76,8 +80,6 @@
                 loaded: false,
                 formName: '',
                 isNewForm: false,
-                newFormKey: '',
-                newFormAction: '',
                 modalVisible: false,
                 formData: [],
                 schema: [],

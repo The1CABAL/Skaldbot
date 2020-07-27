@@ -780,7 +780,7 @@ class SQL():
 
     def update_form(form, userId):
         field = "UPDATE VueFormFields SET FieldSchema = '@schema', ActionLink = '@actionlink', IsActive = @isActive, UpdatedByUserId = '@userId', UpdateDate = '@date' WHERE FormKey = '@formKey'"
-        formInfo = "UPDATE CodeVueForms SET FormName = '@formName' WHERE FormKey = '@formKey'"
+        formInfo = "UPDATE CodeVueForms SET FormName = '@formName', IsActive = @isActive WHERE FormKey = '@formKey'"
         current_date = datetime.now()
 
         schema = str(form[1])
@@ -793,6 +793,7 @@ class SQL():
         field = field.replace("@schema", schema)
         field = field.replace("@actionlink", form[2])
         field = field.replace("@isActive", Helpers.bool_to_int(form[3]))
+        formInfo = formInfo.replace("@isActive", Helpers.bool_to_int(form[3]))
         field = field.replace("@userId", userId)
         field = field.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         formInfo = formInfo.replace("@formName", form[4])
@@ -820,7 +821,7 @@ class SQL():
 
     def create_form(form, userId):
         field = "INSERT INTO VueFormFields (FormKey, FieldSchema, ActionLink, IsActive, UpdateDate, UpdatedByUserId) VALUES ('@formKey', '@schema', '@actionlink', @isActive, '@date', '@userId')"
-        formInfo = "INSERT INTO CodeVueForms (FormKey, FormName) VALUES ('@formKey', '@formName')"
+        formInfo = "INSERT INTO CodeVueForms (FormKey, IsActive, FormName) VALUES ('@formKey', @isActive, '@formName')"
         current_date = datetime.now()
 
         schema = str(form[1])
@@ -833,6 +834,7 @@ class SQL():
         field = field.replace("@schema", schema)
         field = field.replace("@actionlink", form[2])
         field = field.replace("@isActive", Helpers.bool_to_int(form[3]))
+        formInfo = formInfo.replace("@isActive", Helpers.bool_to_int(form[3]))
         field = field.replace("@userId", userId)
         field = field.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         formInfo = formInfo.replace("@formName", form[4])
