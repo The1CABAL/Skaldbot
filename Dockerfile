@@ -1,5 +1,6 @@
 FROM python:3.7
 ADD . ./SkaldBot
+COPY ../../jsons/SkaldBotToken.json ~/
 WORKDIR /SkaldBot
 
 RUN apt-get update && \
