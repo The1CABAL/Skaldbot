@@ -23,7 +23,7 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = 16 #24Hour UTC Time. I cannot stress this enough. UTC TIME
+wisdom_hour = "08:00" #24Hour Pacific time
 client = commands.Bot(command_prefix='$')
 
 #Testing Server
@@ -105,11 +105,11 @@ BEGIN FUNCTIONS THAT RUN DAILY JOBS
 ===================================
 '''
 #Loop Wisdom Once a day
-@tasks.loop(hours=1)
+@tasks.loop(minutes=1)
 async def wisdom_once_a_day():
     now = datetime.datetime.now()
-    hour = rth(now).hour
-    if hour == wisdom_hour:
+    time = now.strftime("%H:%M")
+    if time == wisdom_hour:
         message_channel = client.get_channel(target_channel_id)
         print(f"Got channel {message_channel}")
         wisdom = random_wisdom()
