@@ -86,6 +86,7 @@
     <Build Include="dbo\Tables\Wisdoms.sql" />
     <Build Include="dbo\Stored Procedures\UpdateSubmittedItem.sql" />
     <Build Include="dbo\Tables\CodeServers.sql" />
+    <Build Include="dbo\Tables\Accounts.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
@@ -95,6 +96,7 @@
     <None Include="Scripts\Seed\CodePages.sql" />
     <None Include="Scripts\Seed\Roles.sql" />
     <None Include="Scripts\Seed\Users.sql" />
+    <None Include="Scripts\Seed\Accounts.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Seed\Seed.PostDeploy.sql" />
