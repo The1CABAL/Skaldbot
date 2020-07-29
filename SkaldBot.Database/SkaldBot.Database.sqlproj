@@ -85,6 +85,7 @@
     <Build Include="dbo\Stored Procedures\UpsertRoles.sql" />
     <Build Include="dbo\Tables\Wisdoms.sql" />
     <Build Include="dbo\Stored Procedures\UpdateSubmittedItem.sql" />
+    <Build Include="dbo\Tables\CodeServers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
