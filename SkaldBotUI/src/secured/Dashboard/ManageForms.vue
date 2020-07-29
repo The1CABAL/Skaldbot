@@ -79,11 +79,16 @@
             this.fetchData();
         },
         created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
             else {
-                this.fetchData()
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.fetchData();
+                }
             }
         },
         methods: {
@@ -107,6 +112,16 @@
             },
             newForm() {
                 this.$router.push('/modifyform')
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                    else {
+                        this.fetchData();
+                    }
+                });
             }
         }
     }

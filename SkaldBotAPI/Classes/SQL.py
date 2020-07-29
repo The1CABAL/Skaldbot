@@ -436,9 +436,9 @@ class SQL():
             print("Error finding if user exists. Error {}".format(e))
             return False
 
-    def get_user_role(username):
-        sql = "SELECT r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON ur.UserId = u.Id JOIN Roles r WITH (NOLOCK) ON r.Id = ur.RoleId WHERE u.Username = '@username' FOR JSON AUTO"
-        sql = sql.replace('@username', username)
+    def get_user_role(Id):
+        sql = "SELECT r.Role FROM UserRoles ur WITH (NOLOCK) JOIN Roles r WITH (NOLOCK) ON r.Id = ur.RoleId WHERE ur.UserId = '@userId' FOR JSON AUTO"
+        sql = sql.replace('@userId', Id)
 
         try:
             conn = SQL.open_connection()

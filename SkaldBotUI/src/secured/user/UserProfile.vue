@@ -95,8 +95,11 @@
             this.getData();
         },
         created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                if (this.userId != this.$store.getters.userId) {
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                     this.$router.push('/unauthorized')
                 }
             }
@@ -200,6 +203,13 @@
                 }
 
                 return objectsAreSame;
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                });
             }
         }
     }

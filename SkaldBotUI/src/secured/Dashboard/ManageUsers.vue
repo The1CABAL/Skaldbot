@@ -90,26 +90,46 @@
             }
         },
         created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
             else {
-                this.isLoaded = true
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.fetchData();
+                }
             }
         },
         mounted: function () {
-            this.loaded = false;
-            let userUrl = BaseUrl + "getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
-            var that = this;
-            axios.get(userUrl).then(function (response) {
-                that.data = JSON.parse(response.data);
-            }).catch(function (error) {
-                console.log(error);
-                this.$emit('error', true)
-            });
-            that.loaded = true;
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.fetchData();
+                }
+            }
         },
         methods: {
+            fetchData() {
+                this.loaded = false;
+                let userUrl = BaseUrl + "getUsers?isMaster=" + this.$store.getters.isMasterAdmin;
+                var that = this;
+                axios.get(userUrl).then(function (response) {
+                    that.data = JSON.parse(response.data);
+                }).catch(function (error) {
+                    console.log(error);
+                    this.$emit('error', true)
+                });
+                that.loaded = true;
+            },
             handleSelectionChange(val) {
                 this.selectedRow = val
             },
@@ -124,6 +144,17 @@
                     return "True"
                 else
                     return "False"
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                    else {
+                        this.isLoaded = true
+                        this.fetchData();
+                    }
+                });
             }
         }
     }

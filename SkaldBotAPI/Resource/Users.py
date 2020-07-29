@@ -56,10 +56,10 @@ class Register(Resource):
 class GetUserRoles(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
-            username = request.args.get('username')
+            Id = request.args.get('id')
             #print('Getting Form Data for FormKey: {}'.format(formKey))
         
-            data = SQL.get_user_role(username)
+            data = SQL.get_user_role(Id)
             #print(data)
 
             response = app.response_class(

@@ -86,14 +86,31 @@
             }
         },
         mounted: function () {
-            this.getData();
-        },
-        created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
             else {
-                this.isLoaded = true
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.getData();
+                }
+            }
+        },
+        created: function () {
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.getData();
+                }
             }
         },
         methods: {
@@ -130,6 +147,17 @@
                 this.isModalVisible = false;
                 this.lookupId = 0;
                 this.getData();
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                    else {
+                        this.isLoaded = true
+                        this.getData();
+                    }
+                });
             }
         }
     }

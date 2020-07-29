@@ -38,7 +38,6 @@
                 masterAdmin: false,
                 admin: false,
                 user: true,
-                isInactive: false,
                 userActivityThrottlerTimeout: null,
                 userActivityTimeout: null,
                 userId: ''
@@ -57,24 +56,13 @@
             clearTimeout(this.userActivityThrottlerTimeout);
         },
         mounted() {
-            if (!this.isLoggedIn) {
-                if (this.authenticated)
-                    this.authenticated = false;
-            }
-            else {
-                if (!this.authenticated) {
-                    this.authenticated = true;
-                }
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
         },
         watch: {
             isLoggedIn: function () {
-                if (this.isLoggedIn && !this.authenticated) {
-                    this.setAuthenticated(true);
-                }
-                else if (!this.isLoggedIn && this.authenticated) {
-                    this.setAuthenticated(false);
-                }
+
             }
         },
         computed: {
@@ -92,17 +80,7 @@
             });
 
             if (this.$store.getters.isLoggedIn) {
-                if (!this.authenticated) {
-                    this.authenticated = true;
-                }
-                if (this.$store.getters.isMasterAdmin) {
-                    this.masterAdmin = true;
-                    this.admin = true;
-                }
-                else if (this.$store.getters.isAdmin) {
-                    this.admin = true;
-                }
-                this.userId = this.$store.getters.userId;
+                this.reloadAuthentication();
             }
         },
         methods: {
@@ -112,28 +90,47 @@
             Hide() {
                 document.getElementById("nav-lists").classList.remove("_Menus-show");
             },
-            setAuthenticated(state) {
-                console.log("Setting authentication")
-                this.authenticated = state;
+            setAuthenticated() {
+                var url = this.$route.path;
 
-                if (!state) {
-                    this.userId = '';
+                if (url == '/login' || url == '/register') {
+                    this.$router.push('/')
+                    this.$store.dispatch('loadRoles').then(() => {
+                        if (this.$store.getters.isMasterAdmin) {
+                            this.masterAdmin = true;
+                            this.admin = true;
+                        }
+                        else if (this.$store.getters.isAdmin) {
+                            this.admin = true;
+                        }
+                        this.userId = this.$store.getters.userId;
+
+                        this.$message("Successfully Signed In!");
+                        this.authenticated = true;
+                    }).catch(err => console.log(err));
                 }
                 else {
-                    if (this.userId == '') {
-
-                    }
+                    this.$store.dispatch('loadRoles').then(() => {
+                        if (this.$store.getters.isMasterAdmin) {
+                            this.masterAdmin = true;
+                            this.admin = true;
+                        }
+                        else if (this.$store.getters.isAdmin) {
+                            this.admin = true;
+                        }
+                        this.userId = this.$store.getters.userId;
+                        this.authenticated = true;
+                    });
                 }
-
-                this.$router.push('/')
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
             },
             logout() {
-                this.$store.dispatch('logout').then(() => { this.authenticated = false })
-                this.masterAdmin = false;
-                this.admin = false;
+                this.$store.dispatch('logout').then(() => {
+                    this.authenticated = false;
+                    this.masterAdmin = false;
+                    this.admin = false;
+                    this.$message("Logged out!")
+                })
+
             },
             activateActivityTracker() {
                 window.addEventListener("mousemove", this.userActivityThrottler);
@@ -163,6 +160,19 @@
                     this.$store.dispatch('logout')
                     location.reload();
                 }
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (this.$store.getters.isMasterAdmin) {
+                        this.masterAdmin = true;
+                        this.admin = true;
+                    }
+                    else if (this.$store.getters.isAdmin) {
+                        this.admin = true;
+                    }
+                    this.userId = this.$store.getters.userId;
+                    this.authenticated = true;
+                });
             },
             profile() {
                 this.$router.push('/userprofile/' + this.userId)
