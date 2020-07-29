@@ -1,8 +1,9 @@
 
-from Classes.storySwitcher import storySwitcher, storyFinder
 from Classes.decisionMaker import YesNo
 from Wisdom.Wisdom_List import random_wisdom
 from Helpers.Get_Nearest_Hour import round_to_hour as rth
+
+from Classes.SQL import SQL
 
 import discord
 import os
@@ -47,10 +48,13 @@ async def on_message(message):
         return
 
     if message.content.startswith('$help'):
-        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$myth\n$wisdom\n$request\n$why\n$stop\n$shouldi?')
+        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$wisdom\n$request\n$why\n$stop\n$shouldi?')
 
-    if message.content.startswith('$story'):
-        story = storySwitcher(home, 'Stories')
+    if message.content.startswith('$test'):
+        channel = message.channel
+        serverid = channel.id
+        title, story = SQL.get_stories(serverid)
+        await message.channel.send(f"This tale is called '{title}'...")
         await message.channel.send(str(story))
 
     if message.content.startswith('$why'):

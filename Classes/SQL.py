@@ -1,5 +1,5 @@
 
-import json, urllib.request, pymssql
+import json, urllib.request, pymssql, random
 import pandas as pd
 from time import sleep
 from Classes.ConfigParser import *
@@ -233,3 +233,28 @@ class SQL():
         else:
             return None
 
+    def get_stories(serverid):
+        options = []
+        id_query = "SELECT lu.ServerId, s.Id FROM Stories s JOIN CodeServers lu on lu.Id = s.ServerId WHERE lu.ServerId = "+str(serverid)
+       
+        conn = SQL.open_connection()
+        c = conn.cursor()
+
+        c.execute(id_query)
+        result = c.fetchall()
+        for row in result:
+            options.append(row[1])
+
+        max_int = len(options)
+        max_int -= 1 
+
+        choice = random.randint(0,max_int)
+        decision = options[choice]
+        ts_query = "SELECT Title, Story FROM Stories WHERE Id = " + str(decision)
+
+        c.execute(ts_query)
+        result = c.fetchall()
+        for row in result:
+            title, story = row[0], row[1]
+
+        return title, story

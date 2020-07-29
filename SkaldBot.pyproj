@@ -45,9 +45,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SkaldBot.py" />
-    <Compile Include="Classes\storySwitcher.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Wisdom\Wisdom_List.py">
       <SubType>Code</SubType>
     </Compile>
@@ -88,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
-    <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
     <Content Include="SkaldBotToken.json" />
     <Content Include="Stories\Devins Adoption.txt" />
     <Content Include="Stories\The Great Famine.txt" />
@@ -97,7 +93,6 @@
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="Classes\Music\" />
-    <Folder Include="Myths\" />
     <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
