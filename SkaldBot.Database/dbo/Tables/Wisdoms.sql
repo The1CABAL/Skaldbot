@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[Wisdoms] (
     [Id]              INT            IDENTITY (1, 1) NOT NULL,
     [ServerId]        INT            NOT NULL,
-    [Title]           NVARCHAR (255) NOT NULL,
     [Wisdom]          NVARCHAR (MAX) NOT NULL,
     [WasSubmitted]    BIT            CONSTRAINT [DF_Wisdoms_WasSubmitted] DEFAULT ((0)) NOT NULL,
     [SubmittedItemId] INT            NULL,

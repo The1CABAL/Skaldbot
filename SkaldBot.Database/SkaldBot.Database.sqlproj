@@ -95,6 +95,9 @@
     <None Include="Scripts\Seed\CodePages.sql" />
     <None Include="Scripts\Seed\Roles.sql" />
     <None Include="Scripts\Seed\Users.sql" />
+    <None Include="Scripts\Seed\Stories.sql" />
+    <None Include="Scripts\Seed\Wisdoms.sql" />
+    <None Include="Scripts\Seed\CodeServers.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Seed\Seed.PostDeploy.sql" />
