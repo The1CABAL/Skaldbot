@@ -32,7 +32,7 @@
     <Compile Include="Classes\SQL.py">
       <SubType>Code</SubType>
     </Compile>
-	<Compile Include="Helpers\Get_Nearest_Hour.py">
+    <Compile Include="Helpers\Get_Nearest_Hour.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\Music\Music.py">
@@ -55,15 +55,13 @@
   <ItemGroup>
     <Content Include="config.ini" />
     <Content Include="requirements.txt" />
-    <Content Include="Myths\The Creation of Mjonlir and Gungnir.txt" />
     <Content Include="Stories\Devins Adoption.txt" />
     <Content Include="Stories\The Great Famine.txt" />
     <Content Include="Stories\The Tragedy of The Gungnir.txt" />
   </ItemGroup>
-   <ItemGroup>
+  <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="Classes\Music\" />
-    <Folder Include="Myths\" />
     <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
     <Folder Include="Stories\" />
