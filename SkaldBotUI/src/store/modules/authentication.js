@@ -13,7 +13,8 @@ const state = {
     status: '',
     isMasterAdmin: localStorage.getItem('isMasterAdmin') || false,
     isAdmin: localStorage.getItem('isAdmin') || false,
-    isUser: true
+    isUser: true,
+    user: {}
 };
 
 const getters = {
@@ -22,19 +23,22 @@ const getters = {
     authStatus: state => state.status,
     isMasterAdmin: state => state.isMasterAdmin,
     isAdmin: state => state.isAdmin,
-    isUser: state => state.isUser
+    isUser: state => state.isUser,
+    user: state => state.user
 };
 
 const actions = {
     async login({ commit }, user) {
-        //console.log(user);
         let baseUser = user;
         return new Promise((resolve, reject) => {
             commit('auth_request')
             let url = BaseUrl + 'login'
             axios.post(url, user).then(resp => {
                 const token = JSON.parse(resp.data)[0].Id
-                localStorage.setItem('token', token)
+                const accountId = JSON.parse(resp.data)[0].accountId
+                const username = JSON.parse(resp.data)[0].Username
+                const user = {accountId, username}
+                localStorage.setItem('token', token, user)
                 axios.defaults.headers.common['Authorization'] = token
                 commit('auth_success', token, user)
 
@@ -64,16 +68,10 @@ const actions = {
             commit('auth_request')
             let url = BaseUrl + 'register'
             axios.post(url, user).then(resp => {
-                const token = resp.data.token
-                const user = resp.data.user
-                localStorage.setItem('token', token)
-                axios.defaults.headers.common['Authorization'] = token
-                commit('auth_success', token, user)
                 resolve(resp)
             })
                 .catch(err => {
                     commit('auth_error')
-                    localStorage.removeItem('token')
                     reject(err)
                 })
         })
@@ -92,9 +90,10 @@ const mutations = {
     auth_request(state) {
         state.status = 'loading'
     },
-    auth_success(state, token) {
+    auth_success(state, token, user) {
         state.status = 'success'
         state.token = token
+        state.user = user
     },
     user_roles(state, role) {
         if (role == "MasterAdmin") {

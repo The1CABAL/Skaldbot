@@ -351,7 +351,7 @@ class SQL():
                 return False
 
             if passedPassword == password:
-                getUserData = "SELECT Id, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
+                getUserData = "SELECT Id, AccountId, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
                 getUserData = getUserData.replace("@username", user[0])
 
                 c.execute(getUserData)

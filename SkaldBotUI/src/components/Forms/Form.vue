@@ -174,8 +174,6 @@
             }
         },
         created() {
-            console.log(this.$store.getters.isAdmin);
-            console.log(this.$store.getters.isMasterAdmin);
             if (this.$store.getters.isAdmin || this.$store.getters.isMasterAdmin) {
                 this.admin = true
             }
@@ -225,7 +223,7 @@
                             var firstname = this.model.firstname;
                             var lastname = this.model.lastname;
                             var accountname = this.model.accountName;
-                            this.$store.dispatch('register', { accountname, username, firstname, lastname, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
+                            this.$store.dispatch('register', { accountname, username, firstname, lastname, password }).then(() => this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))).catch(err => console.log(err))
                         }
                     }
                     else {
