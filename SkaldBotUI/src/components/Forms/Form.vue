@@ -224,7 +224,8 @@
                         else {
                             var firstname = this.model.firstname;
                             var lastname = this.model.lastname;
-                            this.$store.dispatch('register', { username, firstname, lastname, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
+                            var accountname = this.model.accountName;
+                            this.$store.dispatch('register', { accountname, username, firstname, lastname, password }).then(() => this.$emit("RegisterSuccess", true)).catch(err => console.log(err))
                         }
                     }
                     else {

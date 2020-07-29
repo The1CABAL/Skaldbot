@@ -368,26 +368,34 @@ class SQL():
             return None
 
     def register(user):
-        sql = "INSERT INTO Users (Username, FirstName, LastName, PasswordHash, CreateDate) VALUES ('@username', '@firstname', '@lastname', '@password', '@date');"
+        sql = "INSERT INTO Users (Username, AccountId, FirstName, LastName, PasswordHash, CreateDate) VALUES ('@username', @accountId, '@firstname', '@lastname', '@password', '@date');"
         insertRole = "INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), 3)"
+        createAccount = "INSERT INTO Accounts (AccountName) VALUES ('@account'); SELECT CAST(scope_identity() as int)"
         
-        userExists = SQL.userExists(user[0])
+        userExists = SQL.userExists(user[1])
 
         if userExists == False:
-            #print("Starting to create user");
             current_date = datetime.now()
-            password = Cryptography.hashPassword(user[3])
+            password = Cryptography.hashPassword(user[4])
         
-            sql = sql.replace("@username", user[0])
-            insertRole = insertRole.replace("@username", user[0])
-            sql = sql.replace("@firstname", user[1])
-            sql = sql.replace("@lastname", user[2])
+            sql = sql.replace("@username", user[1])
+            insertRole = insertRole.replace("@username", user[1])
+            sql = sql.replace("@firstname", user[2])
+            sql = sql.replace("@lastname", user[3])
             sql = sql.replace("@password", password.decode())
             sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+            createAccount = createAccount.replace("@account", user[0])
 
             try:
                 conn = SQL.open_connection()
                 c = conn.cursor()
+                
+                c.execute(createAccount)
+                accountId = c.fetchone()
+                conn.commit()
+
+                
+                sql = sql.replace("@accountId", str(accountId[0]))
                 c.execute(sql)
 
                 conn.commit()

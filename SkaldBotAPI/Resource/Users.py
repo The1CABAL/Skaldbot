@@ -35,7 +35,7 @@ class Register(Resource):
             #print('Registering user...')
             req_data = request.get_json()
             
-            user = RegisterUser(req_data['username'], req_data['firstname'], req_data['lastname'], req_data['password'])
+            user = RegisterUser(req_data['accountname'], req_data['username'], req_data['firstname'], req_data['lastname'], req_data['password'])
     
             isAuth = SQL.register(user)
 
