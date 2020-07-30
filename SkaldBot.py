@@ -1,9 +1,8 @@
 
 from Classes.decisionMaker import YesNo
+from Classes.SQL import SQL
 from Wisdom.Wisdom_List import random_wisdom
 from Helpers.Get_Nearest_Hour import round_to_hour as rth
-
-from Classes.SQL import SQL
 
 import discord
 import os
@@ -48,37 +47,30 @@ async def on_message(message):
         return
 
     if message.content.startswith('$help'):
-        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$wisdom\n$request\n$why\n$stop\n$shouldi?')
+        await message.channel.send('I am the Skald-Bot. I tell the stories of the pilots in this squadron and the myths that inspire them. I also dispense the wisdom of the gods. \n\nHere are some the commands I will listen to: \n$story\n$wisdom\n$why\n$stop\n$shouldi?')
 
-    if message.content.startswith('$test'):
-        channel = message.channel
-        serverid = channel.id
-        title, story = SQL.get_stories(serverid)
-        await message.channel.send(f"This tale is called '{title}'...")
-        await message.channel.send(str(story))
+    if message.content.startswith('$story'):
+        try:
+            channel = message.channel
+            serverid = channel.id
+            title, story = SQL.get_stories(serverid)
+            await message.channel.send(f"This tale is called '{title}'...")
+            await message.channel.send(str(story))
+        except:
+            await message.channel.send('The gods have not yet gifted me with any tails associated with this great hall...')
 
     if message.content.startswith('$why'):
         await message.channel.send('Isaac lost his ship in Elite: Dangerous so he drank over 6 ounces of rum and wrote a discord bot. \n\nWhat followed was a team effort of many ideas and abilities to create the entity that stands before you today.\n\nI am basically a digital Kvasir.')
 
-    if message.content.startswith('$wisdom'):
-        wisdom = random_wisdom()
-        await message.channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
-
-    if message.content.startswith('$request'):
-        if message.content.startswith('$request #'):
-            try:
-                args = message.content.split('#')
-                arg = args[1]
-
-                story = storyFinder(home, 'Stories', arg)
-                await message.channel.send(story)
-            except:
-                await message.channel.send('Sorry I didnt understand what you asked for...')
-
-        else:
-            list = storyFinder(home, 'Stories')
-            await message.channel.send('Please select from the following stories by typing "$request #1" but replace the number with the number next to the story you want. \n\n'+str(list))
-
+    if message.content.startswith('$test'):
+        try:
+            channel = message.channel
+            serverid = channel.id
+            wisdom = SQL.get_wisdoms(serverid)
+            await message.channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
+        except:
+            await message.channel.send('The gods have not yet gifted me with any wisdom for this great hall...')
+            
     if message.content.startswith('$stop'):
         await message.channel.send('No. I cannot be stopped fore I am the mouthpiece of the gods. Everyword I write has been ordained by the Allfather.')
 
@@ -98,13 +90,16 @@ BEGIN FUNCTIONS THAT RUN DAILY JOBS
 #Loop Wisdom Once a day
 @tasks.loop(hours=1)
 async def wisdom_once_a_day():
-    now = datetime.datetime.now()
-    hour = rth(now).hour
-    if hour == wisdom_hour:
-        message_channel = client.get_channel(target_channel_id)
-        print(f"Got channel {message_channel}")
-        wisdom = random_wisdom()
-        await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
+    channels = SQL.get_daily_wisdom_channels()
+    for i in channels:
+
+        now = datetime.datetime.now()
+        hour = rth(now).hour
+        if hour == wisdom_hour:
+            message_channel = client.get_channel(i)
+            print(f"Got channel {message_channel}")
+            wisdom = SQL.get_wisdoms(i)
+            await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
 
 #Wait until bot is started to start loop
 @wisdom_once_a_day.before_loop

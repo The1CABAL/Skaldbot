@@ -258,3 +258,43 @@ class SQL():
             title, story = row[0], row[1]
 
         return title, story
+
+    def get_wisdoms(channelid):
+        options = []
+        id_query = 'SELECT lu.ServerId, w.Id FROM Wisdoms w JOIN CodeServers lu on lu.Id = w.ServerId WHERE lu.ServerId = ' + str(channelid)
+
+        conn = SQL.open_connection()
+        c = conn.cursor()
+
+        c.execute(id_query)
+        result = c.fetchall()
+        for row in result:
+            options.append(row[1])
+
+        max_int = ((len(options))-1)
+        choice = random.randint(0,max_int)
+        decision = options[choice]
+
+        w_query = 'SELECT Wisdom FROM Wisdoms WHERE Id = '+ str(decision)
+        c.execute(w_query)
+        result = c.fetchall()
+
+        for row in result:
+            wisdom = row[0]
+
+        return wisdom
+
+    def get_daily_wisdom_channels():
+        channels=[]
+        query = 'SELECT ServerId FROM CodeServers WHERE DailyWisdom = 1 AND IsActive = 1'
+
+        conn = SQL.open_connection()
+        c = cursor()
+
+        c.execute(query)
+        result = c.fetchall()
+
+        for row in result:
+            channels.append(row[0])
+
+        return channels

@@ -1,6 +1,7 @@
 ﻿IF NOT EXISTS (SELECT * FROM CodeServers)
 BEGIN
 SET IDENTITY_INSERT dbo.CodeServers ON
-INSERT INTO CodeServers (id, ServerId) VALUES (1, '725880649356935192')
+INSERT INTO CodeServers (id, ServerId, DailyWisdom) VALUES (1, '725880649356935192', 1)
+INSERT INTO CodeServers (id, ServerId, DailyWisdom) VALUES (2, '726640547019751458', 1)
 SET IDENTITY_INSERT dbo.CodeServers OFF
 END

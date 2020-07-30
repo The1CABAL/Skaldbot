@@ -52,16 +52,12 @@
   <ItemGroup>
     <Content Include="config.ini" />
     <Content Include="requirements.txt" />
-    <Content Include="Stories\Devins Adoption.txt" />
-    <Content Include="Stories\The Great Famine.txt" />
-    <Content Include="Stories\The Tragedy of The Gungnir.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="Classes\Music\" />
     <Folder Include="Helpers\" />
     <Folder Include="Wisdom\" />
-    <Folder Include="Stories\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="devin\">
