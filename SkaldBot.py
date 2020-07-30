@@ -23,7 +23,7 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = "19:06" #24Hour Pacific time
+wisdom_hour = "08:00" #24Hour Pacific time 
 client = commands.Bot(command_prefix='$')
 
 '''
