@@ -13,4 +13,4 @@ RUN apt-get update && \
 EXPOSE 5478
 RUN pip install --upgrade pip
 RUN pip install -r ./requirements.txt
-CMD ["Python", "./SkaldBot.py"]
+CMD ["python", "./SkaldBot.py"]
