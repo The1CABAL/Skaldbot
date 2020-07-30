@@ -286,10 +286,10 @@ class SQL():
 
     def get_daily_wisdom_channels():
         channels=[]
-        query = 'SELECT ServerId FROM CodeServers WHERE DailyWisdom = 1 AND IsActive = 1'
+        query = 'SELECT ServerId FROM CodeServers WHERE DailyWisdom = 1'
 
         conn = SQL.open_connection()
-        c = cursor()
+        c = conn.cursor()
 
         c.execute(query)
         result = c.fetchall()

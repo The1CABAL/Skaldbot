@@ -23,13 +23,8 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = "08:00" #24Hour Pacific time
+wisdom_hour = "19:06" #24Hour Pacific time
 client = commands.Bot(command_prefix='$')
-
-#Testing Server
-#target_channel_id = 726640547019751458
-#Production
-target_channel_id = 725880649356935192
 
 '''
 ================================
@@ -62,7 +57,7 @@ async def on_message(message):
     if message.content.startswith('$why'):
         await message.channel.send('Isaac lost his ship in Elite: Dangerous so he drank over 6 ounces of rum and wrote a discord bot. \n\nWhat followed was a team effort of many ideas and abilities to create the entity that stands before you today.\n\nI am basically a digital Kvasir.')
 
-    if message.content.startswith('$test'):
+    if message.content.startswith('$wisdom'):
         try:
             channel = message.channel
             serverid = channel.id
@@ -90,16 +85,18 @@ BEGIN FUNCTIONS THAT RUN DAILY JOBS
 #Loop Wisdom Once a day
 @tasks.loop(minutes=1)
 async def wisdom_once_a_day():
-    channels = SQL.get_daily_wisdom_channels()
-    for i in channels:
 
-        now = datetime.datetime.now()
-        hour = rth(now).hour
-        if hour == wisdom_hour:
-            message_channel = client.get_channel(i)
-            print(f"Got channel {message_channel}")
-            wisdom = SQL.get_wisdoms(i)
-            await message_channel.send(wisdom + "\n\nThis has been today's wisdom of the gods.")
+    now = datetime.datetime.now()
+    time = now.strftime("%H:%M")
+    if time == wisdom_hour:
+        channels = SQL.get_daily_wisdom_channels()
+        for i in channels:
+            try:
+                message_channel = client.get_channel(int(i))
+                wisdom = SQL.get_wisdoms(i)
+                await message_channel.send(str(wisdom) + "\n\nThis has been today's wisdom of the gods.")
+            except:
+                print('Channel with the ID of '+ str(i)+ ' has daily wisdoms turned on but no wisdoms')
 
 #Wait until bot is started to start loop
 @wisdom_once_a_day.before_loop

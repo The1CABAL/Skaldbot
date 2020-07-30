@@ -10,4 +10,6 @@ INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (1, 'Jormu
 INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (1, 'A jumo is approximately 6 jumps. Only a Diamondback Explorer is capable of a jumo.', 0, 1)
 INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (1, 'Everything is either a banana or not a banana.', 0, 1)
 INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (1, 'Driving is just reall slow teleportation.', 0, 1)
+INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (2, 'Test Wisdom One', 0, 1)
+INSERT INTO Wisdoms (ServerId, Wisdom, WasSubmitted, IsActive) VALUES (2, 'Test Wisdom Two', 0, 1)
 END
