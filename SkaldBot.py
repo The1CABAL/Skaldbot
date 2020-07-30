@@ -23,7 +23,6 @@ BEGIN VARIABLES NEEDED PRE STARTUP
 ==================================
 '''
 home = os.getcwd()
-wisdom_hour = "08:00" #24Hour Pacific time 
 client = commands.Bot(command_prefix='$')
 
 '''
@@ -97,6 +96,7 @@ async def wisdom_once_a_day():
                 await message_channel.send(str(wisdom) + "\n\nThis has been today's wisdom of the gods.")
             except:
                 print('Channel with the ID of '+ str(i)+ ' has daily wisdoms turned on but no wisdoms')
+
 
 #Wait until bot is started to start loop
 @wisdom_once_a_day.before_loop
