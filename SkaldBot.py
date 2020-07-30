@@ -60,19 +60,6 @@ async def on_message(message):
         wisdom = random_wisdom()
         await message.channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
 
-    if message.content.startswith('$myth'):
-        myth = storySwitcher(home, 'Myths')
-
-        if len(myth) <= 2000:
-            await message.channel.send(str(myth))
-        elif len(myth) > 2000 and len(myth) < 4001:
-            await message.channel.send(str(myth[0:1999]))
-            await message.channel.send(str(myth[2000:4000]))
-        elif len(myth) > 4000:
-            await message.channel.send(str(myth[0:2000]))
-            await message.channel.send(str(myth[2000:4000]))
-            await message.channel.send(str(myth[4000:6000]))
-
     if message.content.startswith('$request'):
         if message.content.startswith('$request #'):
             try:
