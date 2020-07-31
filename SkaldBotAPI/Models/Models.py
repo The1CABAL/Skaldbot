@@ -7,3 +7,4 @@ UserProfile = collections.namedtuple('userprofile', ['username', 'firstname', 'l
 StoryModel = collections.namedtuple('story', ['id', 'title', 'story', 'isactive'])
 WisdomModel = collections.namedtuple('wisdom', ['id', 'title', 'wisdom', 'isactive'])
 FormModel = collections.namedtuple('formmodel', ['formkey', 'fieldschema', 'actionlink', 'isactive', 'formname'])
+AccountProfile = collections.namedtuple('accountprofile', ['accountid', 'accountname', 'createdate', 'isactive'])

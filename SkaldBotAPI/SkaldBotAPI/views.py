@@ -9,6 +9,7 @@ from Resource.Forms import *
 from Resource.Users import *
 from Resource.Roles import *
 from Resource.Items import *
+from Resource.Accounts import *
 from Resource.GenerateFernetKey import GenerateFernetKey
 
 api_bp = Blueprint('api', __name__)
@@ -35,3 +36,4 @@ api.add_resource(Story, '/story')
 api.add_resource(Wisdoms, '/getWisdoms')
 api.add_resource(Wisdom, '/wisdom')
 api.add_resource(Form, '/form')
+api.add_resource(Account, '/account')

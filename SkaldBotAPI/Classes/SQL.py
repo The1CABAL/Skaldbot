@@ -867,3 +867,54 @@ class SQL():
             print(field)
             print(formInfo)
             return False
+
+    def get_account_info_by_id(accountId):
+        accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO";
+        usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
+
+        accountSql = accountSql.replace("@accountId", str(accountId))
+        usersSql = usersSql.replace("@accountId", str(accountId))
+
+        results = ()
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(accountSql)
+            accounts = c.fetchone()[0]
+
+            c.execute(usersSql)
+            users = c.fetchall()
+
+            results = (accounts, users)
+
+            c.close()
+            conn.close()
+
+            return results
+        except pymssql.Error as e:
+            print("Error getting account information. Error {}".format(e))
+            return None
+
+    def update_account(account):
+        sql = "UPDATE Accounts SET AccountName = '@name', IsActive = @isActive WHERE AccountId = @accountId";
+
+        sql = sql.replace("@name", account[1])
+        sql = sql.replace("@isActive", Helpers.bool_to_int(account[3]))
+        sql = sql.replace("@accountId", str(account[0]))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return SQL.get_account_info_by_id(account[0])
+        except pymssql.Error as e:
+            print("Error updating account. Error {}".format(e))
+            return None

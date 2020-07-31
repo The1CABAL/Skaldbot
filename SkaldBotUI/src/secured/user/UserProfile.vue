@@ -4,9 +4,8 @@
             <p style="font-weight: bold;">{{msg}}</p>
             <button class="close" @click="closeNotification">x</button>
         </div>
-        <div v-if="prevRoute.name == 'manageusers' && isAdmin">
-            <router-link to="/manageusers" class="btn-button">Go Back</router-link>
-        </div>
+        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
+        <button type="submit" class="btn-button">Save</button>
         <div class="panel">
             <div class="panel-heading"><h4>User Profile</h4></div>
             <div class="panel-body">
@@ -45,7 +44,6 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit">Update</button>
                 </form>
             </div>
         </div>
@@ -101,6 +99,9 @@
             else {
                 if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                     this.$router.push('/unauthorized')
+                }
+                else {
+                    this.getData();
                 }
             }
         },
@@ -183,17 +184,12 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-
-                if (this.$store.getters.isAdmin || this.$store.getters.isMasterAdmin) {
-                    this.isAdmin = true;
-                }
             },
             objectsAreSame(x, y) {
                 var objectsAreSame = true;
                 for (var propertyName in x) {
                     if (propertyName == 'r') {
-                        if (x[propertyName][0].Role != y[propertyName][0].Role)
-                        {
+                        if (x[propertyName][0].Role != y[propertyName][0].Role) {
                             objectsAreSame = false;
                         }
                     }
@@ -209,7 +205,15 @@
                     if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                         this.$router.push('/unauthorized')
                     }
+                    else {
+                        if (this.$store.getters.isMasterAdmin || this.$store.getters.isAdmin) {
+                            this.isAdmin = true
+                        }
+                    }
                 });
+            },
+            goBack() {
+                this.$router.push(this.prevRoute.path)
             }
         }
     }
@@ -224,7 +228,7 @@
         overflow: hidden;
         text-decoration: none;
         color: black;
-        background-color: lightgray;
+        background-color: #45DE71;
         text-align: center;
         cursor: pointer;
         white-space: nowrap;
@@ -232,6 +236,23 @@
         margin: 5px;
         border-radius: 4px;
     }
+
+        .btn-button:hover {
+            border: 1px solid black;
+            display: inline-block;
+            padding: 8px 16px;
+            vertical-align: middle;
+            overflow: hidden;
+            text-decoration: none;
+            color: black;
+            background-color: #57F985;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 4px;
+        }
 
     .close {
         position: absolute;

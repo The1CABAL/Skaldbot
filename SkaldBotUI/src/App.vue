@@ -16,6 +16,7 @@
                     <li><router-link to="/about">About</router-link></li>
                     <li><router-link to="/suggestions">Submit Ideas</router-link></li>
                     <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)">Dashboard</router-link></li>
+                    <li><router-link to="/accountprofile" v-if="authenticated  && clientAdmin" v-on:click.native="account()">Account Profile</router-link></li>
                     <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile()">User Profile</router-link></li>
                     <li><router-link to="/" v-if="authenticated" v-on:click.native="logout()">Logout</router-link></li>
                     <li><router-link to="login" v-if="!authenticated">Login</router-link></li>
@@ -36,11 +37,11 @@
                 logoImage: require('@/assets/logo.png'),
                 background: require('@/assets/SbBackground.jpg'),
                 masterAdmin: false,
+                clientAdmin: false,
                 admin: false,
                 user: true,
                 userActivityThrottlerTimeout: null,
                 userActivityTimeout: null,
-                userId: ''
             }
         },
         beforeMount() {
@@ -61,9 +62,6 @@
             }
         },
         watch: {
-            isLoggedIn: function () {
-
-            }
         },
         computed: {
             ...mapGetters(["isLoggedIn", "isAdmin", "isMasterAdmin", "isUser"])
@@ -99,14 +97,18 @@
                         if (this.$store.getters.isMasterAdmin) {
                             this.masterAdmin = true;
                             this.admin = true;
+                            this.clientAdmin = true;
                         }
                         else if (this.$store.getters.isAdmin) {
                             this.admin = true;
+                            this.clientAdmin = true;
                         }
-                        this.userId = this.$store.getters.userId;
+                        else if (this.$store.getters.isClientAdmin) {
+                            this.clientAdmin = true;
+                        }
 
-                        this.$message("Successfully Signed In!");
                         this.authenticated = true;
+                        this.$message("Successfully Signed In!");
                     }).catch(err => console.log(err));
                 }
                 else {
@@ -114,11 +116,16 @@
                         if (this.$store.getters.isMasterAdmin) {
                             this.masterAdmin = true;
                             this.admin = true;
+                            this.clientAdmin = true;
                         }
                         else if (this.$store.getters.isAdmin) {
                             this.admin = true;
+                            this.clientAdmin = true;
                         }
-                        this.userId = this.$store.getters.userId;
+                        else if (this.$store.getters.isClientAdmin) {
+                            this.clientAdmin = true;
+                        }
+
                         this.authenticated = true;
                     });
                 }
@@ -128,6 +135,7 @@
                     this.authenticated = false;
                     this.masterAdmin = false;
                     this.admin = false;
+                    this.clientAdmin = false;
                     this.$message("Logged out!")
                 })
 
@@ -166,16 +174,23 @@
                     if (this.$store.getters.isMasterAdmin) {
                         this.masterAdmin = true;
                         this.admin = true;
+                        this.clientAdmin = true;
                     }
                     else if (this.$store.getters.isAdmin) {
                         this.admin = true;
+                        this.clientAdmin = true;
                     }
-                    this.userId = this.$store.getters.userId;
+                    else if (this.$store.getters.isClientAdmin) {
+                        this.clientAdmin = true;
+                    }
                     this.authenticated = true;
                 });
             },
             profile() {
-                this.$router.push('/userprofile/' + this.userId)
+                this.$router.push('/userprofile/' + this.$store.getters.userId)
+            },
+            account() {
+                this.$router.push('/accountprofile/' + this.$store.getters.accountId);
             }
         }
     }

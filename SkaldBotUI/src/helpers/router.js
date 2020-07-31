@@ -17,6 +17,7 @@ import ManageWisdoms from '../secured/Dashboard/ManageWisdoms'
 import ManageForms from '../secured/Dashboard/ManageForms'
 import GitHub from '../secured/Dashboard/GitHub'
 import ModifyForm from '../secured/Dashboard/ModifyForm'
+import AccountProfile from '../secured/user/AccountProfile'
 
 Vue.use(Router);
 
@@ -61,7 +62,8 @@ export const router = new Router({
                     path: '/modifyform/:formKey', name: "modifyform", component: ModifyForm, props: true
                 }]
         },
-        { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
+        { path: '/userprofile/:userId', name: 'userprofile', component: UserProfile, props: true },
+        { path: '/accountprofile/:accountId', name: 'accountprofile', component: AccountProfile, props: true },
         { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home

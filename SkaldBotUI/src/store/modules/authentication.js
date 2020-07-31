@@ -10,9 +10,12 @@ if (token) {
 
 const state = {
     token: localStorage.getItem('token') || '',
+    accountId: localStorage.getItem('accountId') || '',
     status: '',
     isMasterAdmin: false,
     isAdmin: false,
+    isClientAdmin: false,
+    isClientUser: false,
     isUser: true,
     role: '',
     user: {}
@@ -20,10 +23,13 @@ const state = {
 
 const getters = {
     userId: state => state.token,
+    accountId: state => state.accountId,
     isLoggedIn: state => state.token != '' ? true : false,
     authStatus: state => state.status,
     isMasterAdmin: state => state.role == "MasterAdmin" ? true : false,
     isAdmin: state => state.role == "Admin" ? true : false,
+    isClientAdmin: state => state.Role == "ClientAdmin" ? true : false,
+    isClientUser: state => state.role = "ClientUser" ? true : false,
     isUser: state => state.isUser,
     user: state => state.user
 };
@@ -35,10 +41,12 @@ const actions = {
             let url = BaseUrl + 'login'
             axios.post(url, user).then(resp => {
                 const token = JSON.parse(resp.data)[0].Id
-                const accountId = JSON.parse(resp.data)[0].accountId
+                const accountId = JSON.parse(resp.data)[0].AccountId
                 const username = JSON.parse(resp.data)[0].Username
                 const user = { accountId, username }
-                localStorage.setItem('token', token, user)
+                localStorage.setItem('token', token)
+                localStorage.setItem('accountId', accountId)
+                console.log(localStorage.getItem('accountId'))
                 axios.defaults.headers.common['Authorization'] = token
                 commit('auth_success', token, user)
 
@@ -51,6 +59,7 @@ const actions = {
                     .catch(err => {
                         commit('auth_error')
                         localStorage.removeItem('token')
+                        localStorage.removeItem('accountId');
                         reject(err)
                     });
 
@@ -59,6 +68,7 @@ const actions = {
                 .catch(err => {
                     commit('auth_error')
                     localStorage.removeItem('token')
+                    localStorage.removeItem('accountId');
                     reject(err)
                 });
         })
@@ -97,6 +107,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             commit('logout')
             localStorage.removeItem('token')
+            localStorage.removeItem('accountId');
             delete axios.defaults.headers.common['Authorization']
             resolve()
         })
@@ -121,9 +132,14 @@ const mutations = {
     logout(state) {
         state.status = ''
         state.token = ''
+
         localStorage.removeItem('token');
+        localStorage.removeItem('accountId');
+
         state.isMasterAdmin = false
         state.isAdmin = false
+        state.isClientAdmin = false
+        state.isClientUser = false
         state.isUser = true
     },
 };
