@@ -11,7 +11,7 @@ import fieldPassword from './components/CustomFields/fieldPassword';
 Vue.component("fieldPassword", fieldPassword);
 
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+import 'element-theme-dark';
 Vue.use(ElementUI);
 
 import lang from 'element-ui/lib/locale/lang/en'
@@ -22,7 +22,7 @@ import VueDataTables from 'vue-data-tables'
 Vue.use(VueDataTables);
 
 import * as Tabs from 'vue-slim-tabs'
-import 'vue-slim-tabs/themes/default.css'
+//import 'vue-slim-tabs/themes/default.css'
 Vue.use(Tabs)
 
 new Vue({

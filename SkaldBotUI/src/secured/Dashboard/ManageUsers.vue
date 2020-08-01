@@ -159,3 +159,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .el-table{
+        background-color: #23272a;
+    }
+</style>

@@ -11,10 +11,4 @@
 </script>
 
 <style scoped>
-    .wrapper{
-        width: 100%;
-    }
-    .centerText{
-        text-align: center;
-    }
 </style>
