@@ -25,6 +25,7 @@
                 </div>
             </tab>
             <tab title="Users">
+                <button type="button" class="btn-button" v-on:click="registerUser">Add User</button>
                 <div style="margin-bottom: 10px">
                     <el-row>
                         <el-col :span="6">
@@ -230,6 +231,9 @@
                     return "True"
                 else
                     return "False"
+            },
+            registerUser() {
+                this.$router.push('/registerUser/' + this.accountId)
             }
         }
     }
