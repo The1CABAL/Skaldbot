@@ -2,11 +2,14 @@
     <div id="RegisterUser">
         <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
         <Form :formKey="formKey" :accountId="accountId" @RegisterSuccess="alert" />
+        <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+        <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
     </div>
 </template>
 
 <script>
     import Form from '../../components/Forms/Form';
+    import HelpDocumentation from '../../components/HelpDocumentation'
     export default {
         name: 'RegisterUser',
         props: {
@@ -16,7 +19,8 @@
             }
         },
         components: {
-            Form
+            Form,
+            HelpDocumentation
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
@@ -25,7 +29,9 @@
         },
         data() {
             return {
-                formKey: 'RegisterUserForm'
+                formKey: 'RegisterUserForm',
+                helpContentKey: 'RegisterHelp',
+                showHelp: false,
             }
         },
         methods: {
@@ -34,6 +40,12 @@
             },
             goBack() {
                 this.$router.push(this.prevRoute.path)
+            },
+            openHelp() {
+                this.showHelp = true;
+            },
+            closeHelp() {
+                this.showHelp = false;
             }
         }
     }

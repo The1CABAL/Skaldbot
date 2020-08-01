@@ -5,3 +5,4 @@
 :r .\VueFormFields.sql
 :r .\Accounts.sql
 :r .\Users.sql
+:r .\HelpDocumentation.sql

@@ -2,25 +2,37 @@
     <div id="Register">
         <Form v-if="formKey != ''" :formKey="formKey" @RegisterSuccess="login" />
         <router-link to="/login" class="link">Login</router-link>
+        <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+        <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
     </div>
 </template>
 
 <script>
     import Form from '../components/Forms/Form';
+    import HelpDocumentation from '../components/HelpDocumentation'
     export default {
         name: 'Register',
         components: {
-            Form
+            Form,
+            HelpDocumentation
         },
         data() {
             return {
-                formKey: 'RegisterForm'
+                formKey: 'RegisterForm',
+                helpContentKey: 'RegisterHelp',
+                showHelp: false,
             }
         },
         methods: {
             login() {
                 console.log("Logging in...")
                 this.$emit("authenticated", true)
+            },
+            openHelp() {
+                this.showHelp = true;
+            },
+            closeHelp() {
+                this.showHelp = false;
             }
         }
     }

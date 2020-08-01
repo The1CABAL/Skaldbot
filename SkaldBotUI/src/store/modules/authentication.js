@@ -119,8 +119,6 @@ const actions = {
     logout({ commit }) {
         return new Promise((resolve, reject) => {
             commit('logout')
-            localStorage.removeItem('token')
-            localStorage.removeItem('accountId');
             delete axios.defaults.headers.common['Authorization']
             resolve()
         })
@@ -149,11 +147,11 @@ const mutations = {
         localStorage.removeItem('token');
         localStorage.removeItem('accountId');
 
-        state.isMasterAdmin = false
-        state.isAdmin = false
-        state.isClientAdmin = false
-        state.isClientUser = false
-        state.isUser = true
+        state.isMasterAdmin = false;
+        state.isAdmin = false;
+        state.isClientAdmin = false;
+        state.isClientUser = false;
+        state.isUser = true;
     },
 };
 

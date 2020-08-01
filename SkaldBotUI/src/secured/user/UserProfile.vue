@@ -47,6 +47,8 @@
                     </div>
                     <hr />
                     <button type="submit" class="btn-button">Save</button>
+                    <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+                    <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
                 </form>
             </div>
         </div>
@@ -56,6 +58,7 @@
 <script>
     import axios from 'axios';
     import { BaseUrl } from '../../helpers/constants';
+    import HelpDocumentation from '../../components/HelpDocumentation'
 
     export default {
         name: "UserProfile",
@@ -64,6 +67,9 @@
                 type: String,
                 required: true
             }
+        },
+        components: {
+            HelpDocumentation
         },
         data() {
             return {
@@ -76,7 +82,9 @@
                 isError: true,
                 submitted: false,
                 success: false,
-                prevRoute: {}
+                prevRoute: {},
+                helpContentKey: 'RegisterHelp',
+                showHelp: false,
             }
         },
         watch: {
@@ -216,6 +224,12 @@
             },
             goBack() {
                 this.$router.push(this.prevRoute.path)
+            },
+            openHelp() {
+                this.showHelp = true;
+            },
+            closeHelp() {
+                this.showHelp = false;
             }
         }
     }

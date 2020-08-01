@@ -954,3 +954,61 @@ class SQL():
         except pymssql.Error as e:
             print("Error updating account. Error {}".format(e))
             return None
+
+    def get_documentation(helpContentKey, isAdmin):
+        sql = ''
+        if isAdmin:
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE HelpContentKey = '@key' FOR JSON AUTO";
+        else:
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE IsActive = 1 AND HelpContentKey = '@key' FOR JSON AUTO";
+        sql = sql.replace("@key", helpContentKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            content = c.fetchone()
+
+            if content:
+                content = content[0]
+            else:
+                content = None
+
+            c.close()
+            conn.close()
+
+            return content
+        except pymssql.Error as e:
+            print("Error getting documentation. Error {}".format(e))
+            return None
+
+    def update_documentation(documentation):
+        sql = "UPDATE HelpDocumentation SET HelpTitle = '@title', HelpContent = '@content', IsActive = @isActive, UpdateDate = '@date', UpdateByUserId = '@userId' WHERE HelpContentKey = '@key'"
+        current_date = datetime.now()
+        content = documentation[2]
+        content = content.replace("'", "''")
+        sql = sql.replace("@title", documentation[1])
+        sql = sql.replace("@content", content)
+        sql = sql.replace("@isActive", Helpers.bool_to_int(documentation[3]))
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        sql = sql.replace("@userId", documentation[4])
+        sql = sql.replace("@key", documentation[0])
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            content = SQL.get_documentation(documentation[0], documentation[5])
+
+            return content
+        except pymssql.Error as e:
+            print("Error updating documentation. Error {}".format(e))
+            return None

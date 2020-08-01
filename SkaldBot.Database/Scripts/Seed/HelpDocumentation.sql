@@ -1,0 +1,1 @@
+﻿EXEC UpsertHelpDocumentation 'RegiserHelp', 'Help Registering User', '<h1><span style="color: rgb(204, 224, 245);">Get Discord User ID</span></h1><h4>Make sure you have developer mode enabled</h4><ul><li>You''ll find Developer Mode in User Settings &gt; Appearance</li><li>To get the user id, right click your user name and select "Copy Id"</li></ul>', 1
