@@ -5,7 +5,7 @@
     -webkit-box-sizing: border-box;
 }
 
-body {
+body !important{
     background-color: #2c2f33;
     color: #ffffff;
 }
@@ -195,6 +195,7 @@ textarea {
     border-radius: 10px 10px 10px 10px;
     overflow: hidden;
     padding-left: 10px;
+    color: black;
 }
 
 .errorMsg {

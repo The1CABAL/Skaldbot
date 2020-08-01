@@ -78,6 +78,10 @@
             formKey: {
                 type: String,
                 required: true
+            },
+            accountId: {
+                type: String,
+                required: false
             }
         },
         mounted: function () {
@@ -89,8 +93,7 @@
             axios.get(schemaUrl).then(function (response) {
                 that.schema = JSON.parse(response.data);
             }).catch(function (error) {
-                console.log(error);
-                this.$emit('error', true)
+                that.$message('Error loading form')
             });
 
             axios.get(actionUrl).then(function (response) {
@@ -120,7 +123,7 @@
                     that.schema = JSON.parse(response.data);
                 }).catch(function (error) {
                     console.log(error);
-                    this.$emit('error', true)
+                    that.$message('Error loading form')
                 });
 
                 axios.get(actionUrl).then(function (response) {
@@ -213,17 +216,25 @@
                     var url = this.action;
                     let that = this;
                     //console.log(url);
-                    if (this.formKey == "LoginForm" || this.formKey == "RegisterForm") {
+                    if (this.formKey == "LoginForm" || this.formKey == "RegisterForm" || this.formKey == "RegisterUserForm") {
                         var username = this.model.username;
                         var password = this.model.password;
                         //console.log(this.formKey);
                         if (this.formKey == "LoginForm")
                             this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))
-                        else {
+                        else if (this.formKey == "RegisterForm") {
                             var firstname = this.model.firstname;
                             var lastname = this.model.lastname;
                             var accountname = this.model.accountName;
-                            this.$store.dispatch('register', { accountname, username, firstname, lastname, password }).then(() => this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))).catch(err => console.log(err))
+                            var discorduserid = this.model.discordUserId;
+                            this.$store.dispatch('register', { accountname, username, firstname, lastname, discorduserid, password }).then(() => this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))).catch(err => console.log(err))
+                        }
+                        else if (this.formKey == "RegisterUserForm") {
+                            var firstname = this.model.firstname;
+                            var lastname = this.model.lastname;
+                            var accountid = this.accountId;
+                            var discorduserid = this.model.discordUserId;
+                            this.$store.dispatch('registeruser', { accountid, username, firstname, lastname, discorduserid, password }).then(() => this.$message('User created!')).catch(err => console.log(err))
                         }
                     }
                     else {

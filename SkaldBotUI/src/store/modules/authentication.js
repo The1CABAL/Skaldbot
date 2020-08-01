@@ -86,6 +86,19 @@ const actions = {
                 })
         })
     },
+    async registeruser({ commit }, user) {
+        return new Promise((resolve, reject) => {
+            commit('auth_request')
+            let url = BaseUrl + 'registeruser'
+            axios.post(url, user).then(resp => {
+                resolve(resp)
+            })
+                .catch(err => {
+                    commit('auth_error')
+                    reject(err)
+                })
+        })
+    },
     async loadRoles({ commit }) {
         var userId = this.getters.userId;
         var userUrl = BaseUrl + 'roles?id=' + userId

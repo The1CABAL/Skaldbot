@@ -1,5 +1,5 @@
 <template>
-    <div id="login">
+    <div id="Register">
         <Form v-if="formKey != ''" :formKey="formKey" @RegisterSuccess="login" />
         <router-link to="/login" class="link">Login</router-link>
     </div>

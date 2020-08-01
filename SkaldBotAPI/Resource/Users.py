@@ -16,17 +16,13 @@ class Login(Resource):
             isAuth = SQL.login(user)
 
             if isAuth:
-                response = app.response_class(
-                        response = json.dumps(isAuth),
+                response = app.response_class(response = json.dumps(isAuth),
                         status = 200,
-                        mimetype='application/json'
-                    )
+                        mimetype='application/json')
                 return response
             else:
-                response = app.response_class(
-                    status=424,
-                    mimetype='application/json'
-                )
+                response = app.response_class(status=424,
+                    mimetype='application/json')
                 return response
 
 class Register(Resource):
@@ -35,23 +31,41 @@ class Register(Resource):
             #print('Registering user...')
             req_data = request.get_json()
             
-            user = RegisterUser(req_data['accountname'], req_data['username'], req_data['firstname'], req_data['lastname'], req_data['password'])
+            user = RegisterUser(req_data['accountname'], req_data['username'], req_data['firstname'], req_data['lastname'], req_data['discorduserid'], req_data['password'])
     
             isAuth = SQL.register(user)
 
             if isAuth:
-                response = app.response_class(
-                        response = json.dumps({"Message": "LoginSuccess"}),
+                response = app.response_class(response = json.dumps({"Message": "LoginSuccess"}),
                         status = 200,
-                        mimetype='application/json'
-                    )
+                        mimetype='application/json')
                 return response
             else:
-                response = app.response_class(
-                    status=424,
-                    mimetype='application/json'
-                )
+                response = app.response_class(status=424,
+                    mimetype='application/json')
                 return response
+
+class RegisterNewUser(Resource):
+    def post(self):
+        if SQL.test_connect_to_dbo():
+            req_data = request.get_json()
+
+            print(req_data)
+            user = RegisterAccountUser(req_data['accountid'],
+            req_data['username'], req_data['firstname'], req_data['lastname'],
+            req_data['discorduserid'], req_data['password'])
+            isAuth = SQL.registerUser(user)
+            
+            if isAuth:
+                response = app.response_class(response = json.dumps({"Message": "Register Success"}), status=200, mimetype='application/json')
+                return response
+            else:
+                response = app.response_class(response = json.dumps({"Message": "Failure"}), status=200, mimetype='application/json')
+                return response
+        else:
+            response = app.response_class(status=424,
+                    mimetype='application/json')
+            return response
 
 class GetUserRoles(Resource):
     def get(self):
@@ -62,18 +76,14 @@ class GetUserRoles(Resource):
             data = SQL.get_user_role(Id)
             #print(data)
 
-            response = app.response_class(
-                response = json.dumps(data),
+            response = app.response_class(response = json.dumps(data),
                 status=200,
-                mimetype='application/json'
-              )
+                mimetype='application/json')
 
             return response
         else:
-            response = app.response_class(
-                status=424,
-                mimetype='application/json'
-            )
+            response = app.response_class(status=424,
+                mimetype='application/json')
             return response
 
 class GetAllUsers(Resource):
@@ -82,18 +92,14 @@ class GetAllUsers(Resource):
             isMaster = request.args.get('isMaster')
             data = SQL.get_all_users(isMaster)
 
-            response = app.response_class(
-                response = json.dumps(data),
+            response = app.response_class(response = json.dumps(data),
                 status=200,
-                mimetype='application/json'
-                )
+                mimetype='application/json')
 
             return response
         else:
-            response = app.response_class(
-                status=424,
-                mimetype='application/json'
-                )
+            response = app.response_class(status=424,
+                mimetype='application/json')
             return response
 
 class GetUserForProfile(Resource):
@@ -102,18 +108,14 @@ class GetUserForProfile(Resource):
             userId = request.args.get('userId')
             data = SQL.get_user_by_id(userId)
 
-            response = app.response_class(
-                response = json.dumps(data),
+            response = app.response_class(response = json.dumps(data),
                 status=200,
-                mimetype='application/json'
-             )
+                mimetype='application/json')
 
             return response
         else:
-            response = app.response_class(
-                status=424,
-                mimetype='application/json'
-                )
+            response = app.response_class(status=424,
+                mimetype='application/json')
             return response
     def post(self):
         if SQL.test_connect_to_dbo():
@@ -122,20 +124,26 @@ class GetUserForProfile(Resource):
             role = data['r'][0]
             role = role['Role']
             
-            userInfo = UserProfile(data['Username'], data['FirstName'], data['LastName'], data['IsActive'], data['IsLocked'], role)
+            discordUserId = None
+
+            data_dic = json.loads(json.dumps(data))
+            discordExists = "DiscordUserId" in data_dic
+
+            if discordExists:
+                discordUserId = data['DiscordUserId']
+            else:
+                discordUserId = "NULL"
+
+            userInfo = UserProfile(data['Username'], data['FirstName'], data['LastName'], discordUserId, data['IsActive'], data['IsLocked'], role)
             
             SQL.update_user(userInfo)
 
-            response = app.response_class(
-                response = json.dumps({"Message": "Success"}),
+            response = app.response_class(response = json.dumps({"Message": "Success"}),
                 status=200,
-                mimetype='application/json'
-             )
+                mimetype='application/json')
 
             return response
         else:
-            response = app.response_class(
-                status=424,
-                mimetype='application/json'
-                )
+            response = app.response_class(status=424,
+                mimetype='application/json')
             return response

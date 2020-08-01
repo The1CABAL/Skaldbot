@@ -5,7 +5,6 @@
             <button class="close" @click="closeNotification">x</button>
         </div>
         <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
-        <button type="submit" class="btn-button">Save</button>
         <div class="panel">
             <div class="panel-heading"><h4>User Profile</h4></div>
             <div class="panel-body">
@@ -18,6 +17,8 @@
                     <input type="text" id="firstName" name="firstName" v-model="userData.FirstName" />
                     <label for="lastName">Last Name:</label>
                     <input type="text" id="lastName" name="lastName" v-model="userData.LastName" />
+                    <label for="discordUserId">Discord User ID:</label>
+                    <input type="text" id="discordUserId" name="discordUserId" v-model="userData.DiscordUserId" />
                     <label for="createDate">Date Created:</label>
                     <input type="text" id="createDate" name="createDate" disabled :value="getDate(userData.CreateDate)" />
                     <div v-if="isAdmin">
@@ -44,6 +45,8 @@
                             </div>
                         </div>
                     </div>
+                    <hr />
+                    <button type="submit" class="btn-button">Save</button>
                 </form>
             </div>
         </div>
@@ -197,7 +200,6 @@
                         objectsAreSame = false;
                     }
                 }
-
                 return objectsAreSame;
             },
             reloadAuthentication() {

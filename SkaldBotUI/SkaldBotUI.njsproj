@@ -105,6 +105,9 @@
     <Content Include="src\secured\user\AccountProfile.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\user\RegisterUser.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\user\UserProfile.vue">
       <SubType>Code</SubType>
     </Content>
