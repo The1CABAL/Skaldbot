@@ -19,6 +19,7 @@ import GitHub from '../secured/Dashboard/GitHub'
 import ModifyForm from '../secured/Dashboard/ModifyForm'
 import AccountProfile from '../secured/user/AccountProfile'
 import RegisterUser from '../secured/user/RegisterUser'
+import ManageDocumentation from '../secured/Dashboard/ManageDocumentation'
 
 Vue.use(Router);
 
@@ -50,6 +51,9 @@ export const router = new Router({
                 },
                 {
                     path: '/manageforms', name: "manageforms", component: ManageForms
+                },
+                {
+                    path: '/managedocumentation', name: "managedocumentation", component: ManageDocumentation
                 },
                 {
                     path: '/github', name: "github", beforeEnter() {

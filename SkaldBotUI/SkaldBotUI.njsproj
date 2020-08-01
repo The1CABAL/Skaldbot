@@ -86,6 +86,9 @@
     <Content Include="src\secured\Dashboard\GitHub.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\Dashboard\ManageDocumentation.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\Dashboard\ManageForms.vue">
       <SubType>Code</SubType>
     </Content>

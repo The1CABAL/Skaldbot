@@ -1,5 +1,7 @@
 
-import json, urllib.request, pymssql
+import json
+import urllib.request
+import pymssql
 import pandas as pd
 from datetime import datetime
 from time import sleep
@@ -71,7 +73,8 @@ class SQL():
                     else:
                         keys.append(key)
 
-                #Iterate through the line and build a list of values associated with those keys
+                #Iterate through the line and build a list of values associated
+                #with those keys
                 values = []
                 for i in keys:
                     if i == "[group]":
@@ -95,7 +98,7 @@ class SQL():
                             newvalue + 1
                             values.append(newvalue)
                         except:
-                            values.append("N'"+newvalue+"'")
+                            values.append("N'" + newvalue + "'")
                     except:
                         pass
 
@@ -105,7 +108,8 @@ class SQL():
                     if i == "N'None'":
                         values[n] = 'NULL'
 
-                #join necessary lists into comma separated string which can be used as the query input
+                #join necessary lists into comma separated string which can be
+                #used as the query input
                 #col_name_string = ', '.join(keys)
                 val_string = ', '.join(values)
 
@@ -114,7 +118,8 @@ class SQL():
                 #Insert values
                 try:
                     sqlstring = ('EXEC ' + upsertTable + ' ' + val_string + '')
-                    #sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
+                    #sqlstring = ('INSERT INTO '+ table +'('+col_name_string+')
+                    #VALUES ('+val_string + ')')
                     c.execute(sqlstring)
                     values = []
                     keys = []
@@ -123,16 +128,16 @@ class SQL():
                 except pymssql.Error as ex:
                     print('Error Inserting JSON!')
                     print('')
-                    print('SQL:    '+sqlstring)
+                    print('SQL:    ' + sqlstring)
                     print('')
-                    print('ERROR:    '+str(ex))
+                    print('ERROR:    ' + str(ex))
                     values = []
                     keys = []
                     #col_name_string = ''
                     val_string = ''
                 conn.commit()
 
-            print('Done with '+table)
+            print('Done with ' + table)
         c.close()
         conn.close()
         #sleep(86400)
@@ -148,8 +153,7 @@ class SQL():
                                                                             'government':str,'allegiance_id':str,'allegiance':str,'security_id':str,'security':str,'primary_economy_id':str,
                                                                             'primary_economy':str,'power':str,'power_state':str,'power_state_id':str,'needs_permit':str,'updated_at':str,
                                                                             'simbad_ref':str,'controlling_minor_faction_id':str,'controlling_minor_faction':str,'reserve_type_id':str,'reserve_type	ed_system_address':str
-                                                                            }
-                                 ):
+                                                                            }):
             df = chunk
             print('Got a chunk of data!')
             headers = df.columns
@@ -165,7 +169,7 @@ class SQL():
                 values = []
                 for h in headers:
                     values.append(df.at[iterant, h])
-                c.execute('INSERT INTO CodeSystems ('+col_name_string+') VALUES ('+var_string+');', row)
+                c.execute('INSERT INTO CodeSystems (' + col_name_string + ') VALUES (' + var_string + ');', row)
 
             conn.commit()
             print('Done with Chunk')
@@ -189,7 +193,7 @@ class SQL():
     def find_station_by_module(ModuleId):
         pass
 
-    #This function gets the closest coordinates 
+    #This function gets the closest coordinates
     def find_closest_coordinates(id):
         sql = 'SELECT x, y, z FROM CodeSystems WHERE Id <> @id GROUP BY x, y, z ORDER BY ABS((SUM(x + y + z) / 3) - (SELECT (SUM(x + y + z) / 3) FROM CodeSystems WHERE id = @id)) LIMIT 1'
         sql = sql.replace('@id', id)
@@ -226,7 +230,7 @@ class SQL():
             c.close()
             conn.close()
 
-            return forms;
+            return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
@@ -246,7 +250,7 @@ class SQL():
             c.close()
             conn.close()
 
-            return forms;
+            return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
@@ -303,7 +307,7 @@ class SQL():
             print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
-        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')";
+        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')"
         current_date = datetime.now()
 
         sql = sql.replace("@itemType", suggestion[0])
@@ -330,7 +334,7 @@ class SQL():
             return False
 
     def login(user):
-        sql = "SELECT PasswordHash FROM Users WHERE Username = '@username'";
+        sql = "SELECT PasswordHash FROM Users WHERE Username = '@username'"
 
         sql = sql.replace("@username", user[0])
 
@@ -567,7 +571,7 @@ class SQL():
         currentRole = "SELECT r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Username = '@username'"
         currentRole = currentRole.replace("@username", username)
 
-        updateUser = "UPDATE Users SET Username = '@username', FirstName = '@firstName', LastName = '@lastName', DiscordUserId = @discord, IsActive = @isActive, IsLocked = @isLocked WHERE Id = (SELECT Id FROM Users WHERE Username = '@username')";
+        updateUser = "UPDATE Users SET Username = '@username', FirstName = '@firstName', LastName = '@lastName', DiscordUserId = @discord, IsActive = @isActive, IsLocked = @isLocked WHERE Id = (SELECT Id FROM Users WHERE Username = '@username')"
         updateUser = updateUser.replace("@username", username)
         updateUser = updateUser.replace("@firstName", userprofile[1])
         updateUser = updateUser.replace("@lastName", userprofile[2])
@@ -600,7 +604,7 @@ class SQL():
             print('Error updating user. Error {}'.format(e))
 
     def get_submitted_items():
-        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO";
+        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()
@@ -619,7 +623,7 @@ class SQL():
 
     def get_submitted_item_by_id(id):
         sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
-        sql = sql.replace("@id", id);
+        sql = sql.replace("@id", id)
 
         try:
             conn = SQL.open_connection()
@@ -683,7 +687,7 @@ class SQL():
     def get_story_by_id(id):
         sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
 
-        sql = sql.replace("@id", str(id));
+        sql = sql.replace("@id", str(id))
 
         try:
             conn = SQL.open_connection()
@@ -751,7 +755,7 @@ class SQL():
     def get_wisdom_by_id(id):
         sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
 
-        sql = sql.replace("@id", str(id));
+        sql = sql.replace("@id", str(id))
 
         try:
             conn = SQL.open_connection()
@@ -905,7 +909,7 @@ class SQL():
             return False
 
     def get_account_info_by_id(accountId):
-        accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO";
+        accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO"
         usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
 
         accountSql = accountSql.replace("@accountId", str(accountId))
@@ -934,7 +938,7 @@ class SQL():
             return None
 
     def update_account(account):
-        sql = "UPDATE Accounts SET AccountName = '@name', IsActive = @isActive WHERE AccountId = @accountId";
+        sql = "UPDATE Accounts SET AccountName = '@name', IsActive = @isActive WHERE AccountId = @accountId"
 
         sql = sql.replace("@name", account[1])
         sql = sql.replace("@isActive", Helpers.bool_to_int(account[3]))
@@ -958,9 +962,9 @@ class SQL():
     def get_documentation(helpContentKey, isAdmin):
         sql = ''
         if isAdmin:
-            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE HelpContentKey = '@key' FOR JSON AUTO";
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE HelpContentKey = '@key' FOR JSON AUTO"
         else:
-            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE IsActive = 1 AND HelpContentKey = '@key' FOR JSON AUTO";
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE IsActive = 1 AND HelpContentKey = '@key' FOR JSON AUTO"
         sql = sql.replace("@key", helpContentKey)
 
         try:
@@ -975,6 +979,25 @@ class SQL():
                 content = content[0]
             else:
                 content = None
+
+            c.close()
+            conn.close()
+
+            return content
+        except pymssql.Error as e:
+            print("Error getting documentation. Error {}".format(e))
+            return None
+
+    def get_all_documentation():
+        sql = "SELECT HelpContentKey, HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            content = c.fetchall()
 
             c.close()
             conn.close()

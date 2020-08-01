@@ -4,13 +4,15 @@ import { BaseUrl } from '../../helpers/constants';
 const state = {
     helpTitle: '',
     helpContent: '',
-    isActive: true
+    isActive: true,
+    helpDocumentation: []
 };
 
 const getters = {
     helpTitle: state => state.helpTitle,
     helpContent: state => state.helpContent,
-    helpIsActive: state => state.isActive
+    helpIsActive: state => state.isActive,
+    helpDocumentation: state => state.helpDocumentation
 };
 
 const actions = {
@@ -19,6 +21,17 @@ const actions = {
             let url = BaseUrl + 'documentation?helpContentKey=' + docInfo.HelpContentKey + "&isAdmin=" + docInfo.IsAdmin
             axios.get(url).then(resp => {
                 commit('set_documentation', resp.data)
+                resolve(resp);
+            }).catch(err => {
+                reject(err);
+            })
+        })
+    },
+    async getAllDocumentation({ commit }) {
+        return new Promise((resolve, reject) => {
+            let url = BaseUrl + 'getAllDocumentation'
+            axios.get(url).then(resp => {
+                commit('set_all_documentation', resp.data)
                 resolve(resp);
             }).catch(err => {
                 reject(err);
@@ -44,6 +57,9 @@ const mutations = {
         state.helpTitle = data.HelpTitle;
         state.helpContent = data.HelpContent;
         state.isActive = data.IsActive
+    },
+    set_all_documentation(state, data) {
+        state.helpDocumentation = JSON.parse(data);
     }
 };
 

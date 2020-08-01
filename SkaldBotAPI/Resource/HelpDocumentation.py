@@ -50,3 +50,22 @@ class HelpDocumentation(Resource):
                 mimetype='application/json'
             )
             return response
+
+class GetAllDocumentation(Resource):
+    def get(self):
+        if SQL.test_connect_to_dbo():
+            content = SQL.get_all_documentation()
+
+            response = app.response_class(
+                response = json.dumps(content),
+                status = 200,
+                mimetype='application/json'
+            )
+
+            return response
+        else:
+            response = app.response_class(
+                status=424,
+                mimetype='application/json'
+            )
+            return response
