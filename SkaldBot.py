@@ -73,7 +73,7 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
-    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
+    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing') or message.content.startswith('$heresacoin') or message.content.startswith('$queue'):
         await client.process_commands(message)
 
 
@@ -155,6 +155,42 @@ async def thanks(ctx):
 @client.command(pass_context=True, aliases=['s', 'sin'])
 async def sing(ctx, url: str):
 
+    def check_queue():
+        Queue_infile = os.path.isdir("./Queue")
+        if Queue_infile is True:
+            DIR = os.path.abspath(os.path.realpath("Queue"))
+            length = len(os.listdir(DIR))
+            still_q = length - 1
+            try:
+                first_file = os.listdir(DIR)[0]
+            except:
+                print("No more queued songs\n")
+                queues.clear()
+                return
+
+            main_location = os.path.dirname(os.path.realpath(__file__))
+            song_path = os.path.abspath(os.path.realpath("Queue") + "\\" + first_file)
+            if length != 0:
+                print("Song done, playing next queued\n")
+                print(f"Songs still in queue: {still_q}")
+                song_there = os.path.isfile('song.mp3')
+                if song_there:
+                    os.remove("song.mp3")
+                shutil.move(song_path, main_location)
+                for file in os.listdir("./"):
+                    if file.endswith(".mp3"):
+                        os.rename(file, 'song.mp3')
+
+                voice.play(discord.FFmpegAudio("song.mp3"), after= lambda e: check_queue())
+                voice.source = discord.PCMVolumeTransformer(voice.source)
+                voice.source.volume = 0.07
+            else:
+                queues.clear()
+                return
+        else:
+            queues.clear()
+            print("No songs in Queue")
+
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
@@ -204,17 +240,55 @@ async def sing(ctx, url: str):
         await ctx.send('I dont think you are asking me to sing a song...')
 
     #Stop
-#    @client.command(pass_context=True, aliases=['s', 'sto'])
-#    async def stop(ctx):
-#        voice = get(client.voice_clients, guild=ctx.guild)
+    @client.command(pass_context=True, aliases=['here', 'coin'])
+    async def heresacoin(ctx):
+        voice = get(client.voice_clients, guild=ctx.guild)
 
-#        queues.clear()
+        queues.clear()
 
-#        if voice and voice.is_playing():
-#            print("music stopped")
-#        else:
-#            print('no music to stop')
-#            await ctx.send()
+        if voice and voice.is_playing():
+            print("music stopped")
+            ctx.send("Thanks!")
+        else:
+            print('no music to stop')
+            await ctx.send('I am not singing, but thanks anyway.')
+
+    #Queue
+    queues = {}
+    @client.command(pass_context = True, aliases=['q', 'que'])
+    async def queue(ctx, url: str):
+        Queue_infile = os.path.isdir("./Queue")
+        if Queue_infile is False:
+            os.mkdir("Queue")
+        DIR = os.path.abspath(os.path.realpath("Queue"))
+        q_num = len(os.listdir(DIR))
+        q_num += 1
+        add_queue = True
+
+        while add_queue:
+            if q_num in queues:
+                q_num += 1
+            else:
+                add_queue = False
+                queues[q_num] = q_num
+
+        queue_path = os.path.abspath(os.path.realpath("Queue") + f"\song{q_num}.%(ext)s")
+
+        if 'youtube' in url:
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+            }
+
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                print("Downloading audio now\n")
+                ydl.download([url])
+            await ctx.send("Added song "+ str(q_num) + " to the list!")
+
 '''
 ======================
 END PLAYBACK FUNCTIONS
@@ -224,5 +298,5 @@ END PLAYBACK FUNCTIONS
 token_file = open('SkaldBotToken.json')
 data = json.load(token_file)
 
-token = data['token']
+token = data['Token']
 client.run(token)
