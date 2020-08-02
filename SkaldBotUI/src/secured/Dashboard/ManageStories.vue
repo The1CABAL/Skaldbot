@@ -99,17 +99,13 @@
         methods: {
             getData() {
                 this.loaded = false;
-                let url = BaseUrl + "getStories";
-                var that = this;
-                axios.get(url).then(function (response) {
-                    if (response.data.length > 0) {
-                        that.data = JSON.parse(response.data);
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('There was an error getting the submitted items')
-                });
-                that.loaded = true;
+                this.$store.dispatch('getAllStories').then(() => {
+                    this.data = this.$store.getters.getStories;
+                    this.loaded = true;
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("There was an error getting all the stories");
+                })
             },
             handleSelectionChange(val) {
                 this.selectedRow = val

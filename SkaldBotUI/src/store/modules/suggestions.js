@@ -6,14 +6,18 @@ const state = {
     submittedResponse: '',
     submittedItem: [],
     story: [],
-    wisdom: []
+    stories: [],
+    wisdom: [],
+    wisdoms: []
 };
 
 const getters = {
     getSubmittedResponse: state => state.submittedResponse,
     getSubmittedItem: state => state.submittedItem,
     getStory: state => state.story,
-    getWisdom: state => state.wisdom
+    getWisdom: state => state.wisdom,
+    getStories: state => state.stories,
+    getWisdoms: state => state.wisdoms
 };
 
 const actions = {
@@ -77,6 +81,18 @@ const actions = {
             })
         })
     },
+    async getAllStories({ commit }) {
+        let url = BaseUrl + 'getStories';
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_stories', resp.data)
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
     async getWisdomData({ commit }, wisdomId) {
         let url = BaseUrl + 'wisdom?id=' + wisdomId
         return new Promise((resolve, reject) => {
@@ -100,6 +116,9 @@ const mutations = {
     },
     set_story(state, story) {
         state.story = JSONbig.parse(story)
+    },
+    set_stories(state, stories) {
+        state.stories = JSON.parse(stories);
     },
     set_wisdom(state, wisdom) {
         state.wisdom = JSONbig.parse(wisdom)

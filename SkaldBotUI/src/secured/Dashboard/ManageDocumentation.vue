@@ -25,7 +25,6 @@
 </template>
 
 <script>
-    // fake server
     import VueLoading from '../../components/VueLoading';
     import HelpDocumentation from '../../components/HelpDocumentation';
 
