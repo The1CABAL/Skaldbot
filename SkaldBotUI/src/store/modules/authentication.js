@@ -18,7 +18,8 @@ const state = {
     isClientUser: false,
     isUser: true,
     role: '',
-    user: {}
+    user: {},
+    users: []
 };
 
 const getters = {
@@ -31,7 +32,8 @@ const getters = {
     isClientAdmin: state => state.Role == "ClientAdmin" ? true : false,
     isClientUser: state => state.role = "ClientUser" ? true : false,
     isUser: state => state.isUser,
-    user: state => state.user
+    user: state => state.user,
+    getUsers: state => state.users
 };
 
 const actions = {
@@ -116,6 +118,18 @@ const actions = {
                 });
         })
     },
+    async getAllUsers({ commit }, isMasterAdmin) {
+        let url = BaseUrl + 'getUsers?isMaster=' + isMasterAdmin
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_users', resp.data);
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
     logout({ commit }) {
         return new Promise((resolve, reject) => {
             commit('logout')
@@ -139,6 +153,9 @@ const mutations = {
     },
     auth_error(state) {
         state.status = 'error'
+    },
+    set_users(state, users) {
+        state.users = JSON.parse(users);
     },
     logout(state) {
         state.status = ''
