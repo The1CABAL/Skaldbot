@@ -2,7 +2,7 @@
     <div id="app">
         <div class="container-nav">
             <div class="logo">
-                <img :src="logoImage" style="height: 60px;" />
+                <router-link to="/"><img :src="logoImage" style="height: 60px;" /></router-link>
             </div>
             <div class="navbar">
                 <div class="icon-bar" @click="Show()">
