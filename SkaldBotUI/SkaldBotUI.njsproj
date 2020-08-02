@@ -132,6 +132,9 @@
     <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\suggestions.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\style\main.css">
       <SubType>Code</SubType>
     </Content>

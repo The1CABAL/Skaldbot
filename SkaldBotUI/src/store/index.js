@@ -4,6 +4,7 @@ import forms from './modules/forms';
 import authentication from './modules/authentication'
 import account from './modules/account'
 import documentation from './modules/Documentation'
+import suggestions from './modules/suggestions'
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
         authentication,
         forms,
         account,
-        documentation
+        documentation,
+        suggestions
     }
 });

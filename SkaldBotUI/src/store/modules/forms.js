@@ -113,7 +113,6 @@ const actions = {
 
         return new Promise((resolve, reject) => {
             axios.post(url, model).then(resp => {
-                console.log(resp.data.Message.toString());
                 commit('set_post_status', resp.data.Message.toString())
                 resolve(resp);
             }).catch(err => {
@@ -138,7 +137,6 @@ const mutations = {
     },
     set_post_status(state, message) {
         state.postStatus = message;
-        console.log(state.postStatus)
     }
 };
 

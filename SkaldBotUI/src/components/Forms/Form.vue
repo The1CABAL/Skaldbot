@@ -190,7 +190,6 @@
                         let model = this.model;
                         this.$store.dispatch('postFormData', { url, model }).then(() => {
                             var returnVal = this.$store.getters.getPostStatus;
-                            console.log(returnVal);
                             if (returnVal == "Success") {
                                 that.setNotification(true);
                             }
