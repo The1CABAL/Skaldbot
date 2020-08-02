@@ -19,6 +19,8 @@ const state = {
     isUser: true,
     role: '',
     user: {},
+    userData: [],
+    roles: [],
     users: []
 };
 
@@ -33,7 +35,9 @@ const getters = {
     isClientUser: state => state.role = "ClientUser" ? true : false,
     isUser: state => state.isUser,
     user: state => state.user,
-    getUsers: state => state.users
+    getUser: state => state.userData,
+    getUsers: state => state.users,
+    getAllRoles: state => state.roles
 };
 
 const actions = {
@@ -130,6 +134,42 @@ const actions = {
             })
         })
     },
+    async getUser({ commit }, userId) {
+        let url = BaseUrl + 'getUser?userId=' + userId
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_user_data', resp.data);
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
+    async getAllRoles({ commit }) {
+        let url = BaseUrl + 'getRoles'
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_all_roles', resp.data);
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
+    async updateUser({ commit }, userData) {
+        let url = BaseUrl + 'getUser';
+        return new Promise((resolve, reject) => {
+            axios.post(url, userData).then(resp => {
+                commit('set_status', resp.data);
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
     logout({ commit }) {
         return new Promise((resolve, reject) => {
             commit('logout')
@@ -156,6 +196,15 @@ const mutations = {
     },
     set_users(state, users) {
         state.users = JSON.parse(users);
+    },
+    set_user_data(state, user) {
+        state.userData = JSON.parse(user)[0]
+    },
+    set_all_roles(state, roles) {
+        state.roles = JSON.parse(roles);
+    },
+    set_status(state, status) {
+        state.status = status.Message.toString();
     },
     logout(state) {
         state.status = ''

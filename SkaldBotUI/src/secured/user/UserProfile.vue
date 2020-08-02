@@ -56,8 +56,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
     import HelpDocumentation from '../../components/HelpDocumentation'
 
     export default {
@@ -132,27 +130,25 @@
             formSubmit() {
                 event.preventDefault();
                 if (!this.objectsAreSame(this.userData, this.oldUserData)) {
-                    var url = BaseUrl + 'getUser'
                     var postData = [];
-                    let that = this;
                     if (this.selectedRole != this.userData.r[0].Role) {
                         this.userData.r[0].Role = this.selectedRole
                     }
                     postData.push(this.userData)
 
-                    axios.post(url, postData).then(function (response) {
-                        var returnVal = response.data;
-                        if (returnVal.Message.toString() == "Success") {
-                            that.success = true
-                            that.setNotification(that.success)
-                            that.getData()
+                    this.$store.dispatch('updateUser', postData).then(() => {
+                        var returnVal = this.$store.getters.authStatus;
+                        if (returnVal == "Success") {
+                            this.success = true;
+                            this.setNotification(this.success);
+                            this.getData()
                         }
                         else {
-                            that.success = false
-                            that.setNotification(that.success)
-                            that.getData()
+                            this.success = false;
+                            this.setNotification(this.success);
+                            this.getData()
                         }
-                    });
+                    })
                 }
                 else {
                     this.setNotification(false)
@@ -176,25 +172,22 @@
                 }
             },
             getData() {
-                let url = BaseUrl + 'getUser?userId=' + this.userId;
-                let roleUrl = BaseUrl + 'getRoles'
-                let that = this;
-                axios.get(url).then(function (response) {
-                    var data = response.data[0];
-                    that.userData = JSON.parse(data);
-                    that.userData = that.userData[0]
-                    that.oldUserData = JSON.parse(data);
-                    that.oldUserData = that.oldUserData[0]
-                    that.selectedRole = (that.userData.r[0].Role)
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                var userId = this.userId
 
-                axios.get(roleUrl).then(function (response) {
-                    that.roles = JSON.parse(response.data)
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                this.$store.dispatch('getUser', userId).then(() => {
+                    this.userData = { ...this.$store.getters.getUser };
+                    this.oldUserData = { ...this.$store.getters.getUser };
+                    this.selectedRole = this.$store.getters.getUser.r[0].Role;
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("Error getting user data");
+                })
+
+                this.$store.dispatch('getAllRoles').then(() => {
+                    this.roles = this.$store.getters.getAllRoles;
+                }).catch(err => {
+                    console.log(err);
+                })
             },
             objectsAreSame(x, y) {
                 var objectsAreSame = true;
