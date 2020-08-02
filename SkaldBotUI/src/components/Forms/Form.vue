@@ -243,6 +243,7 @@
                     this.schema = { ...this.$store.getters.getFormSchema };
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
+                    this.newModel();
                     this.loaded = true;
                 }).catch((err) => {
                     console.log(err);
