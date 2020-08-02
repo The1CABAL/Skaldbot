@@ -31,8 +31,6 @@
 <script>
     // fake server
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
 
     export default {
         name: "ManageUsers",
