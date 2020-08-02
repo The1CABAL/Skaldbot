@@ -26,8 +26,6 @@
 
 <script>
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
     import Modal from '../../components/ModalComponent';
 
     export default {

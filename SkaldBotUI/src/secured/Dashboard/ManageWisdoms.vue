@@ -26,8 +26,6 @@
 
 <script>
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
     import Modal from '../../components/ModalComponent';
 
     export default {
@@ -111,17 +109,13 @@
         methods: {
             getData() {
                 this.loaded = false;
-                let url = BaseUrl + "getWisdoms";
-                var that = this;
-                axios.get(url).then(function (response) {
-                    if (response.data.length > 0) {
-                        that.data = JSON.parse(response.data);
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('There was an error getting the submitted items')
-                });
-                that.loaded = true;
+                this.$store.dispatch('getAllWisdoms').then(() => {
+                    this.data = this.$store.getters.getWisdoms;
+                    this.loaded = true
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("Error getting wisdoms");
+                })
             },
             handleSelectionChange(val) {
                 this.selectedRow = val

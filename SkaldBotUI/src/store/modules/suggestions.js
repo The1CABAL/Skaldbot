@@ -104,6 +104,18 @@ const actions = {
                 reject(err);
             })
         })
+    },
+    async getAllWisdoms({ commit }) {
+        let url = BaseUrl + 'getWisdoms';
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_wisdoms', resp.data)
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
     }
 };
 
@@ -112,16 +124,19 @@ const mutations = {
         state.submittedResponse = response.Message.toString();
     },
     set_submitted_item(state, submittedItem) {
-        state.submittedItem = JSON.parse(submittedItem)
+        state.submittedItem = JSON.parse(submittedItem);
     },
     set_story(state, story) {
-        state.story = JSONbig.parse(story)
+        state.story = JSONbig.parse(story);
     },
     set_stories(state, stories) {
         state.stories = JSON.parse(stories);
     },
     set_wisdom(state, wisdom) {
-        state.wisdom = JSONbig.parse(wisdom)
+        state.wisdom = JSONbig.parse(wisdom);
+    },
+    set_wisdoms(state, wisdoms) {
+        state.wisdoms = JSON.parse(wisdoms);
     }
 };
 
