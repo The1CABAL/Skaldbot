@@ -70,7 +70,6 @@
             this.$http.interceptors.response.use(undefined, function (err) {
                 return new Promise(function (resolve, reject) {
                     if (err.status == 401 && err.config && !err.config__isRetryRequest) {
-                        //console.log("Dispatching logout");
                         this.$store.dispatch(logout)
                     }
                     throw err;

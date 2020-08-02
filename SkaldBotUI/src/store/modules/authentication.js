@@ -209,6 +209,7 @@ const mutations = {
     logout(state) {
         state.status = ''
         state.token = ''
+        state.role = ''
 
         localStorage.removeItem('token');
         localStorage.removeItem('accountId');
@@ -218,6 +219,7 @@ const mutations = {
         state.isClientAdmin = false;
         state.isClientUser = false;
         state.isUser = true;
+        state.isLoggedIn = false;
     },
 };
 
