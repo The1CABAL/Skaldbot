@@ -5,6 +5,7 @@ import JSONbig from 'json-bigint'
 const state = {
     submittedResponse: '',
     submittedItem: [],
+    submittedItems: [],
     story: [],
     stories: [],
     wisdom: [],
@@ -16,11 +17,24 @@ const getters = {
     getSubmittedItem: state => state.submittedItem,
     getStory: state => state.story,
     getWisdom: state => state.wisdom,
+    getSubmittedItems: state => state.submittedItems,
     getStories: state => state.stories,
     getWisdoms: state => state.wisdoms
 };
 
 const actions = {
+    async getSuggestions({ commit }) {
+        let url = BaseUrl + 'submittedItems';
+        return new Promise((resolve, reject) => {
+            axios.get(url).then(resp => {
+                commit('set_submitted_items', resp.data)
+                resolve(resp);
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        })
+    },
     async updateSuggestionState({ commit }, suggestionData) {
         let url = BaseUrl + 'submittedItems'
         return new Promise((resolve, reject) => {
@@ -125,6 +139,11 @@ const mutations = {
     },
     set_submitted_item(state, submittedItem) {
         state.submittedItem = JSON.parse(submittedItem);
+    },
+    set_submitted_items(state, submittedItems) {
+        if (submittedItems.length > 0) {
+            state.submittedItems = JSON.parse(submittedItems);
+        }
     },
     set_story(state, story) {
         state.story = JSONbig.parse(story);

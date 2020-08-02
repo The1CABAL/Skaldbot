@@ -107,7 +107,6 @@ const actions = {
         })
     },
     async postFormData({ commit }, formData) {
-        console.log(formData);
         let url = BaseUrl + formData.url
         let model = formData.model
 

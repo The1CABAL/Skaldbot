@@ -126,20 +126,34 @@
         methods: {
             getData() {
                 this.loaded = false;
-                let userUrl = BaseUrl + "submittedItems";
-                var that = this;
-                axios.get(userUrl).then(function (response) {
-                    if (response.data.length > 0) {
-                        that.data = JSON.parse(response.data);
-                        for (var i = 0; i < that.data.length; i++) {
-                            that.data[i].ItemType = that.data[i].luIT[0].ActualItemType
+
+                this.$store.dispatch('getSuggestions').then(() => {
+                    if (this.$store.getters.getSubmittedItems.length > 0) {
+                        this.data = this.$store.getters.getSubmittedItems
+                        for (var i = 0; i < this.data.length; i++) {
+                            this.data[i].ItemType = this.data[i].luIT[0].ActualItemType
                         }
                     }
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('There was an error getting the submitted items')
-                });
-                that.loaded = true;
+                    this.loaded = true;
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("There was an error getting the submitted items");
+                })
+
+                //let userUrl = BaseUrl + "submittedItems";
+                //var that = this;
+                //axios.get(userUrl).then(function (response) {
+                //    if (response.data.length > 0) {
+                //        that.data = JSON.parse(response.data);
+                //        for (var i = 0; i < that.data.length; i++) {
+                //            that.data[i].ItemType = that.data[i].luIT[0].ActualItemType
+                //        }
+                //    }
+                //}).catch(function (error) {
+                //    console.log(error);
+                //    that.$message('There was an error getting the submitted items')
+                //});
+                //that.loaded = true;
             },
             handleSelectionChange(val) {
                 this.selectedRow = val

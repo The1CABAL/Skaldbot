@@ -164,7 +164,6 @@
                 if (this.isValid) {
                     var url = this.action;
                     let that = this;
-                    //console.log(url);
                     if (this.formKey == "LoginForm" || this.formKey == "RegisterForm" || this.formKey == "RegisterUserForm") {
                         var username = this.model.username;
                         var password = this.model.password;
@@ -194,23 +193,12 @@
                                 that.setNotification(true);
                             }
                             else {
-                                //console.log("Setting success to false");
                                 that.setNotification(false);
                             }
                         }).catch(err => {
                             console.log(err);
                             this.$message("Error submitting form");
                         })
-                        //axios.post(url, this.model).then(function (response) {
-                        //    var returnVal = response.data;
-                        //    if (returnVal.Message.toString() == "Success") {
-                        //        that.setNotification(true);
-                        //    }
-                        //    else {
-                        //        //console.log("Setting success to false");
-                        //        that.setNotification(false);
-                        //    }
-                        //});
                     }
                 }
                 event.preventDefault();
