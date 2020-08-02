@@ -307,7 +307,7 @@ class SQL():
             print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
-        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')"
+        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, '@email', '@date')"
         current_date = datetime.now()
 
         text = suggestion[2]
@@ -316,7 +316,8 @@ class SQL():
         sql = sql.replace("@itemType", suggestion[0])
         sql = sql.replace("@title", suggestion[1])
         sql = sql.replace("@text", text)
-        sql = sql.replace("@email", suggestion[3])
+        sql = sql.replace("@serverId", str(suggestion[3]))
+        sql = sql.replace("@email", suggestion[4])
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         try:
@@ -625,7 +626,7 @@ class SQL():
             print('Error getting submitted items. Error {}'.format(e))
 
     def get_submitted_item_by_id(id):
-        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
+        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.ServerId, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
         sql = sql.replace("@id", id)
 
         try:
@@ -688,7 +689,7 @@ class SQL():
             return None
 
     def get_story_by_id(id):
-        sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = "SELECT s.Id, s.Title, s.Story, luS.ServerId, s.IsActive FROM Stories s WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON s.ServerId = luS.Id WHERE s.Id = @id FOR JSON AUTO"
 
         sql = sql.replace("@id", str(id))
 
@@ -713,17 +714,38 @@ class SQL():
 
     def update_story(story):
         sql = "UPDATE Stories SET Title = '@title', Story = '@story', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
         sql = sql.replace("@title", story[1])
         sql = sql.replace("@story", story[2])
-        sql = sql.replace("@isActive", Helpers.bool_to_int(story[3]))
+        server = server.replace("@serverId", str(story[3]))
+        sql = sql.replace("@isActive", Helpers.bool_to_int(story[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         sql = sql.replace("@Id", str(story[0]))
 
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
+
+            c.execute(server)
+            serverId = c.fetchone()
+
+            if serverId:
+                serverId = serverId[0]
+            else:
+                getCurrentServerId = "SELECT ServerId FROM Stories WHERE Id = @id"
+                getCurrentServerId = getCurrentServerId.replace("@id", str(story[0]))
+
+                c.execute(getCurrentServerId)
+                serverId = c.fetchone()[0]
+
+                updateServer = "UPDATE CodeServers SET ServerId = @newServer WHERE Id = @oldServer"
+                updateServer = updateServer.replace("@newServer", str(story[3]))
+                updateServer = updateServer.replace("@oldServer", str(serverId))
+
+                c.execute(updateServer)
+                conn.commit()
 
             c.execute(sql)
 
@@ -756,7 +778,7 @@ class SQL():
             return None
 
     def get_wisdom_by_id(id):
-        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = "SELECT w.Id, w.Title, w.Wisdom, luS.ServerId, w.IsActive FROM Wisdoms w WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON w.ServerId = luS.Id WHERE w.Id = @id FOR JSON AUTO"
 
         sql = sql.replace("@id", str(id))
 
@@ -781,17 +803,38 @@ class SQL():
 
     def update_wisdom(wisdom):
         sql = "UPDATE Wisdoms SET Title = '@title', Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
         sql = sql.replace("@title", wisdom[1])
         sql = sql.replace("@wisdom", wisdom[2])
-        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[3]))
+        server = server.replace("@serverId", str(wisdom[3]))
+        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         sql = sql.replace("@Id", str(wisdom[0]))
 
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
+            
+            c.execute(server)
+            serverId = c.fetchone()
+
+            if serverId:
+                serverId = serverId[0]
+            else:
+                getCurrentServerId = "SELECT ServerId FROM Wisdoms WHERE Id = @id"
+                getCurrentServerId = getCurrentServerId.replace("@id", str(wisdom[0]))
+
+                c.execute(getCurrentServerId)
+                serverId = c.fetchone()[0]
+
+                updateServer = "UPDATE CodeServers SET ServerId = @newServer WHERE Id = @oldServer"
+                updateServer = updateServer.replace("@newServer", str(wisdom[3]))
+                updateServer = updateServer.replace("@oldServer", str(serverId))
+
+                c.execute(updateServer)
+                conn.commit()
 
             c.execute(sql)
 

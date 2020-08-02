@@ -48,7 +48,7 @@ class Story(Resource):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
 
-            story = StoryModel(req_data[0]['Id'], req_data[0]['Title'], req_data[0]['Story'], req_data[0]['IsActive'])
+            story = StoryModel(req_data[0]['Id'], req_data[0]['Title'], req_data[0]['Story'], req_data[0]['luS'][0]['ServerId'], req_data[0]['IsActive'])
 
             updated = SQL.update_story(story)
 
@@ -118,7 +118,7 @@ class Wisdom(Resource):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
 
-            wisdom = WisdomModel(req_data[0]['Id'], req_data[0]['Title'], req_data[0]['Wisdom'], req_data[0]['IsActive'])
+            wisdom = WisdomModel(req_data[0]['Id'], req_data[0]['Title'], req_data[0]['Wisdom'], req_data[0]['luS'][0]['ServerId'], req_data[0]['IsActive'])
 
             updated = SQL.update_wisdom(wisdom)
 

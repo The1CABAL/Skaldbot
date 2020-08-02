@@ -112,7 +112,7 @@ class SubmitItem(Resource):
             print('subimt story called')
             req_data = request.get_json()
 
-            suggestion = Suggestion(req_data['typeId'], req_data['title'], req_data['story'], req_data['email'])
+            suggestion = Suggestion(req_data['typeId'], req_data['title'], req_data['story'], req_data['serverId'], req_data['email'])
     
             isSubmitted = SQL.submit_item_suggestion(suggestion);
 
@@ -185,12 +185,19 @@ class ManageSubmittedItems(Resource):
 
             isUpdated = SQL.update_submitted_item(isApproved, id, userId)
 
-            response = app.response_class(
-                response = json.dumps({"Message": "Success"}),
-                status = 200,
-                mimetype='application/json')
+            if isUpdated:
+                response = app.response_class(
+                    response = json.dumps({"Message": "Success"}),
+                    status = 200,
+                    mimetype='application/json')
             
-            return response
+                return response
+            else:
+                response = app.response_class(
+                    response = json.dumps({"Message": "Failure"}), 
+                    status=424, 
+                    mimetype='application/json')
+                return response
         else:
             response = app.response_class(
                 response = json.dumps({"Message": "Failure"}), 

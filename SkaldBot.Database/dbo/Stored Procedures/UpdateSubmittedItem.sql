@@ -15,7 +15,18 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @ItemTypeId INT = (SELECT ItemTypeId FROM SubmittedItems WHERE Id = @Id)
+	DECLARE @ServerId BIGINT = (SELECT ServerId FROM SubmittedItems WHERE Id = @Id)
+	DECLARE @ServerExists BIT = 0
 	DECLARE @Date DATETIMEOFFSET = GETDATE()
+
+	IF NOT EXISTS(SELECT 1 FROM CodeServers WHERE ServerId = @ServerId)
+	BEGIN
+		SET @ServerExists = 0
+	END
+	ELSE
+	BEGIN
+		SET @ServerExists = 1
+	END
 
 	IF @IsApproved = 0
 	BEGIN
@@ -23,16 +34,25 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		IF @ServerExists = 0
+		BEGIN
+			INSERT INTO CodeServers (ServerId, UpdateDate) VALUES (@ServerId, @Date)
+			
+		END
+
+		SET @ServerId = (SELECT Id FROM CodeServers WHERE ServerId = @ServerId)
+
 		IF @ItemTypeId = 1 --Story
 		BEGIN
 			
 			UPDATE SubmittedItems SET IsReviewed = 1, IsApproved = 1, ReviewedByUserId = @UserId, ReviewedDate = @Date WHERE Id = @Id
 
-			INSERT INTO Stories (Title, Story, WasSubmitted, SubmittedItemId, UpdateDate)
+			INSERT INTO Stories (Title, Story, WasSubmitted, ServerId, SubmittedItemId, UpdateDate)
 			VALUES (
 				(SELECT Title FROM SubmittedItems WHERE Id = @Id), 
 				(SELECT ItemText FROM SubmittedItems WHERE Id = @Id), 
-				1, 
+				1,
+				@ServerId,
 				@Id, 
 				@Date
 			)
@@ -41,11 +61,12 @@ BEGIN
 		BEGIN
 			UPDATE SubmittedItems SET IsReviewed = 1, IsApproved = 1, ReviewedByUserId = @UserId, ReviewedDate = @Date WHERE Id = @Id
 
-			INSERT INTO Wisdoms (Title, Wisdom, WasSubmitted, SubmittedItemId, UpdateDate)
+			INSERT INTO Wisdoms (Title, Wisdom, WasSubmitted, ServerId, SubmittedItemId, UpdateDate)
 			VALUES (
 				(SELECT Title FROM SubmittedItems WHERE Id = @Id), 
 				(SELECT ItemText FROM SubmittedItems WHERE Id = @Id), 
 				1, 
+				@ServerId,
 				@Id, 
 				@Date
 			)
