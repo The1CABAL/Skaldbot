@@ -44,7 +44,6 @@
     import VueFormGenerator from 'vue-form-generator'
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapGetters, mapActions } from "vuex";
-    import { BaseUrl } from '../../helpers/constants';
 
     VueFormGenerator.validators.emailValidation = function (value, field, model) {
         let email = model.email;
@@ -85,61 +84,11 @@
             }
         },
         mounted: function () {
-            this.loaded = false;
-            let schemaUrl = BaseUrl + "getFormSchema?formKey=" + this.formKey;
-            let actionUrl = BaseUrl + "getActionLink?formKey=" + this.formKey;
-            let nameUrl = BaseUrl + "getFormName?formKey=" + this.formKey;
-            var that = this;
-            axios.get(schemaUrl).then(function (response) {
-                that.schema = JSON.parse(response.data);
-            }).catch(function (error) {
-                that.$message('Error loading form')
-            });
-
-            axios.get(actionUrl).then(function (response) {
-                //console.log(JSON.parse(response.data));
-                var data = JSON.parse(response.data);
-                var actionLink = data[0];
-                //console.log(actionLink.ActionLink);
-                that.action = BaseUrl + actionLink.ActionLink;
-                //console.log(that.action);
-            }).catch(error => { console.log(error) });
-
-            axios.get(nameUrl).then(function (response) {
-                var data = JSON.parse(response.data);
-                var name = data[0].FormName;
-                that.formName = name;
-                that.loaded = true;
-            }).catch(error => { console.log(error) });
+            this.getData();
         },
         watch: {
             formKey: function () {
-                this.loaded = false;
-                let schemaUrl = BaseUrl + "getFormSchema?formKey=" + this.formKey;
-                let actionUrl = BaseUrl + "getActionLink?formKey=" + this.formKey;
-                let nameUrl = BaseUrl + "getFormName?formKey=" + this.formKey;
-                var that = this;
-                axios.get(schemaUrl).then(function (response) {
-                    that.schema = JSON.parse(response.data);
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('Error loading form')
-                });
-
-                axios.get(actionUrl).then(function (response) {
-                    //console.log(JSON.parse(response.data));
-                    var data = JSON.parse(response.data);
-                    var actionLink = data[0];
-                    //console.log(actionLink.ActionLink);
-                    that.action = BaseUrl + actionLink.ActionLink;
-                }).catch(error => { console.log(error) });
-
-                axios.get(nameUrl).then(function (response) {
-                    var data = JSON.parse(response.data);
-                    var name = data[0].FormName;
-                    that.formName = name;
-                    that.loaded = true;
-                }).catch(error => { console.log(error) });
+                this.getData();
             },
             loaded: function () {
                 if (this.loaded) {
@@ -238,16 +187,31 @@
                         }
                     }
                     else {
-                        axios.post(url, this.model).then(function (response) {
-                            var returnVal = response.data;
-                            if (returnVal.Message.toString() == "Success") {
+                        let model = this.model;
+                        this.$store.dispatch('postFormData', { url, model }).then(() => {
+                            var returnVal = this.$store.getters.getPostStatus;
+                            console.log(returnVal);
+                            if (returnVal == "Success") {
                                 that.setNotification(true);
                             }
                             else {
                                 //console.log("Setting success to false");
                                 that.setNotification(false);
                             }
-                        });
+                        }).catch(err => {
+                            console.log(err);
+                            this.$message("Error submitting form");
+                        })
+                        //axios.post(url, this.model).then(function (response) {
+                        //    var returnVal = response.data;
+                        //    if (returnVal.Message.toString() == "Success") {
+                        //        that.setNotification(true);
+                        //    }
+                        //    else {
+                        //        //console.log("Setting success to false");
+                        //        that.setNotification(false);
+                        //    }
+                        //});
                     }
                 }
                 event.preventDefault();
@@ -273,6 +237,17 @@
                     this.showFormExtras = false;
                 else
                     this.showFormExtras = true;
+            },
+            getData() {
+                this.$store.dispatch('fetchFormByFormKey', this.formKey).then(() => {
+                    this.schema = { ...this.$store.getters.getFormSchema };
+                    this.action = this.$store.getters.getFormActionLink;
+                    this.formName = this.$store.getters.getFormName;
+                    this.loaded = true;
+                }).catch((err) => {
+                    console.log(err);
+                    this.$message('Error getting form data');
+                })
             }
         },
         computed: {

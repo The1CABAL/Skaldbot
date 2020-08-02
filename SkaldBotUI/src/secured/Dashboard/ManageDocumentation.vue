@@ -6,7 +6,7 @@
             <div style="margin-bottom: 10px">
                 <el-row>
                     <el-col :span="6">
-                        <el-input placeholder="Filter Item Type" v-model="filters[0].value"></el-input>
+                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
                     </el-col>
                 </el-row>
             </div>

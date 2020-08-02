@@ -60,8 +60,8 @@
                                     <input type="text" id="title" v-model="lookupData[0].Title" />
                                     <label for="itemText">Content:</label>
                                     <br />
-                                    <textarea id="itemText" v-if="modalDisplayTypeId == 2" v-model="lookupData[0].Story"></textarea>
-                                    <textarea id="itemText" v-if="modalDisplayTypeId == 3" v-model="lookupData[0].Wisdom"></textarea>
+                                    <textarea id="itemText" v-if="modalDisplayTypeId == 2" v-model="lookupData[0].Story" class="modal-textarea"></textarea>
+                                    <textarea id="itemText" v-if="modalDisplayTypeId == 3" v-model="lookupData[0].Wisdom" class="modal-textarea"></textarea>
                                     <br />
                                     <label for="isActive">Is Active:</label>
                                     <input type="checkbox" id="isActive" v-model="lookupData[0].IsActive" />

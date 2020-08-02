@@ -310,9 +310,12 @@ class SQL():
         sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')"
         current_date = datetime.now()
 
+        text = suggestion[2]
+        text = text.replace("'", "''");
+
         sql = sql.replace("@itemType", suggestion[0])
         sql = sql.replace("@title", suggestion[1])
-        sql = sql.replace("@text", suggestion[2])
+        sql = sql.replace("@text", text)
         sql = sql.replace("@email", suggestion[3])
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
@@ -604,7 +607,7 @@ class SQL():
             print('Error updating user. Error {}'.format(e))
 
     def get_submitted_items():
-        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
+        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate, si.IsApproved, si.IsReviewed FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()

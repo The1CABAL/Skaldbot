@@ -14,6 +14,16 @@
             <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
                 <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
                 </el-table-column>
+                <el-table-column prop="IsApproved" label="Is Approved">
+                    <template slot-scope="scope">
+                        <div>{{getBool(scope.row.IsApproved)}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="IsReviewed" label="Is Reviewed">
+                    <template slot-scope="scope">
+                        <div>{{getBool(scope.row.IsReviewed)}}</div>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="CreateDate" label="Date Created">
                     <template slot-scope="scope">
                         <div>{{getDate(scope.row.CreateDate)}}</div>
@@ -139,6 +149,12 @@
                 return (elDate.getMonth() + 1) + '-'
                     + elDate.getDate() + '-'
                     + elDate.getFullYear()
+            },
+            getBool(value) {
+                if (value)
+                    return "True"
+                else
+                    return "False"
             },
             showModal() {
                 this.isModalVisible = true

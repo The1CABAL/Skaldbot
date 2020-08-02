@@ -26,8 +26,6 @@
 
 <script>
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
 
     export default {
         name: "ManageForms",
@@ -98,7 +96,7 @@
                 });
             },
             getData() {
-                this.data = this.$store.getters.allForms
+                this.data = this.$store.getters.getForms
                 this.loaded = true;
             },
             handleSelectionChange(val) {

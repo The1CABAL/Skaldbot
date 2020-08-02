@@ -1,5 +1,6 @@
 <template>
     <div id="ModifyForm">
+        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
         <div v-if="modalVisible">
             <transition name="modal-fade">
                 <div class="modal-backdrop">
@@ -107,10 +108,15 @@
                 this.isNewForm = true;
             }
         },
+        beforeRouteEnter(to, from, next) {
+            next((vm) => {
+                vm.prevRoute = from
+            })
+        },
         methods: {
             fetchData() {
                 if (this.formKey != null && this.formKey != '') {
-                    return this.$store.dispatch('fetchFormByFormKey', this.formKey).then(() => {
+                    return this.$store.dispatch('fetchFormToEdit', this.formKey).then(() => {
                         this.getData();
                     });
                 }
@@ -191,7 +197,10 @@
             },
             close() {
                 this.modalVisible = false;
-            }
+            },
+            goBack() {
+                this.$router.push(this.prevRoute.path)
+            },
         }
     }
 </script>

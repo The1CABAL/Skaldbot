@@ -61,6 +61,27 @@ input[type=text] {
         color: #fff
     }
 
+input[type=email] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+    input[type=email]:disabled {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        color: #fff
+    }
+
 textarea {
     width: 100%;
     padding: 12px 20px;
@@ -69,6 +90,10 @@ textarea {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+textarea:disabled{
+    color:white;
 }
 
 .modal-backdrop {
@@ -93,6 +118,8 @@ textarea {
     width: 100%;
     border-radius: 5px;
 }
+
+
 
 .modal-header,
 .modal-footer {
@@ -161,7 +188,7 @@ textarea {
 
 .topright {
     position: initial;
-    margin-left: 98%;
+    margin-left: 96%;
     margin-right: 0;
     margin-top: 2px;
 }
