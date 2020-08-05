@@ -1,1 +1,1 @@
-START cmd.exe /k "cd C:\Program Files (x86)\Go Agent\pipelines\SkaldBot\SkalBotUI&.\env\Scripts\activate&SET FLASK_APP=runserver.py&flask run&serve -s C:\Program Files (x86)\Go Agent\pipelines\SkaldBot\SkalBotUI\dist" 
+echo "TEST"
