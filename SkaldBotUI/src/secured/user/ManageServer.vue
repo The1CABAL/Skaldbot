@@ -9,15 +9,15 @@
                 </select>
             </div>
             <div v-if="serverLoaded && !newServer">
-                <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="getServers" />
+                <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="setSuccess" />
             </div>
             <div v-if="newServer">
-                <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="getServers" />
+                <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="setSuccess" />
             </div>
         </div>
         <div v-if="!hasExistingSever">
             <p>Add new server</p>
-            <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="getServers" />
+            <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="setSuccess" />
         </div>
         <hr />
         <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
@@ -73,6 +73,7 @@
                 this.newServer = false;
                 this.selectedServer = [];
                 this.servers = [];
+                this.serverLoaded = false;
                 var accountId = this.$store.getters.getAccountId;
                 this.$store.dispatch('getAccountServers', accountId).then(() => {
                     this.servers = this.$store.getters.getServers;
@@ -95,6 +96,7 @@
                     Id: 0,
                     ServerId: "",
                     AccountId: this.$store.getters.getAccountId,
+                    DailyWisdom: 1,
                     UpdateDate: ""
                 }
                 var model = [defaultModel]
@@ -127,6 +129,10 @@
             },
             closeHelp() {
                 this.showHelp = false;
+            },
+            setSuccess() {
+                this.$message("Successfully updated!");
+                this.getServers();
             }
         }
     }
