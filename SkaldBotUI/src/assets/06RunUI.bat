@@ -1,3 +1,3 @@
 @echo on
 @echo starting ui
-serve -s ../../dist
+\K "serve -s ../../dist"
