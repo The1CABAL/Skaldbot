@@ -61,9 +61,8 @@ BEGIN
 		BEGIN
 			UPDATE SubmittedItems SET IsReviewed = 1, IsApproved = 1, ReviewedByUserId = @UserId, ReviewedDate = @Date WHERE Id = @Id
 
-			INSERT INTO Wisdoms (Title, Wisdom, WasSubmitted, ServerId, SubmittedItemId, UpdateDate)
-			VALUES (
-				(SELECT Title FROM SubmittedItems WHERE Id = @Id), 
+			INSERT INTO Wisdoms (Wisdom, WasSubmitted, ServerId, SubmittedItemId, UpdateDate)
+			VALUES ( 
 				(SELECT ItemText FROM SubmittedItems WHERE Id = @Id), 
 				1, 
 				@ServerId,
