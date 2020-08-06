@@ -36,7 +36,18 @@ BEGIN
 	BEGIN
 		IF @ServerExists = 0
 		BEGIN
-			INSERT INTO CodeServers (ServerId, UpdateDate) VALUES (@ServerId, @Date)
+			DECLARE @AccountId INT = 0
+
+			IF EXISTS(SELECT 1 FROM Users WHERE Email = (SELECT SubmitterEmail FROM SubmittedItems WHERE Id = @Id))
+			BEGIN
+				SET @AccountId = (SELECT AccountId FROM Users WHERE Email = (SELECT SubmitterEmail FROM SubmittedItems WHERE Id = @Id))
+			END
+			ELSE
+			BEGIN
+				SET @AccountId = 1
+			END
+
+			INSERT INTO CodeServers (ServerId, UpdateDate, Nickname, AccountId) VALUES (@ServerId, @Date, CONCAT('New Server Added', ' - ', CONVERT(NVARCHAR(255), @Date)), @AccountId)
 			
 		END
 

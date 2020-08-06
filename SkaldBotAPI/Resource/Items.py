@@ -118,7 +118,7 @@ class Wisdom(Resource):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
 
-            wisdom = WisdomModel(req_data[0]['Id'], req_data[0]['Title'], req_data[0]['Wisdom'], req_data[0]['luS'][0]['ServerId'], req_data[0]['IsActive'])
+            wisdom = WisdomModel(req_data[0]['Id'], req_data[0]['Wisdom'], req_data[0]['luS'][0]['ServerId'], req_data[0]['IsActive'])
 
             updated = SQL.update_wisdom(wisdom)
 

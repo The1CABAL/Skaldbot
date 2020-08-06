@@ -759,7 +759,7 @@ class SQL():
             return False
 
     def get_all_wisdoms():
-        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
+        sql = "SELECT Id, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()
@@ -778,7 +778,7 @@ class SQL():
             return None
 
     def get_wisdom_by_id(id):
-        sql = "SELECT w.Id, w.Title, w.Wisdom, luS.ServerId, w.IsActive FROM Wisdoms w WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON w.ServerId = luS.Id WHERE w.Id = @id FOR JSON AUTO"
+        sql = "SELECT w.Id, w.Wisdom, luS.ServerId, w.IsActive FROM Wisdoms w WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON w.ServerId = luS.Id WHERE w.Id = @id FOR JSON AUTO"
 
         sql = sql.replace("@id", str(id))
 
@@ -802,11 +802,10 @@ class SQL():
             return None
 
     def update_wisdom(wisdom):
-        sql = "UPDATE Wisdoms SET Title = '@title', Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        sql = "UPDATE Wisdoms SET Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
         server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
-        sql = sql.replace("@title", wisdom[1])
         sql = sql.replace("@wisdom", wisdom[2])
         server = server.replace("@serverId", str(wisdom[3]))
         sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[4]))

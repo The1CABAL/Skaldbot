@@ -109,10 +109,18 @@ class GetActionLink(Resource):
 class SubmitItem(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
-            print('subimt story called')
             req_data = request.get_json()
 
-            suggestion = Suggestion(req_data['typeId'], req_data['title'], req_data['story'], req_data['serverId'], req_data['email'])
+            title = ''
+            data_dic = json.loads(json.dumps(req_data))
+            titleExists = "title" in data_dic
+
+            if titleExists:
+                title = req_data['title']
+            else:
+                title = "NULL"
+
+            suggestion = Suggestion(req_data['typeId'], title, req_data['story'], req_data['ServerId'], req_data['email'])
     
             isSubmitted = SQL.submit_item_suggestion(suggestion);
 
