@@ -19,15 +19,20 @@
             <p>Add new server</p>
             <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="getServers" />
         </div>
+        <hr />
+        <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+        <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
     </div>
 </template>
 
 <script>
     import Form from '../../components/Forms/Form';
+    import HelpDocumentation from '../../components/HelpDocumentation'
     export default {
         name: "ManageServer",
         components: {
-            Form
+            Form,
+            HelpDocumentation
         },
         data() {
             return {
@@ -35,6 +40,8 @@
                 hasExistingSever: false,
                 serverLoaded: false,
                 newServer: false,
+                showHelp: false,
+                helpContentKey: 'AddServerHelp',
                 prevRoute: {},
                 servers: [],
                 selectedServer: []
@@ -114,6 +121,12 @@
                     this.selectedServer = [];
                     this.serverLoaded = false;
                 }
+            },
+            openHelp() {
+                this.showHelp = true;
+            },
+            closeHelp() {
+                this.showHelp = false;
             }
         }
     }
