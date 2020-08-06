@@ -1,6 +1,6 @@
 import collections
 
-Suggestion = collections.namedtuple('suggestion', ['typeId', 'title', 'story', 'serverid', 'email'])
+Suggestion = collections.namedtuple('suggestion', ['typeId', 'title', 'story', 'serverid', 'discorduserid'])
 User = collections.namedtuple('user', ['username', 'password'])
 RegisterUser = collections.namedtuple('registeruser', ['accountname', 'username', 'firstname', 'lastname', 'discorduserid', 'password', 'email'])
 RegisterAccountUser = collections.namedtuple('registeraccountuser', ['accountid', 'username', 'firstname', 'lastname', 'discorduserid', 'password'])

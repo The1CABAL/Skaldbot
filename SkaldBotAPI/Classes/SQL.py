@@ -307,7 +307,7 @@ class SQL():
             print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
-        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, '@email', '@date')"
+        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, DiscordUserId, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, @discordId, '@date')"
         current_date = datetime.now()
 
         text = suggestion[2]
@@ -317,7 +317,7 @@ class SQL():
         sql = sql.replace("@title", suggestion[1])
         sql = sql.replace("@text", text)
         sql = sql.replace("@serverId", str(suggestion[3]))
-        sql = sql.replace("@email", suggestion[4])
+        sql = sql.replace("@discordId", str(suggestion[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         try:
@@ -608,7 +608,7 @@ class SQL():
             print('Error updating user. Error {}'.format(e))
 
     def get_submitted_items():
-        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate, si.IsApproved, si.IsReviewed FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
+        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.DiscordUserId, si.CreateDate, si.IsApproved, si.IsReviewed FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()
@@ -626,7 +626,7 @@ class SQL():
             print('Error getting submitted items. Error {}'.format(e))
 
     def get_submitted_item_by_id(id):
-        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.ServerId, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
+        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.ServerId, si.DiscordUserId FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
         sql = sql.replace("@id", id)
 
         try:

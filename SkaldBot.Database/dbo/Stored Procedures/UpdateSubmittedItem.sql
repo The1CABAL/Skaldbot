@@ -38,9 +38,9 @@ BEGIN
 		BEGIN
 			DECLARE @AccountId INT = 0
 
-			IF EXISTS(SELECT 1 FROM Users WHERE Email = (SELECT SubmitterEmail FROM SubmittedItems WHERE Id = @Id))
+			IF EXISTS(SELECT 1 FROM Users WHERE DiscordUserId = (SELECT DiscordUserId FROM SubmittedItems WHERE Id = @Id))
 			BEGIN
-				SET @AccountId = (SELECT AccountId FROM Users WHERE Email = (SELECT SubmitterEmail FROM SubmittedItems WHERE Id = @Id))
+				SET @AccountId = (SELECT AccountId FROM Users WHERE DiscordUserId = (SELECT DiscordUserId FROM SubmittedItems WHERE Id = @Id))
 			END
 			ELSE
 			BEGIN

@@ -26,8 +26,8 @@
                                 <input type="text" id="serverId" v-model="lookupData[0].ServerId" disabled />
                                 <label for="dateCreated">Date Submitted:</label>
                                 <input type="text" id="dateCreated" :value="getDate(lookupData[0].CreateDate)" disabled />
-                                <label for="submitterEmail">Submitted By:</label>
-                                <input type="email" id="submitterEmail" v-model="lookupData[0].SubmitterEmail" disabled />
+                                <label for="discordUserId">Submitted By:</label>
+                                <input type="text" id="discordUserId" v-model="lookupData[0].DiscordUserId" disabled />
                             </slot>
                         </section>
                         <footer class="modal-footer">
