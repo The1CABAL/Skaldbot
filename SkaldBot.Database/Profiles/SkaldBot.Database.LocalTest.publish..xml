@@ -2,9 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
-    <TargetDatabaseName>SkaldBot.Database</TargetDatabaseName>
+    <TargetDatabaseName>SkaldbotTest</TargetDatabaseName>
     <DeployScriptFileName>SkaldBot.Database.sql</DeployScriptFileName>
-    <TargetConnectionString>Data Source=192.168.1.11;Persist Security Info=True;User ID=sa;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
+    <TargetConnectionString>Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
     <ProfileVersionNumber>1</ProfileVersionNumber>
   </PropertyGroup>
 </Project>
