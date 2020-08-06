@@ -5,6 +5,8 @@
             <button class="close" @click="closeNotification">x</button>
         </div>
         <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
+        <button type="button" class="btn-button" v-on:click="changePassword">Change Password</button>
+        <ChangePassword v-if="showChangePassword" @close="closeChangePassword"></ChangePassword>
         <div class="panel">
             <div class="panel-heading"><h4>User Profile</h4></div>
             <div class="panel-body">
@@ -48,7 +50,7 @@
                     <hr />
                     <button type="submit" class="btn-button">Save</button>
                     <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
-                    <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
+                    <HelpDocumentation v-if="showHelp" @close="closeChangePassword"></HelpDocumentation>
                 </form>
             </div>
         </div>
@@ -57,6 +59,7 @@
 
 <script>
     import HelpDocumentation from '../../components/HelpDocumentation'
+    import ChangePassword from '../../account/ChangePassword'
 
     export default {
         name: "UserProfile",
@@ -67,7 +70,8 @@
             }
         },
         components: {
-            HelpDocumentation
+            HelpDocumentation,
+            ChangePassword
         },
         data() {
             return {
@@ -83,6 +87,7 @@
                 prevRoute: {},
                 helpContentKey: 'RegisterHelp',
                 showHelp: false,
+                showChangePassword: false
             }
         },
         watch: {
@@ -218,6 +223,12 @@
             },
             closeHelp() {
                 this.showHelp = false;
+            },
+            changePassword() {
+                this.showChangePassword = true;
+            },
+            closeChangePassword() {
+                this.showChangePassword = false;
             }
         }
     }

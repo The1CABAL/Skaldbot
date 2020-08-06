@@ -4,3 +4,4 @@ EXEC UpsertCodeVueForms 'LoginForm', 'Login', 2, 1
 EXEC UpsertCodeVueForms 'RegisterForm', 'Register', 3, 1
 EXEC UpsertCodeVueForms 'RegisterUserForm', 'Register User', 4, 1
 EXEC UpsertCodeVueForms 'ManageServer', 'Manage Server', 5, 1
+EXEC UpsertCodeVueForms 'UpdatePassword', 'Change Password', 6, 1

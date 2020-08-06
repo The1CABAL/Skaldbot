@@ -146,3 +146,31 @@ class GetUserForProfile(Resource):
             response = app.response_class(status=424,
                 mimetype='application/json')
             return response
+
+class ChangePassword(Resource):
+    def post(self):
+        if SQL.test_connect_to_dbo():
+            req_data = request.get_json()
+
+            password = ChangePasswordModel(req_data['UserId'], req_data['password'])
+
+            isUpdated = SQL.update_user_password(password)
+
+            if isUpdated:
+                response = app.response_class(response = json.dumps({"Message": "Success"}),
+                status=200,
+                mimetype='application/json')
+
+                return response
+            else:
+                response = app.response_class(response = json.dumps({"Message": "Fail"}),
+                status=424,
+                mimetype='application/json')
+
+                return response
+        else:
+            response = app.response_class(response = json.dumps({"Message": "Fail"}),
+                status=424,
+                mimetype='application/json')
+
+            return response

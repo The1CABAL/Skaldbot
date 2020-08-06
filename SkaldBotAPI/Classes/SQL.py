@@ -1152,3 +1152,25 @@ class SQL():
         except pymssql.Error as e:
             print("Error updating server. Error {}".format(e))
             return False
+
+    def update_user_password(changePasswordModel):
+        sql = "UPDATE Users SET PasswordHash = '@password' WHERE Id = '@id'"
+
+        password = Cryptography.hashPassword(changePasswordModel[1])
+        sql = sql.replace("@id", changePasswordModel[0])
+        sql = sql.replace("@password", password.decode())
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error updating password! Error {}".format(e))
+            return False

@@ -31,6 +31,9 @@
   <ItemGroup>
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
+    <Content Include="src\account\ChangePassword.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\user\ManageServer.vue">
       <SubType>Code</SubType>
     </Content>

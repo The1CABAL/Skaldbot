@@ -11,3 +11,4 @@ FormModel = collections.namedtuple('formmodel', ['formkey', 'fieldschema', 'acti
 AccountProfile = collections.namedtuple('accountprofile', ['accountid', 'accountname', 'createdate', 'isactive'])
 Documentation = collections.namedtuple('documentation', ['helpcontentkey', 'helptitle', 'helpcontent', 'isactive', 'updatebyuserid', 'isadmin'])
 AccountServerModel = collections.namedtuple('accountserver', ['id', 'serverid', 'accountid', 'nickname'])
+ChangePasswordModel = collections.namedtuple('changepassword', ['userid', 'password'])

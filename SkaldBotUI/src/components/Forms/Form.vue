@@ -229,6 +229,8 @@
 
                     if (this.formKey == "ManageServer")
                         this.$emit("ServerSuccess", true);
+                    else if (this.formKey == "UpdatePassword")
+                        this.$emit("PasswordSuccess", true);
                 }
                 else {
                     this.submitted = true;
