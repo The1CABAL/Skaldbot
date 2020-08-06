@@ -1,6 +1,6 @@
 <template>
     <div id="DashboardHome">
-        <p>This is the home dashboard</p>
+        <p>Welcome to the admin dashboard. Select one of the options in the navigation pane to the left to start managing the application!</p>
     </div>
 </template>
 
