@@ -81,10 +81,19 @@
             accountId: {
                 type: String,
                 required: false
+            },
+            passedModel: {
+                type: [Object, Array],
+                required: false
             }
         },
         mounted: function () {
-            this.getData();
+            if (!this.admin && this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                this.getData();
+            }
         },
         watch: {
             formKey: function () {
@@ -100,6 +109,10 @@
                     setTimeout(
                         this.closeNotification, 5000);
                 }
+            },
+            passedModel: function () {
+                if (this.passedModel != undefined && this.passedModel != null)
+                    this.setModel();
             }
         },
         data() {
@@ -126,8 +139,10 @@
             }
         },
         created() {
-            if (this.$store.getters.isAdmin || this.$store.getters.isMasterAdmin) {
-                this.admin = true
+            if (!this.admin && this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            } else {
+                this.getData();
             }
         },
         methods: {
@@ -169,13 +184,13 @@
                         var password = this.model.password;
                         //console.log(this.formKey);
                         if (this.formKey == "LoginForm")
-                            this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))
+                            this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$message("Error")).catch(err => { this.$message("Invalid Creds") })
                         else if (this.formKey == "RegisterForm") {
                             var firstname = this.model.firstname;
                             var lastname = this.model.lastname;
                             var accountname = this.model.accountName;
                             var discorduserid = this.model.discordUserId;
-                            this.$store.dispatch('register', { accountname, username, firstname, lastname, discorduserid, password }).then(() => this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("LoginSuccess", true) : this.$emit("LoginSuccess", false)).catch(err => console.log(err))).catch(err => console.log(err))
+                            this.$store.dispatch('register', { accountname, username, firstname, lastname, discorduserid, password }).then(() => this.$store.dispatch('login', { username, password }).then(resp => resp.statusText == "OK" ? this.$emit("RegisterSuccess", true) : this.$emit("RegisterSuccess", false)).catch(err => console.log(err))).catch(err => console.log(err))
                         }
                         else if (this.formKey == "RegisterUserForm") {
                             var firstname = this.model.firstname;
@@ -201,18 +216,24 @@
                         })
                     }
                 }
+                else {
+                    this.setNotification(false);
+                }
                 event.preventDefault();
 
             },
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
-                    this.msg = "Successfully submitted the suggestion!";
+                    this.msg = "Successfully submitted!";
+
+                    if (this.formKey == "ManageServer")
+                        this.$emit("ServerSuccess", true);
                 }
                 else {
                     this.submitted = true;
                     this.isError = true;
-                    this.msg = "There was an error submitting the suggestion. Please try again.";
+                    this.msg = "There was an error submitting. Please try again.";
                 }
             },
             closeNotification() {
@@ -231,15 +252,32 @@
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
                     this.newModel();
+                    if (this.passedModel != undefined && this.passedModel != null) {
+                        this.setModel();
+                    }
                     this.loaded = true;
                 }).catch((err) => {
                     console.log(err);
                     this.$message('Error getting form data');
                 })
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.admin = false
+                        this.getData();
+                    }
+                    else {
+                        this.admin = true
+                        this.getData();
+                    }
+                });
+            },
+            setModel() {
+                this.model = this.passedModel[0];
             }
         },
         computed: {
-            ...mapGetters(["formSchema", "isAdmin", "isMasterAdmin", "isUser"])
         }
     }
 </script>

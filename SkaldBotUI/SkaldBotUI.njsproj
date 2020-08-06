@@ -31,6 +31,9 @@
   <ItemGroup>
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
+    <Content Include="src\secured\user\ManageServer.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\account\Register.vue" />
     <Content Include="src\account\Login.vue">
       <SubType>Code</SubType>
@@ -130,6 +133,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\store\modules\forms.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\store\modules\servers.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\store\modules\suggestions.js">

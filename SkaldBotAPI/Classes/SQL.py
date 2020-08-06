@@ -1081,3 +1081,74 @@ class SQL():
         except pymssql.Error as e:
             print("Error updating documentation. Error {}".format(e))
             return None
+
+    def get_servers_by_account(accountId):
+        sql = ''
+        if str(accountId) == "1":
+            sql = "SELECT Id, ServerId, AccountId, Nickname, UpdateDate FROM CodeServers WITH (NOLOCK) FOR JSON AUTO"
+        else:
+            sql = "SELECT Id, ServerId, AccountId, Nickname, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE AccountId = @accountId FOR JSON AUTO"
+            sql = sql.replace("@accountId", str(accountId))
+
+        print(sql)
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            servers = c.fetchall()
+
+            c.close()
+            conn.close()
+            return servers
+        except pymssql.Error as e:
+            print("Error getting the discord servers by account. Error {}".format(e))
+            return None
+
+    def get_server_by_id(id):
+        sql = "SELECT Id, ServerId, AccountId, Nickname, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = sql.replace("@id", str(id));
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            server = c.fetchone()[0]
+
+            c.close()
+            conn.close()
+            return server
+        except pymssql.Error as e:
+            print("Error getting server by id. Error {}".format(e))
+            return None
+
+    def update_server(server):
+        sql = ''
+        if str(server[0]) != "0":
+            sql = "UPDATE CodeServers SET ServerId = '@serverId', AccountId = @accountId, Nickname = '@nickname', UpdateDate = '@date' WHERE Id = @id"
+        else:
+            sql = "INSERT INTO CodeServers (ServerId, AccountId, Nickname, UpdateDate) VALUES ('@serverId', @accountId, '@nickname', '@date')"
+        
+        current_date = datetime.now()
+        sql = sql.replace("@serverId", str(server[1]))
+        sql = sql.replace("@accountId", str(server[2]))
+        sql = sql.replace("@nickname", server[3])
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+
+        if str(server[0]) != "0":
+            sql = sql.replace("@id", str(server[0]))
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error updating server. Error {}".format(e))
+            return False

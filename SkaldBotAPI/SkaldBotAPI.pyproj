@@ -61,6 +61,9 @@
     <Compile Include="Resource\Roles.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\Servers.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Users.py">
       <SubType>Code</SubType>
     </Compile>

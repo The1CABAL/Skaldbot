@@ -3,3 +3,4 @@ EXEC UpsertCodeVueForms 'NewWisdom', 'Submit a New Wisdom', 1, 1
 EXEC UpsertCodeVueForms 'LoginForm', 'Login', 2, 1
 EXEC UpsertCodeVueForms 'RegisterForm', 'Register', 3, 1
 EXEC UpsertCodeVueForms 'RegisterUserForm', 'Register User', 4, 1
+EXEC UpsertCodeVueForms 'ManageServer', 'Manage Server', 5, 1

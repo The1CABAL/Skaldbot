@@ -50,7 +50,6 @@ class RegisterNewUser(Resource):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
 
-            print(req_data)
             user = RegisterAccountUser(req_data['accountid'],
             req_data['username'], req_data['firstname'], req_data['lastname'],
             req_data['discorduserid'], req_data['password'])

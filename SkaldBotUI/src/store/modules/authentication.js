@@ -26,12 +26,12 @@ const state = {
 
 const getters = {
     userId: state => state.token,
-    accountId: state => state.accountId,
+    getAccountId: state => state.accountId,
     isLoggedIn: state => state.token != '' ? true : false,
     authStatus: state => state.status,
     isMasterAdmin: state => state.role == "MasterAdmin" ? true : false,
     isAdmin: state => state.role == "Admin" ? true : false,
-    isClientAdmin: state => state.Role == "ClientAdmin" ? true : false,
+    isClientAdmin: state => state.role == "ClientAdmin" ? true : false,
     isClientUser: state => state.role = "ClientUser" ? true : false,
     isUser: state => state.isUser,
     user: state => state.user,
@@ -49,12 +49,11 @@ const actions = {
                 const token = JSON.parse(resp.data)[0].Id
                 const accountId = JSON.parse(resp.data)[0].AccountId
                 const username = JSON.parse(resp.data)[0].Username
-                const user = { accountId, username }
+                const user = { token, accountId, username }
                 localStorage.setItem('token', token)
                 localStorage.setItem('accountId', accountId)
-                console.log(localStorage.getItem('accountId'))
                 axios.defaults.headers.common['Authorization'] = token
-                commit('auth_success', token, user)
+                commit('auth_success', user)
 
                 var userUrl = BaseUrl + 'roles?id=' + token
                 axios.get(userUrl).then(resp => {
@@ -72,6 +71,7 @@ const actions = {
                 resolve(resp)
             })
                 .catch(err => {
+                    console.log(err);
                     commit('auth_error')
                     localStorage.removeItem('token')
                     localStorage.removeItem('accountId');
@@ -183,10 +183,13 @@ const mutations = {
     auth_request(state) {
         state.status = 'loading'
     },
-    auth_success(state, token, user) {
+    auth_success(state, user) {
         state.status = 'success'
-        state.token = token
-        state.user = user
+        state.token = user.token
+        var accountId = user.accountId;
+        var username = user.username;
+        state.user = { accountId, username }
+        state.accountId = accountId
     },
     user_roles(state, role) {
         state.role = role
@@ -213,6 +216,8 @@ const mutations = {
 
         localStorage.removeItem('token');
         localStorage.removeItem('accountId');
+
+        state.accountId = '';
 
         state.isMasterAdmin = false;
         state.isAdmin = false;

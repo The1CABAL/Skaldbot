@@ -205,13 +205,8 @@
             },
             reloadAuthentication() {
                 this.$store.dispatch('loadRoles').then(() => {
-                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                        this.$router.push('/unauthorized')
-                    }
-                    else {
-                        if (this.$store.getters.isMasterAdmin || this.$store.getters.isAdmin) {
-                            this.isAdmin = true
-                        }
+                    if (this.$store.getters.isMasterAdmin || this.$store.getters.isAdmin) {
+                        this.isAdmin = true
                     }
                 });
             },

@@ -12,14 +12,15 @@
                 </div>
                 <ul id="nav-lists">
                     <li class="close"><span @click="Hide()">&times;</span></li>
-                    <li><router-link to="/"  v-on:click.native="Hide()">Home</router-link></li>
+                    <li><router-link to="/" v-on:click.native="Hide()">Home</router-link></li>
                     <li><router-link to="/about" v-on:click.native="Hide()">About</router-link></li>
                     <li><router-link to="/suggestions" v-on:click.native="Hide()">Submit Ideas</router-link></li>
                     <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)" v-on:click.native="Hide()">Dashboard</router-link></li>
-                    <li><router-link to="/accountprofile" v-if="authenticated  && clientAdmin" v-on:click.native="account(); Hide()">Account Profile</router-link></li>
+                    <li><router-link to="/accountprofile" v-if="authenticated && clientAdmin" v-on:click.native="account(); Hide()">Account Profile</router-link></li>
                     <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile(); Hide()">User Profile</router-link></li>
+                    <li><router-link to="/manageserver" v-if="authenticated" v-on:click.native="Hide()">Manage Servers</router-link></li>
                     <li><router-link to="/" v-if="authenticated" v-on:click.native="logout(); Hide()">Logout</router-link></li>
-                    <li><router-link to="login" v-if="!authenticated"  v-on:click.native="Hide()">Login</router-link></li>
+                    <li><router-link to="login" v-if="!authenticated" v-on:click.native="Hide()">Login</router-link></li>
                 </ul>
             </div>
         </div>
@@ -189,7 +190,7 @@
                 this.$router.push('/userprofile/' + this.$store.getters.userId)
             },
             account() {
-                this.$router.push('/accountprofile/' + this.$store.getters.accountId);
+                this.$router.push('/accountprofile/' + this.$store.getters.getAccountId);
             }
         }
     }

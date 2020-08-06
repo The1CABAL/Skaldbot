@@ -20,6 +20,7 @@ import ModifyForm from '../secured/Dashboard/ModifyForm'
 import AccountProfile from '../secured/user/AccountProfile'
 import RegisterUser from '../secured/user/RegisterUser'
 import ManageDocumentation from '../secured/Dashboard/ManageDocumentation'
+import ManageServer from '../secured/user/ManageServer'
 
 Vue.use(Router);
 
@@ -70,6 +71,7 @@ export const router = new Router({
         { path: '/userprofile/:userId', name: 'userprofile', component: UserProfile, props: true },
         { path: '/accountprofile/:accountId', name: 'accountprofile', component: AccountProfile, props: true },
         { path: '/registerUser/:accountId', name: 'registeraccountuser', component: RegisterUser, props: true },
+        { path: '/manageserver', name: 'manageserver', component: ManageServer },
         { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home
