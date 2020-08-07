@@ -3,13 +3,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>be51d694-0d00-4542-90f1-80d519bf4e94</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
-    <StartupFile>SkaldBot.py</StartupFile>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>SkaldBotCore.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>SkaldBot</Name>
+    <Name>SkaldBotCore</Name>
     <RootNamespace>SkaldBot</RootNamespace>
     <InterpreterId>MSBuild|isaac|$(MSBuildProjectFullPath)</InterpreterId>
     <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
@@ -44,7 +45,7 @@
     <Compile Include="Helpers\distanceCalculator.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SkaldBot.py" />
+    <Compile Include="SkaldBotCore.py" />
     <Compile Include="Wisdom\Wisdom_List.py">
       <SubType>Code</SubType>
     </Compile>
@@ -81,7 +82,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
-    <Content Include="SkaldBotToken.json" />
     <Content Include="Stories\Devins Adoption.txt" />
     <Content Include="Stories\The Great Famine.txt" />
     <Content Include="Stories\The Tragedy of The Gungnir.txt" />

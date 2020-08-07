@@ -1,3 +1,3 @@
 #!/bin/bash
-cp ../../jsons/SkaldBotToken.json ./
-sudo docker build --tag skaldbot .
+cp ../../jsons/SkaldBotToken.json ./SkaldBotCore/
+cd ./SkaldBotCore/ && sudo docker build --tag skaldbotcore . && cd ~
