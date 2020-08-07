@@ -14,6 +14,16 @@
             <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
                 <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
                 </el-table-column>
+                <el-table-column prop="IsApproved" label="Is Approved">
+                    <template slot-scope="scope">
+                        <div>{{getBool(scope.row.IsApproved)}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="IsReviewed" label="Is Reviewed">
+                    <template slot-scope="scope">
+                        <div>{{getBool(scope.row.IsReviewed)}}</div>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="CreateDate" label="Date Created">
                     <template slot-scope="scope">
                         <div>{{getDate(scope.row.CreateDate)}}</div>
@@ -27,8 +37,6 @@
 <script>
     // fake server
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
     import Modal from '../../components/ModalComponent';
 
     export default {
@@ -86,33 +94,64 @@
             }
         },
         mounted: function () {
-            this.getData();
-        },
-        created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
             else {
-                this.isLoaded = true
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.getData();
+                }
+            }
+        },
+        created: function () {
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.isLoaded = true
+                    this.getData();
+                }
             }
         },
         methods: {
             getData() {
                 this.loaded = false;
-                let userUrl = BaseUrl + "submittedItems";
-                var that = this;
-                axios.get(userUrl).then(function (response) {
-                    if (response.data.length > 0) {
-                        that.data = JSON.parse(response.data);
-                        for (var i = 0; i < that.data.length; i++) {
-                            that.data[i].ItemType = that.data[i].luIT[0].ActualItemType
+
+                this.$store.dispatch('getSuggestions').then(() => {
+                    if (this.$store.getters.getSubmittedItems.length > 0) {
+                        this.data = this.$store.getters.getSubmittedItems
+                        for (var i = 0; i < this.data.length; i++) {
+                            this.data[i].ItemType = this.data[i].luIT[0].ActualItemType
                         }
                     }
-                }).catch(function (error) {
-                    console.log(error);
-                    that.$message('There was an error getting the submitted items')
-                });
-                that.loaded = true;
+                    this.loaded = true;
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("There was an error getting the submitted items");
+                })
+
+                //let userUrl = BaseUrl + "submittedItems";
+                //var that = this;
+                //axios.get(userUrl).then(function (response) {
+                //    if (response.data.length > 0) {
+                //        that.data = JSON.parse(response.data);
+                //        for (var i = 0; i < that.data.length; i++) {
+                //            that.data[i].ItemType = that.data[i].luIT[0].ActualItemType
+                //        }
+                //    }
+                //}).catch(function (error) {
+                //    console.log(error);
+                //    that.$message('There was an error getting the submitted items')
+                //});
+                //that.loaded = true;
             },
             handleSelectionChange(val) {
                 this.selectedRow = val
@@ -123,6 +162,12 @@
                     + elDate.getDate() + '-'
                     + elDate.getFullYear()
             },
+            getBool(value) {
+                if (value)
+                    return "True"
+                else
+                    return "False"
+            },
             showModal() {
                 this.isModalVisible = true
             },
@@ -130,6 +175,17 @@
                 this.isModalVisible = false;
                 this.lookupId = 0;
                 this.getData();
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                    else {
+                        this.isLoaded = true
+                        this.getData();
+                    }
+                });
             }
         }
     }

@@ -9,6 +9,9 @@ from Resource.Forms import *
 from Resource.Users import *
 from Resource.Roles import *
 from Resource.Items import *
+from Resource.Accounts import *
+from Resource.HelpDocumentation import *
+from Resource.Servers import *
 from Resource.GenerateFernetKey import GenerateFernetKey
 
 api_bp = Blueprint('api', __name__)
@@ -24,6 +27,7 @@ api.add_resource(GetFormName, '/getFormName')
 api.add_resource(SubmitItem, '/submititem')
 api.add_resource(Login, '/login')
 api.add_resource(Register, '/register')
+api.add_resource(RegisterNewUser, '/registeruser')
 api.add_resource(GenerateFernetKey, '/generatefernetkey')
 api.add_resource(GetUserRoles, '/roles')
 api.add_resource(GetAllUsers, '/getUsers')
@@ -35,3 +39,9 @@ api.add_resource(Story, '/story')
 api.add_resource(Wisdoms, '/getWisdoms')
 api.add_resource(Wisdom, '/wisdom')
 api.add_resource(Form, '/form')
+api.add_resource(Account, '/account')
+api.add_resource(HelpDocumentation, '/documentation')
+api.add_resource(GetAllDocumentation, '/getAllDocumentation')
+api.add_resource(Server, '/server')
+api.add_resource(AccountServers, '/accountServers')
+api.add_resource(ChangePassword, '/resetPassword')

@@ -43,16 +43,25 @@
     <Compile Include="Models\Models.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\Accounts.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Forms.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\GenerateFernetKey.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\HelpDocumentation.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Items.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\Roles.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Resource\Servers.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\Users.py">

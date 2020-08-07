@@ -1,8 +1,8 @@
 <template>
     <div id="app">
-        <div class="container">
+        <div class="container-nav">
             <div class="logo">
-                <img :src="logoImage" style="height: 60px;" />
+                <router-link to="/"><img :src="logoImage" style="height: 60px;" /></router-link>
             </div>
             <div class="navbar">
                 <div class="icon-bar" @click="Show()">
@@ -12,13 +12,15 @@
                 </div>
                 <ul id="nav-lists">
                     <li class="close"><span @click="Hide()">&times;</span></li>
-                    <li><router-link to="/">Home</router-link></li>
-                    <li><router-link to="/about">About</router-link></li>
-                    <li><router-link to="/suggestions">Submit Ideas</router-link></li>
-                    <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)">Dashboard</router-link></li>
-                    <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile()">User Profile</router-link></li>
-                    <li><router-link to="/" v-if="authenticated" v-on:click.native="logout()">Logout</router-link></li>
-                    <li><router-link to="login" v-if="!authenticated">Login</router-link></li>
+                    <li><router-link to="/" v-on:click.native="Hide()">Home</router-link></li>
+                    <li><router-link to="/about" v-on:click.native="Hide()">About</router-link></li>
+                    <li><router-link to="/suggestions" v-on:click.native="Hide()">Submit Ideas</router-link></li>
+                    <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)" v-on:click.native="Hide()">Dashboard</router-link></li>
+                    <li><router-link to="/accountprofile" v-if="authenticated && clientAdmin" v-on:click.native="account(); Hide()">Account Profile</router-link></li>
+                    <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile(); Hide()">User Profile</router-link></li>
+                    <li><router-link to="/manageserver" v-if="authenticated" v-on:click.native="Hide()">Manage Servers</router-link></li>
+                    <li><router-link to="/" v-if="authenticated" v-on:click.native="logout(); Hide()">Logout</router-link></li>
+                    <li><router-link to="login" v-if="!authenticated" v-on:click.native="Hide()">Login</router-link></li>
                 </ul>
             </div>
         </div>
@@ -36,12 +38,11 @@
                 logoImage: require('@/assets/logo.png'),
                 background: require('@/assets/SbBackground.jpg'),
                 masterAdmin: false,
+                clientAdmin: false,
                 admin: false,
                 user: true,
-                isInactive: false,
                 userActivityThrottlerTimeout: null,
                 userActivityTimeout: null,
-                userId: ''
             }
         },
         beforeMount() {
@@ -57,25 +58,11 @@
             clearTimeout(this.userActivityThrottlerTimeout);
         },
         mounted() {
-            if (!this.isLoggedIn) {
-                if (this.authenticated)
-                    this.authenticated = false;
-            }
-            else {
-                if (!this.authenticated) {
-                    this.authenticated = true;
-                }
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
         },
         watch: {
-            isLoggedIn: function () {
-                if (this.isLoggedIn && !this.authenticated) {
-                    this.setAuthenticated(true);
-                }
-                else if (!this.isLoggedIn && this.authenticated) {
-                    this.setAuthenticated(false);
-                }
-            }
         },
         computed: {
             ...mapGetters(["isLoggedIn", "isAdmin", "isMasterAdmin", "isUser"])
@@ -84,7 +71,6 @@
             this.$http.interceptors.response.use(undefined, function (err) {
                 return new Promise(function (resolve, reject) {
                     if (err.status == 401 && err.config && !err.config__isRetryRequest) {
-                        //console.log("Dispatching logout");
                         this.$store.dispatch(logout)
                     }
                     throw err;
@@ -92,17 +78,7 @@
             });
 
             if (this.$store.getters.isLoggedIn) {
-                if (!this.authenticated) {
-                    this.authenticated = true;
-                }
-                if (this.$store.getters.isMasterAdmin) {
-                    this.masterAdmin = true;
-                    this.admin = true;
-                }
-                else if (this.$store.getters.isAdmin) {
-                    this.admin = true;
-                }
-                this.userId = this.$store.getters.userId;
+                this.reloadAuthentication();
             }
         },
         methods: {
@@ -112,28 +88,57 @@
             Hide() {
                 document.getElementById("nav-lists").classList.remove("_Menus-show");
             },
-            setAuthenticated(state) {
-                console.log("Setting authentication")
-                this.authenticated = state;
+            setAuthenticated() {
+                var url = this.$route.path;
 
-                if (!state) {
-                    this.userId = '';
+                if (url == '/login' || url == '/register') {
+                    this.$router.push('/')
+                    this.$store.dispatch('loadRoles').then(() => {
+                        if (this.$store.getters.isMasterAdmin) {
+                            this.masterAdmin = true;
+                            this.admin = true;
+                            this.clientAdmin = true;
+                        }
+                        else if (this.$store.getters.isAdmin) {
+                            this.admin = true;
+                            this.clientAdmin = true;
+                        }
+                        else if (this.$store.getters.isClientAdmin) {
+                            this.clientAdmin = true;
+                        }
+
+                        this.authenticated = true;
+                        this.$message("Successfully Signed In!");
+                    }).catch(err => console.log(err));
                 }
                 else {
-                    if (this.userId == '') {
+                    this.$store.dispatch('loadRoles').then(() => {
+                        if (this.$store.getters.isMasterAdmin) {
+                            this.masterAdmin = true;
+                            this.admin = true;
+                            this.clientAdmin = true;
+                        }
+                        else if (this.$store.getters.isAdmin) {
+                            this.admin = true;
+                            this.clientAdmin = true;
+                        }
+                        else if (this.$store.getters.isClientAdmin) {
+                            this.clientAdmin = true;
+                        }
 
-                    }
+                        this.authenticated = true;
+                    });
                 }
-
-                this.$router.push('/')
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
             },
             logout() {
-                this.$store.dispatch('logout').then(() => { this.authenticated = false })
-                this.masterAdmin = false;
-                this.admin = false;
+                this.$store.dispatch('logout').then(() => {
+                    this.authenticated = false;
+                    this.masterAdmin = false;
+                    this.admin = false;
+                    this.clientAdmin = false;
+                    this.$message("Logged out!")
+                })
+
             },
             activateActivityTracker() {
                 window.addEventListener("mousemove", this.userActivityThrottler);
@@ -164,204 +169,32 @@
                     location.reload();
                 }
             },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (this.$store.getters.isMasterAdmin) {
+                        this.masterAdmin = true;
+                        this.admin = true;
+                        this.clientAdmin = true;
+                    }
+                    else if (this.$store.getters.isAdmin) {
+                        this.admin = true;
+                        this.clientAdmin = true;
+                    }
+                    else if (this.$store.getters.isClientAdmin) {
+                        this.clientAdmin = true;
+                    }
+                    this.authenticated = true;
+                });
+            },
             profile() {
-                this.$router.push('/userprofile/' + this.userId)
+                this.$router.push('/userprofile/' + this.$store.getters.userId)
+            },
+            account() {
+                this.$router.push('/accountprofile/' + this.$store.getters.getAccountId);
             }
         }
     }
 </script>
 
-<style>
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-    }
-
-    .container {
-        height: 60px;
-        background-color: #479194;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-        .container .logo {
-            max-width: 250px;
-            padding: 0 10px;
-            overflow: hidden;
-            max-height: 60px;
-        }
-
-            .container .logo a {
-                display: -webkit-box;
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-wrap: wrap;
-                flex-wrap: wrap;
-                -webkit-box-align: center;
-                -ms-flex-align: center;
-                align-items: center;
-                height: 60px;
-            }
-
-                .container .logo a img {
-                    max-width: 100%;
-                    max-height: 60px;
-                }
-
-        .container .navbar {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
-            flex: 1;
-            padding: 0 5px;
-        }
-
-            .container .navbar ul {
-                display: -webkit-box;
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-wrap: wrap;
-                flex-wrap: wrap;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-
-                .container .navbar ul li a {
-                    text-decoration: none;
-                    color: #fff;
-                    font-size: 14px;
-                    text-transform: uppercase;
-                    display: block;
-                    height: 60px;
-                    line-height: 60px;
-                    cursor: pointer;
-                    padding: 0 10px;
-                }
-
-                    .container .navbar ul li a:hover {
-                        color: #ffffff;
-                        background-color: #3D8083;
-                    }
-
-                .container .navbar ul .close {
-                    display: none;
-                    text-align: right;
-                    padding: 10px;
-                }
-
-                    .container .navbar ul .close span {
-                        font-size: 40px;
-                        display: inline-block;
-                        padding: 0 10px;
-                        cursor: pointer;
-                    }
-
-            .container .navbar .icon-bar {
-                padding: 18px 8px;
-                width: 50px;
-                height: 60px;
-                display: none;
-                -webkit-box-orient: vertical;
-                -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                flex-direction: column;
-                -webkit-box-pack: justify;
-                -ms-flex-pack: justify;
-                justify-content: space-between;
-                cursor: pointer;
-            }
-
-                .container .navbar .icon-bar i {
-                    background-color: #ffffff;
-                    height: 2px;
-                }
-
-    @media only screen and (max-width: 650px) {
-        .container {
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
-        }
-
-            .container .logo {
-                -webkit-box-flex: 1;
-                -ms-flex: 1;
-                flex: 1;
-            }
-
-            .container .navbar {
-                -webkit-box-flex: 0;
-                -ms-flex: 0;
-                flex: 0;
-            }
-
-                .container .navbar ul {
-                    -ms-flex-wrap: nowrap;
-                    flex-wrap: nowrap;
-                    position: fixed;
-                    left: 100%;
-                    z-index: 2;
-                    -webkit-box-orient: vertical;
-                    -webkit-box-direction: normal;
-                    -ms-flex-direction: column;
-                    flex-direction: column;
-                    background: #479194;
-                    width: 100%;
-                    height: 100%;
-                    overflow: auto;
-                    -webkit-transition: left .3s;
-                    -o-transition: left .3s;
-                    transition: left .3s;
-                }
-
-                    .container .navbar ul li a {
-                        padding: 10px;
-                        font-size: 16px;
-                        height: auto;
-                        line-height: normal;
-                        color: white;
-                    }
-
-                    .container .navbar ul .close {
-                        display: block;
-                    }
-
-                .container .navbar .icon-bar {
-                    display: -webkit-box;
-                    display: -ms-flexbox;
-                    display: flex;
-                }
-
-                .container .navbar ._Menus-show {
-                    left: 0;
-                }
-    }
-
-    .titleLink {
-        text-decoration: none;
-        color: white;
-        font-size: 20px;
-    }
-
-    .activeLink {
-        background-color: #59ACAF;
-    }
-
-    body {
-        background-color: #C9C9C9;
-    }
+<style src="@/style/main.css">
 </style>
