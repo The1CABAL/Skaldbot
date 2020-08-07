@@ -4,9 +4,9 @@
             <p style="font-weight: bold;">{{msg}}</p>
             <button class="close" @click="closeNotification">x</button>
         </div>
-        <div v-if="prevRoute.name == 'manageusers' && isAdmin">
-            <router-link to="/manageusers" class="btn-button">Go Back</router-link>
-        </div>
+        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
+        <button type="button" class="btn-button" v-on:click="changePassword">Change Password</button>
+        <ChangePassword v-if="showChangePassword" @close="closeChangePassword"></ChangePassword>
         <div class="panel">
             <div class="panel-heading"><h4>User Profile</h4></div>
             <div class="panel-body">
@@ -19,6 +19,8 @@
                     <input type="text" id="firstName" name="firstName" v-model="userData.FirstName" />
                     <label for="lastName">Last Name:</label>
                     <input type="text" id="lastName" name="lastName" v-model="userData.LastName" />
+                    <label for="discordUserId">Discord User ID:</label>
+                    <input type="text" id="discordUserId" name="discordUserId" v-model="userData.DiscordUserId" />
                     <label for="createDate">Date Created:</label>
                     <input type="text" id="createDate" name="createDate" disabled :value="getDate(userData.CreateDate)" />
                     <div v-if="isAdmin">
@@ -45,7 +47,10 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit">Update</button>
+                    <hr />
+                    <button type="submit" class="btn-button">Save</button>
+                    <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+                    <HelpDocumentation v-if="showHelp" @close="closeChangePassword"></HelpDocumentation>
                 </form>
             </div>
         </div>
@@ -53,8 +58,8 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
+    import HelpDocumentation from '../../components/HelpDocumentation'
+    import ChangePassword from '../../account/ChangePassword'
 
     export default {
         name: "UserProfile",
@@ -63,6 +68,10 @@
                 type: String,
                 required: true
             }
+        },
+        components: {
+            HelpDocumentation,
+            ChangePassword
         },
         data() {
             return {
@@ -75,7 +84,10 @@
                 isError: true,
                 submitted: false,
                 success: false,
-                prevRoute: {}
+                prevRoute: {},
+                helpContentKey: 'RegisterHelp',
+                showHelp: false,
+                showChangePassword: false
             }
         },
         watch: {
@@ -95,9 +107,15 @@
             this.getData();
         },
         created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                if (this.userId != this.$store.getters.userId) {
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
+            }
+            else {
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                     this.$router.push('/unauthorized')
+                }
+                else {
+                    this.getData();
                 }
             }
         },
@@ -117,27 +135,25 @@
             formSubmit() {
                 event.preventDefault();
                 if (!this.objectsAreSame(this.userData, this.oldUserData)) {
-                    var url = BaseUrl + 'getUser'
                     var postData = [];
-                    let that = this;
                     if (this.selectedRole != this.userData.r[0].Role) {
                         this.userData.r[0].Role = this.selectedRole
                     }
                     postData.push(this.userData)
 
-                    axios.post(url, postData).then(function (response) {
-                        var returnVal = response.data;
-                        if (returnVal.Message.toString() == "Success") {
-                            that.success = true
-                            that.setNotification(that.success)
-                            that.getData()
+                    this.$store.dispatch('updateUser', postData).then(() => {
+                        var returnVal = this.$store.getters.authStatus;
+                        if (returnVal == "Success") {
+                            this.success = true;
+                            this.setNotification(this.success);
+                            this.getData()
                         }
                         else {
-                            that.success = false
-                            that.setNotification(that.success)
-                            that.getData()
+                            this.success = false;
+                            this.setNotification(this.success);
+                            this.getData()
                         }
-                    });
+                    })
                 }
                 else {
                     this.setNotification(false)
@@ -161,36 +177,28 @@
                 }
             },
             getData() {
-                let url = BaseUrl + 'getUser?userId=' + this.userId;
-                let roleUrl = BaseUrl + 'getRoles'
-                let that = this;
-                axios.get(url).then(function (response) {
-                    var data = response.data[0];
-                    that.userData = JSON.parse(data);
-                    that.userData = that.userData[0]
-                    that.oldUserData = JSON.parse(data);
-                    that.oldUserData = that.oldUserData[0]
-                    that.selectedRole = (that.userData.r[0].Role)
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                var userId = this.userId
 
-                axios.get(roleUrl).then(function (response) {
-                    that.roles = JSON.parse(response.data)
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                this.$store.dispatch('getUser', userId).then(() => {
+                    this.userData = { ...this.$store.getters.getUser };
+                    this.oldUserData = { ...this.$store.getters.getUser };
+                    this.selectedRole = this.$store.getters.getUser.r[0].Role;
+                }).catch(err => {
+                    console.log(err);
+                    this.$message("Error getting user data");
+                })
 
-                if (this.$store.getters.isAdmin || this.$store.getters.isMasterAdmin) {
-                    this.isAdmin = true;
-                }
+                this.$store.dispatch('getAllRoles').then(() => {
+                    this.roles = this.$store.getters.getAllRoles;
+                }).catch(err => {
+                    console.log(err);
+                })
             },
             objectsAreSame(x, y) {
                 var objectsAreSame = true;
                 for (var propertyName in x) {
                     if (propertyName == 'r') {
-                        if (x[propertyName][0].Role != y[propertyName][0].Role)
-                        {
+                        if (x[propertyName][0].Role != y[propertyName][0].Role) {
                             objectsAreSame = false;
                         }
                     }
@@ -198,99 +206,33 @@
                         objectsAreSame = false;
                     }
                 }
-
                 return objectsAreSame;
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (this.$store.getters.isMasterAdmin || this.$store.getters.isAdmin) {
+                        this.isAdmin = true
+                    }
+                });
+            },
+            goBack() {
+                this.$router.push(this.prevRoute.path)
+            },
+            openHelp() {
+                this.showHelp = true;
+            },
+            closeHelp() {
+                this.showHelp = false;
+            },
+            changePassword() {
+                this.showChangePassword = true;
+            },
+            closeChangePassword() {
+                this.showChangePassword = false;
             }
         }
     }
 </script>
 
 <style scoped>
-    .btn-button {
-        border: 1px solid black;
-        display: inline-block;
-        padding: 8px 16px;
-        vertical-align: middle;
-        overflow: hidden;
-        text-decoration: none;
-        color: black;
-        background-color: lightgray;
-        text-align: center;
-        cursor: pointer;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 4px;
-    }
-
-    .close {
-        position: absolute;
-        font-size: 15px;
-        top: 1px;
-        right: 0;
-        border: 0;
-        padding-right: 5px;
-        background-color: rgba(0,0,0,0.0);
-    }
-
-    .successMsg {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        background: #93FFA1;
-        border-radius: 10px 10px 10px 10px;
-        overflow: hidden;
-        padding-left: 10px;
-    }
-
-    .errorMsg {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        background: #FF9393;
-        border-radius: 10px 10px 10px 10px;
-        overflow: hidden;
-        padding-left: 10px;
-    }
-
-    .panel {
-        margin-top: 5px;
-        margin-bottom: 20px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        border-color: #ddd;
-    }
-
-    .panel-heading {
-        color: #333;
-        background-color: #f5f5f5;
-        border-color: #ddd;
-        padding: 5px 15px;
-        border-bottom: 1px solid transparent;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
-    }
-
-    .panel-body {
-        padding: 15px;
-        background-color: #fff;
-    }
-
-    input[type=text] {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .sectionHeading {
-        color: #00b1b1;
-    }
 </style>

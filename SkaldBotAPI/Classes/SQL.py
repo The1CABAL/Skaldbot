@@ -1,5 +1,7 @@
 
-import json, urllib.request, pymssql
+import json
+import urllib.request
+import pymssql
 import pandas as pd
 from datetime import datetime
 from time import sleep
@@ -71,7 +73,8 @@ class SQL():
                     else:
                         keys.append(key)
 
-                #Iterate through the line and build a list of values associated with those keys
+                #Iterate through the line and build a list of values associated
+                #with those keys
                 values = []
                 for i in keys:
                     if i == "[group]":
@@ -95,7 +98,7 @@ class SQL():
                             newvalue + 1
                             values.append(newvalue)
                         except:
-                            values.append("N'"+newvalue+"'")
+                            values.append("N'" + newvalue + "'")
                     except:
                         pass
 
@@ -105,7 +108,8 @@ class SQL():
                     if i == "N'None'":
                         values[n] = 'NULL'
 
-                #join necessary lists into comma separated string which can be used as the query input
+                #join necessary lists into comma separated string which can be
+                #used as the query input
                 #col_name_string = ', '.join(keys)
                 val_string = ', '.join(values)
 
@@ -114,7 +118,8 @@ class SQL():
                 #Insert values
                 try:
                     sqlstring = ('EXEC ' + upsertTable + ' ' + val_string + '')
-                    #sqlstring = ('INSERT INTO '+ table +'('+col_name_string+') VALUES ('+val_string + ')')
+                    #sqlstring = ('INSERT INTO '+ table +'('+col_name_string+')
+                    #VALUES ('+val_string + ')')
                     c.execute(sqlstring)
                     values = []
                     keys = []
@@ -123,16 +128,16 @@ class SQL():
                 except pymssql.Error as ex:
                     print('Error Inserting JSON!')
                     print('')
-                    print('SQL:    '+sqlstring)
+                    print('SQL:    ' + sqlstring)
                     print('')
-                    print('ERROR:    '+str(ex))
+                    print('ERROR:    ' + str(ex))
                     values = []
                     keys = []
                     #col_name_string = ''
                     val_string = ''
                 conn.commit()
 
-            print('Done with '+table)
+            print('Done with ' + table)
         c.close()
         conn.close()
         #sleep(86400)
@@ -148,8 +153,7 @@ class SQL():
                                                                             'government':str,'allegiance_id':str,'allegiance':str,'security_id':str,'security':str,'primary_economy_id':str,
                                                                             'primary_economy':str,'power':str,'power_state':str,'power_state_id':str,'needs_permit':str,'updated_at':str,
                                                                             'simbad_ref':str,'controlling_minor_faction_id':str,'controlling_minor_faction':str,'reserve_type_id':str,'reserve_type	ed_system_address':str
-                                                                            }
-                                 ):
+                                                                            }):
             df = chunk
             print('Got a chunk of data!')
             headers = df.columns
@@ -165,7 +169,7 @@ class SQL():
                 values = []
                 for h in headers:
                     values.append(df.at[iterant, h])
-                c.execute('INSERT INTO CodeSystems ('+col_name_string+') VALUES ('+var_string+');', row)
+                c.execute('INSERT INTO CodeSystems (' + col_name_string + ') VALUES (' + var_string + ');', row)
 
             conn.commit()
             print('Done with Chunk')
@@ -189,7 +193,7 @@ class SQL():
     def find_station_by_module(ModuleId):
         pass
 
-    #This function gets the closest coordinates 
+    #This function gets the closest coordinates
     def find_closest_coordinates(id):
         sql = 'SELECT x, y, z FROM CodeSystems WHERE Id <> @id GROUP BY x, y, z ORDER BY ABS((SUM(x + y + z) / 3) - (SELECT (SUM(x + y + z) / 3) FROM CodeSystems WHERE id = @id)) LIMIT 1'
         sql = sql.replace('@id', id)
@@ -226,7 +230,7 @@ class SQL():
             c.close()
             conn.close()
 
-            return forms;
+            return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
@@ -246,7 +250,7 @@ class SQL():
             c.close()
             conn.close()
 
-            return forms;
+            return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
@@ -303,13 +307,17 @@ class SQL():
             print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
-        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, SubmitterEmail, CreateDate) VALUES ('@itemType', '@title', '@text', '@email', '@date')";
+        sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, DiscordUserId, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, @discordId, '@date')"
         current_date = datetime.now()
+
+        text = suggestion[2]
+        text = text.replace("'", "''");
 
         sql = sql.replace("@itemType", suggestion[0])
         sql = sql.replace("@title", suggestion[1])
-        sql = sql.replace("@text", suggestion[2])
-        sql = sql.replace("@email", suggestion[3])
+        sql = sql.replace("@text", text)
+        sql = sql.replace("@serverId", str(suggestion[3]))
+        sql = sql.replace("@discordId", str(suggestion[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         try:
@@ -330,7 +338,7 @@ class SQL():
             return False
 
     def login(user):
-        sql = "SELECT PasswordHash FROM Users WHERE Username = '@username'";
+        sql = "SELECT PasswordHash FROM Users WHERE Username = '@username'"
 
         sql = sql.replace("@username", user[0])
 
@@ -351,7 +359,7 @@ class SQL():
                 return False
 
             if passedPassword == password:
-                getUserData = "SELECT Id, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
+                getUserData = "SELECT Id, AccountId, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
                 getUserData = getUserData.replace("@username", user[0])
 
                 c.execute(getUserData)
@@ -367,27 +375,72 @@ class SQL():
             print("Error authenticating user. Error {}".format(e))
             return None
 
-    def register(user):
-        sql = "INSERT INTO Users (Username, FirstName, LastName, PasswordHash, CreateDate) VALUES ('@username', '@firstname', '@lastname', '@password', '@date');"
-        insertRole = "INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), 3)"
-        
-        userExists = SQL.userExists(user[0])
+    def registerUser(user):
+        sql = "INSERT INTO Users (Username, AccountId, FirstName, LastName, DiscordUserId, PasswordHash, CreateDate) VALUES ('@username', @accountId, '@firstname', '@lastname', '@discord', '@password', '@date');"
+        insertRole = "INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), 4)"
+        userExists = SQL.userExists(user[1])
 
         if userExists == False:
-            #print("Starting to create user");
             current_date = datetime.now()
-            password = Cryptography.hashPassword(user[3])
-        
-            sql = sql.replace("@username", user[0])
-            insertRole = insertRole.replace("@username", user[0])
-            sql = sql.replace("@firstname", user[1])
-            sql = sql.replace("@lastname", user[2])
+            password = Cryptography.hashPassword(user[5])
+
+            sql = sql.replace("@accountId", str(user[0]))
+            sql = sql.replace("@username", user[1])
+            sql = sql.replace("@firstname", user[2])
+            sql = sql.replace("@lastname", user[3])
+            sql = sql.replace("@discord", str(user[4]))
             sql = sql.replace("@password", password.decode())
             sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+            insertRole = insertRole.replace("@username", user[1])
 
             try:
                 conn = SQL.open_connection()
                 c = conn.cursor()
+
+                c.execute(sql)
+                conn.commit()
+
+                c.execute(insertRole)
+                conn.commit()
+
+                c.close()
+                conn.close()
+
+                return True
+            except pymssql.Error as e:
+                print("Error creating account user. Error {}".format(e))
+                return False
+
+    def register(user):
+        sql = "INSERT INTO Users (Username, AccountId, FirstName, LastName, DiscordUserId, PasswordHash, CreateDate) VALUES ('@username', @accountId, '@firstname', '@lastname', '@discord', '@password', '@date');"
+        insertRole = "INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), 3)"
+        createAccount = "INSERT INTO Accounts (AccountName) VALUES ('@account'); SELECT CAST(scope_identity() as int)"
+        
+        userExists = SQL.userExists(user[1])
+
+        if userExists == False:
+            current_date = datetime.now()
+            password = Cryptography.hashPassword(user[5])
+        
+            sql = sql.replace("@username", user[1])
+            insertRole = insertRole.replace("@username", user[1])
+            sql = sql.replace("@firstname", user[2])
+            sql = sql.replace("@lastname", user[3])
+            sql = sql.replace("@discord", str(user[4]))
+            sql = sql.replace("@password", password.decode())
+            sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+            createAccount = createAccount.replace("@account", user[0])
+
+            try:
+                conn = SQL.open_connection()
+                c = conn.cursor()
+                
+                c.execute(createAccount)
+                accountId = c.fetchone()
+                conn.commit()
+
+                
+                sql = sql.replace("@accountId", str(accountId[0]))
                 c.execute(sql)
 
                 conn.commit()
@@ -428,9 +481,9 @@ class SQL():
             print("Error finding if user exists. Error {}".format(e))
             return False
 
-    def get_user_role(username):
-        sql = "SELECT r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON ur.UserId = u.Id JOIN Roles r WITH (NOLOCK) ON r.Id = ur.RoleId WHERE u.Username = '@username' FOR JSON AUTO"
-        sql = sql.replace('@username', username)
+    def get_user_role(Id):
+        sql = "SELECT r.Role FROM UserRoles ur WITH (NOLOCK) JOIN Roles r WITH (NOLOCK) ON r.Id = ur.RoleId WHERE ur.UserId = '@userId' FOR JSON AUTO"
+        sql = sql.replace('@userId', Id)
 
         try:
             conn = SQL.open_connection()
@@ -474,7 +527,7 @@ class SQL():
             return None
 
     def get_user_by_id(userId):
-        sql = "SELECT u.Username, u.FirstName, u.LastName, u.IsActive, u.IsLocked, u.CreateDate, r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Id = '@userId' FOR JSON AUTO"
+        sql = "SELECT u.Username, u.FirstName, u.LastName, u.DiscordUserId, u.IsActive, u.IsLocked, u.CreateDate, r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Id = '@userId' FOR JSON AUTO"
 
         sql = sql.replace("@userId", userId)
 
@@ -519,19 +572,20 @@ class SQL():
    
     def update_user(userprofile):
         username = userprofile[0]
-        currentRole = "SELECT r.RoleName FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Username = '@username'"
+        currentRole = "SELECT r.Role FROM Users u WITH (NOLOCK) JOIN UserRoles ur WITH (NOLOCK) ON u.Id = ur.UserId JOIN Roles r WITH (NOLOCK) ON ur.RoleId = r.Id WHERE u.Username = '@username'"
         currentRole = currentRole.replace("@username", username)
 
-        updateUser = "UPDATE Users SET Username = '@username', FirstName = '@firstName', LastName = '@lastName', IsActive = @isActive, IsLocked = @isLocked WHERE Id = (SELECT Id FROM Users WHERE Username = '@username')";
+        updateUser = "UPDATE Users SET Username = '@username', FirstName = '@firstName', LastName = '@lastName', DiscordUserId = @discord, IsActive = @isActive, IsLocked = @isLocked WHERE Id = (SELECT Id FROM Users WHERE Username = '@username')"
         updateUser = updateUser.replace("@username", username)
         updateUser = updateUser.replace("@firstName", userprofile[1])
         updateUser = updateUser.replace("@lastName", userprofile[2])
-        updateUser = updateUser.replace("@isActive", Helpers.bool_to_int(userprofile[3]))
-        updateUser = updateUser.replace("@isLocked", Helpers.bool_to_int(userprofile[4]))
+        updateUser = updateUser.replace("@discord", str(userprofile[3]))
+        updateUser = updateUser.replace("@isActive", Helpers.bool_to_int(userprofile[4]))
+        updateUser = updateUser.replace("@isLocked", Helpers.bool_to_int(userprofile[5]))
 
         updateRole = "DELETE FROM UserRoles WHERE UserId = (SELECT Id FROM Users WHERE Username = '@username'); INSERT INTO UserRoles (UserId, RoleId) VALUES ((SELECT Id FROM Users WHERE Username = '@username'), (SELECT Id FROM Roles WHERE Role = '@role'))"
         updateRole = updateRole.replace("@username", username)
-        updateRole = updateRole.replace("@role", userprofile[5])
+        updateRole = updateRole.replace("@role", userprofile[6])
 
         try:
             conn = SQL.open_connection()
@@ -541,12 +595,10 @@ class SQL():
 
             userRole = c.fetchone()[0]
 
-            if userRole != userprofile[5]:
-                print('Updating Role')
+            if userRole != userprofile[6]:
                 c.execute(updateRole)
                 conn.commit()
             
-            print('Updating user')
             c.execute(updateUser)
             conn.commit()
 
@@ -556,7 +608,7 @@ class SQL():
             print('Error updating user. Error {}'.format(e))
 
     def get_submitted_items():
-        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.SubmitterEmail, si.CreateDate FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO";
+        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.DiscordUserId, si.CreateDate, si.IsApproved, si.IsReviewed FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()
@@ -574,8 +626,8 @@ class SQL():
             print('Error getting submitted items. Error {}'.format(e))
 
     def get_submitted_item_by_id(id):
-        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.SubmitterEmail FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
-        sql = sql.replace("@id", id);
+        sql = "SELECT si.Title, si.CreateDate, 'Blank' as ItemType, luIT.ItemType, si.ItemText, si.ServerId, si.DiscordUserId FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.Id = @id FOR JSON AUTO"
+        sql = sql.replace("@id", id)
 
         try:
             conn = SQL.open_connection()
@@ -637,9 +689,9 @@ class SQL():
             return None
 
     def get_story_by_id(id):
-        sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = "SELECT s.Id, s.Title, s.Story, luS.ServerId, s.IsActive FROM Stories s WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON s.ServerId = luS.Id WHERE s.Id = @id FOR JSON AUTO"
 
-        sql = sql.replace("@id", str(id));
+        sql = sql.replace("@id", str(id))
 
         try:
             conn = SQL.open_connection()
@@ -662,17 +714,38 @@ class SQL():
 
     def update_story(story):
         sql = "UPDATE Stories SET Title = '@title', Story = '@story', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
         sql = sql.replace("@title", story[1])
         sql = sql.replace("@story", story[2])
-        sql = sql.replace("@isActive", Helpers.bool_to_int(story[3]))
+        server = server.replace("@serverId", str(story[3]))
+        sql = sql.replace("@isActive", Helpers.bool_to_int(story[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         sql = sql.replace("@Id", str(story[0]))
 
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
+
+            c.execute(server)
+            serverId = c.fetchone()
+
+            if serverId:
+                serverId = serverId[0]
+            else:
+                getCurrentServerId = "SELECT ServerId FROM Stories WHERE Id = @id"
+                getCurrentServerId = getCurrentServerId.replace("@id", str(story[0]))
+
+                c.execute(getCurrentServerId)
+                serverId = c.fetchone()[0]
+
+                updateServer = "UPDATE CodeServers SET ServerId = @newServer WHERE Id = @oldServer"
+                updateServer = updateServer.replace("@newServer", str(story[3]))
+                updateServer = updateServer.replace("@oldServer", str(serverId))
+
+                c.execute(updateServer)
+                conn.commit()
 
             c.execute(sql)
 
@@ -686,7 +759,7 @@ class SQL():
             return False
 
     def get_all_wisdoms():
-        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
+        sql = "SELECT Id, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
 
         try:
             conn = SQL.open_connection()
@@ -705,9 +778,9 @@ class SQL():
             return None
 
     def get_wisdom_by_id(id):
-        sql = "SELECT Id, Title, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = "SELECT w.Id, w.Wisdom, luS.ServerId, w.IsActive FROM Wisdoms w WITH (NOLOCK) JOIN CodeServers luS WITH (NOLOCK) ON w.ServerId = luS.Id WHERE w.Id = @id FOR JSON AUTO"
 
-        sql = sql.replace("@id", str(id));
+        sql = sql.replace("@id", str(id))
 
         try:
             conn = SQL.open_connection()
@@ -729,18 +802,38 @@ class SQL():
             return None
 
     def update_wisdom(wisdom):
-        sql = "UPDATE Wisdoms SET Title = '@title', Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        sql = "UPDATE Wisdoms SET Wisdom = '@wisdom', IsActive = @isActive, UpdateDate = '@date' WHERE Id = @Id"
+        server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
-        sql = sql.replace("@title", wisdom[1])
         sql = sql.replace("@wisdom", wisdom[2])
-        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[3]))
+        server = server.replace("@serverId", str(wisdom[3]))
+        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[4]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         sql = sql.replace("@Id", str(wisdom[0]))
 
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
+            
+            c.execute(server)
+            serverId = c.fetchone()
+
+            if serverId:
+                serverId = serverId[0]
+            else:
+                getCurrentServerId = "SELECT ServerId FROM Wisdoms WHERE Id = @id"
+                getCurrentServerId = getCurrentServerId.replace("@id", str(wisdom[0]))
+
+                c.execute(getCurrentServerId)
+                serverId = c.fetchone()[0]
+
+                updateServer = "UPDATE CodeServers SET ServerId = @newServer WHERE Id = @oldServer"
+                updateServer = updateServer.replace("@newServer", str(wisdom[3]))
+                updateServer = updateServer.replace("@oldServer", str(serverId))
+
+                c.execute(updateServer)
+                conn.commit()
 
             c.execute(sql)
 
@@ -858,4 +951,226 @@ class SQL():
             print("SQL")
             print(field)
             print(formInfo)
+            return False
+
+    def get_account_info_by_id(accountId):
+        accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO"
+        usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
+
+        accountSql = accountSql.replace("@accountId", str(accountId))
+        usersSql = usersSql.replace("@accountId", str(accountId))
+
+        results = ()
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(accountSql)
+            accounts = c.fetchone()[0]
+
+            c.execute(usersSql)
+            users = c.fetchall()
+
+            results = (accounts, users)
+
+            c.close()
+            conn.close()
+
+            return results
+        except pymssql.Error as e:
+            print("Error getting account information. Error {}".format(e))
+            return None
+
+    def update_account(account):
+        sql = "UPDATE Accounts SET AccountName = '@name', IsActive = @isActive WHERE AccountId = @accountId"
+
+        sql = sql.replace("@name", account[1])
+        sql = sql.replace("@isActive", Helpers.bool_to_int(account[3]))
+        sql = sql.replace("@accountId", str(account[0]))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return SQL.get_account_info_by_id(account[0])
+        except pymssql.Error as e:
+            print("Error updating account. Error {}".format(e))
+            return None
+
+    def get_documentation(helpContentKey, isAdmin):
+        sql = ''
+        if isAdmin:
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE HelpContentKey = '@key' FOR JSON AUTO"
+        else:
+            sql = "SELECT HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) WHERE IsActive = 1 AND HelpContentKey = '@key' FOR JSON AUTO"
+        sql = sql.replace("@key", helpContentKey)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            content = c.fetchone()
+
+            if content:
+                content = content[0]
+            else:
+                content = None
+
+            c.close()
+            conn.close()
+
+            return content
+        except pymssql.Error as e:
+            print("Error getting documentation. Error {}".format(e))
+            return None
+
+    def get_all_documentation():
+        sql = "SELECT HelpContentKey, HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) FOR JSON AUTO"
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+
+            content = c.fetchall()
+
+            c.close()
+            conn.close()
+
+            return content
+        except pymssql.Error as e:
+            print("Error getting documentation. Error {}".format(e))
+            return None
+
+    def update_documentation(documentation):
+        sql = "UPDATE HelpDocumentation SET HelpTitle = '@title', HelpContent = '@content', IsActive = @isActive, UpdateDate = '@date', UpdateByUserId = '@userId' WHERE HelpContentKey = '@key'"
+        current_date = datetime.now()
+        content = documentation[2]
+        content = content.replace("'", "''")
+        sql = sql.replace("@title", documentation[1])
+        sql = sql.replace("@content", content)
+        sql = sql.replace("@isActive", Helpers.bool_to_int(documentation[3]))
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        sql = sql.replace("@userId", documentation[4])
+        sql = sql.replace("@key", documentation[0])
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            content = SQL.get_documentation(documentation[0], documentation[5])
+
+            return content
+        except pymssql.Error as e:
+            print("Error updating documentation. Error {}".format(e))
+            return None
+
+    def get_servers_by_account(accountId):
+        sql = ''
+        if str(accountId) == "1":
+            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) FOR JSON AUTO"
+        else:
+            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE AccountId = @accountId FOR JSON AUTO"
+            sql = sql.replace("@accountId", str(accountId))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            servers = c.fetchall()
+
+            c.close()
+            conn.close()
+            return servers
+        except pymssql.Error as e:
+            print("Error getting the discord servers by account. Error {}".format(e))
+            return None
+
+    def get_server_by_id(id):
+        sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = sql.replace("@id", str(id));
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            server = c.fetchone()[0]
+
+            c.close()
+            conn.close()
+            return server
+        except pymssql.Error as e:
+            print("Error getting server by id. Error {}".format(e))
+            return None
+
+    def update_server(server):
+        sql = ''
+        if str(server[0]) != "0":
+            sql = "UPDATE CodeServers SET ServerId = '@serverId', AccountId = @accountId, Nickname = '@nickname', DailyWisdom = @dailyWisdom, UpdateDate = '@date' WHERE Id = @id"
+        else:
+            sql = "INSERT INTO CodeServers (ServerId, AccountId, Nickname, DailyWisdom, UpdateDate) VALUES ('@serverId', @accountId, '@nickname', @dailyWisdom, '@date')"
+        
+        current_date = datetime.now()
+        sql = sql.replace("@serverId", str(server[1]))
+        sql = sql.replace("@accountId", str(server[2]))
+        sql = sql.replace("@nickname", server[3])
+        sql = sql.replace("@dailyWisdom", Helpers.bool_to_int(server[4]))
+        sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
+
+        if str(server[0]) != "0":
+            sql = sql.replace("@id", str(server[0]))
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error updating server. Error {}".format(e))
+            return False
+
+    def update_user_password(changePasswordModel):
+        sql = "UPDATE Users SET PasswordHash = '@password' WHERE Id = '@id'"
+
+        password = Cryptography.hashPassword(changePasswordModel[1])
+        sql = sql.replace("@id", changePasswordModel[0])
+        sql = sql.replace("@password", password.decode())
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(sql)
+            conn.commit()
+
+            c.close()
+            conn.close()
+
+            return True
+        except pymssql.Error as e:
+            print("Error updating password! Error {}".format(e))
             return False

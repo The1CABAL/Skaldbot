@@ -17,6 +17,10 @@ import ManageWisdoms from '../secured/Dashboard/ManageWisdoms'
 import ManageForms from '../secured/Dashboard/ManageForms'
 import GitHub from '../secured/Dashboard/GitHub'
 import ModifyForm from '../secured/Dashboard/ModifyForm'
+import AccountProfile from '../secured/user/AccountProfile'
+import RegisterUser from '../secured/user/RegisterUser'
+import ManageDocumentation from '../secured/Dashboard/ManageDocumentation'
+import ManageServer from '../secured/user/ManageServer'
 
 Vue.use(Router);
 
@@ -50,6 +54,9 @@ export const router = new Router({
                     path: '/manageforms', name: "manageforms", component: ManageForms
                 },
                 {
+                    path: '/managedocumentation', name: "managedocumentation", component: ManageDocumentation
+                },
+                {
                     path: '/github', name: "github", beforeEnter() {
                         window.open("https://github.com/The1CABAL/SkaldBot/projects/1", '_blank')
                     }
@@ -61,7 +68,10 @@ export const router = new Router({
                     path: '/modifyform/:formKey', name: "modifyform", component: ModifyForm, props: true
                 }]
         },
-        { path: '/userprofile/:userId', name:'userprofile', component: UserProfile, props: true },
+        { path: '/userprofile/:userId', name: 'userprofile', component: UserProfile, props: true },
+        { path: '/accountprofile/:accountId', name: 'accountprofile', component: AccountProfile, props: true },
+        { path: '/registerUser/:accountId', name: 'registeraccountuser', component: RegisterUser, props: true },
+        { path: '/manageserver', name: 'manageserver', component: ManageServer },
         { path: '/unauthorized', component: Unauthorized },
 
         // otherwise redirect to home
