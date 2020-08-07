@@ -224,5 +224,5 @@ END PLAYBACK FUNCTIONS
 token_file = open('SkaldBotToken.json')
 data = json.load(token_file)
 
-token = data['token']
+token = data['Token']
 client.run(token)
