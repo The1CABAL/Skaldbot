@@ -114,9 +114,6 @@
                 if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                     this.$router.push('/unauthorized')
                 }
-                else {
-                    this.getData();
-                }
             }
         },
         methods: {

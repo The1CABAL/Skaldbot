@@ -91,9 +91,9 @@
             if (!this.admin && this.$store.getters.isLoggedIn) {
                 this.reloadAuthentication();
             }
-            else {
-                this.getData();
-            }
+        },
+        created: function () {
+            this.getData();
         },
         watch: {
             formKey: function () {
@@ -136,13 +136,6 @@
                     validateAfterLoad: false,
                     validateAfterChanged: true
                 },
-            }
-        },
-        created() {
-            if (!this.admin && this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            } else {
-                this.getData();
             }
         },
         methods: {
@@ -267,11 +260,9 @@
                 this.$store.dispatch('loadRoles').then(() => {
                     if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                         this.admin = false
-                        this.getData();
                     }
                     else {
                         this.admin = true
-                        this.getData();
                     }
                 });
             },

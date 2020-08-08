@@ -63,9 +63,6 @@
                 if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin && !this.$store.getters.isClientAdmin) {
                     this.$router.push('/unauthorized')
                 }
-                else {
-                    this.getServers();
-                }
             }
         },
         methods: {

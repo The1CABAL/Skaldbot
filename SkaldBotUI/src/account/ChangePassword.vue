@@ -50,10 +50,6 @@
             this.reloadAuthentication();
             this.getData();
         },
-        mounted() {
-            this.reloadAuthentication();
-            this.getData();
-        },
         beforeDestroy() {
         },
         methods: {
