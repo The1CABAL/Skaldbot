@@ -1,18 +1,14 @@
-FROM python:3.7
-ADD . ./SkaldBotUI
-WORKDIR /SkaldBotUI
-ENV TZ=America/Los_Angeles
+FROM node:lts-alpine
 
-RUN ln -snf /usr/share/zoneinfo/$TZ/etc/localtime && echo %TZ > /etc/timezone
-RUN	apt-get update && \
-	apt install --assume-yes nodejs npm && \
-	npm install -g @vue/cli && \
-	npm install -g @vue/cli-service && \
-	npm install -g serve &&\
-	npm i npm@latest -g && \
-	npm run build
+# install simple http server for serving static content
+RUN npm install -g http-server
+WORKDIR /SkaldbotUI
 
-EXPOSE 5478
-RUN pip install --upgrade pip
-RUN pip install -r ./requirements.txt
-CMD ["serve", "- s ./dist"]
+COPY package*.json ./
+
+RUN npm install
+COPY . .
+RUN npm run build
+
+EXPOSE 8080
+CMD [ "http-server", "dist" ]
