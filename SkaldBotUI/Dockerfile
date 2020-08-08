@@ -11,6 +11,7 @@ RUN	apt-get update && \
 	npm install -g @vue/cli-service && \
 	npm install -g @vue/cli-plugin-babel && \
 	npm install -g @vue/cli-plugin-eslint && \
+	npm install -g @vue/babel-preset-app && \
 	npm install -g serve &&\
 	npm run build
 
