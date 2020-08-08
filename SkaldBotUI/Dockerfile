@@ -9,8 +9,7 @@ RUN	apt-get update && \
 	npm install -g @vue/cli && \
 	npm install -g @vue/cli-service && \
 	npm install -g serve &&\
-	npm i npm@latest -g &&\
-	npm audit && \
+	npm i npm@latest -g && \
 	npm run build
 
 EXPOSE 5478
