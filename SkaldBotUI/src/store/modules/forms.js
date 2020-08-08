@@ -53,8 +53,6 @@ const actions = {
             let actionUrl = BaseUrl + 'getActionLink?formKey=' + formKey;
             let nameUrl = BaseUrl + 'getFormName?formKey=' + formKey;
 
-            console.log("Schema URL: " + schemaUrl);
-
             var schema = null;
             var actionLink = '';
             var name = '';
