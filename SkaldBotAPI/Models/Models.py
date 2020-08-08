@@ -10,5 +10,5 @@ WisdomModel = collections.namedtuple('wisdom', ['id', 'wisdom', 'serverid', 'isa
 FormModel = collections.namedtuple('formmodel', ['formkey', 'fieldschema', 'actionlink', 'isactive', 'formname'])
 AccountProfile = collections.namedtuple('accountprofile', ['accountid', 'accountname', 'createdate', 'isactive'])
 Documentation = collections.namedtuple('documentation', ['helpcontentkey', 'helptitle', 'helpcontent', 'isactive', 'updatebyuserid', 'isadmin'])
-AccountServerModel = collections.namedtuple('accountserver', ['id', 'serverid', 'accountid', 'nickname', 'dailywisdom'])
+AccountServerModel = collections.namedtuple('accountserver', ['id', 'serverid', 'accountid', 'nickname', 'dailywisdom', 'weeklystory'])
 ChangePasswordModel = collections.namedtuple('changepassword', ['userid', 'password'])

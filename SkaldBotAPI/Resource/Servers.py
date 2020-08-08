@@ -50,7 +50,7 @@ class AccountServers(Resource):
             else:
                 id = 0
 
-            serverData = AccountServerModel(req_data['Id'], req_data['ServerId'], req_data['AccountId'], req_data['Nickname'], req_data['DailyWisdom'])
+            serverData = AccountServerModel(req_data['Id'], req_data['ServerId'], req_data['AccountId'], req_data['Nickname'], req_data['DailyWisdom'], req_data['WeeklyStory'])
 
             isSuccess = SQL.update_server(serverData)
 

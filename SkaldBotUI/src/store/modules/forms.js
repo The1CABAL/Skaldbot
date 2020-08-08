@@ -48,7 +48,6 @@ const actions = {
 
     async fetchFormByFormKey({ commit }, formKey) {
         return new Promise((resolve, reject) => {
-            console.log("Base URL: " + BaseUrl);
             let schemaUrl = BaseUrl + 'getFormSchema?formKey=' + formKey;
             let actionUrl = BaseUrl + 'getActionLink?formKey=' + formKey;
             let nameUrl = BaseUrl + 'getFormName?formKey=' + formKey;

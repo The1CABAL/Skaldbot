@@ -90,6 +90,7 @@
         mounted: function () {
             if (!this.admin && this.$store.getters.isLoggedIn) {
                 this.reloadAuthentication();
+                this.getData();
             }
         },
         created: function () {
@@ -246,9 +247,11 @@
                     this.schema = { ...this.$store.getters.getFormSchema };
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
-                    this.newModel();
                     if (this.passedModel != undefined && this.passedModel != null) {
                         this.setModel();
+                    }
+                    else {
+                        this.newModel();
                     }
                     this.loaded = true;
                 }).catch((err) => {
@@ -267,7 +270,9 @@
                 });
             },
             setModel() {
-                this.model = this.passedModel[0];
+                if (this.passedModel[0] != undefined && this.passedModel[0] != null) {
+                    this.model = VueFormGenerator.schema.createDefaultObject(this.schema, this.passedModel[0])
+                }
             }
         },
         computed: {
