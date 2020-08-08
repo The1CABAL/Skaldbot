@@ -2,7 +2,7 @@
     <div id="ManageServer">
         <div v-if="hasExistingSever">
             <div class="buttonSection" @change="selectServer($event)">
-                <button type="button" @click="addServer" class="btn-button">Add Server</button>
+                <button type="button" @click="addServer" class="btn-button">Add Channel</button>
                 <select class="select-css" id="serverSelect">
                     <option value="select">Select</option>
                     <option v-for="server in servers" :key="server.Id" :value="server.Id">{{server.Nickname}}</option>
