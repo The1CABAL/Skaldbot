@@ -1,1 +1,1 @@
-..\..\MSBuild\Current\Bin\amd64\MSBuild.exe "./SkaldBot.sln" /t:rebuild
+..\..\MSBuild\Current\Bin\amd64\MSBuild.exe "./SkaldBot.Database/SkaldBot.Database.sqlproj" /t:rebuild
