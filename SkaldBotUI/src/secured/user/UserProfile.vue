@@ -50,7 +50,7 @@
                     <hr />
                     <button type="submit" class="btn-button">Save</button>
                     <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
-                    <HelpDocumentation v-if="showHelp" @close="closeChangePassword"></HelpDocumentation>
+                    <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
                 </form>
             </div>
         </div>
