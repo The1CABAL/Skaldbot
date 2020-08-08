@@ -93,7 +93,8 @@
                     Id: 0,
                     ServerId: "",
                     AccountId: this.$store.getters.getAccountId,
-                    DailyWisdom: 1,
+                    DailyWisdom: true,
+                    WeeklyStory: true,
                     UpdateDate: ""
                 }
                 var model = [defaultModel]

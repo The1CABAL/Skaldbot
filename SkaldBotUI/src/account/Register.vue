@@ -25,7 +25,6 @@
         },
         methods: {
             login() {
-                console.log("Logging in...")
                 this.$emit("authenticated", true)
             },
             openHelp() {

@@ -1084,9 +1084,9 @@ class SQL():
     def get_servers_by_account(accountId):
         sql = ''
         if str(accountId) == "1":
-            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) FOR JSON AUTO"
+            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, WeeklyStory, UpdateDate FROM CodeServers WITH (NOLOCK) FOR JSON AUTO"
         else:
-            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE AccountId = @accountId FOR JSON AUTO"
+            sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, WeeklyStory, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE AccountId = @accountId FOR JSON AUTO"
             sql = sql.replace("@accountId", str(accountId))
 
         try:
@@ -1104,7 +1104,7 @@ class SQL():
             return None
 
     def get_server_by_id(id):
-        sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
+        sql = "SELECT Id, ServerId, AccountId, Nickname, DailyWisdom, WeeklyStory, UpdateDate FROM CodeServers WITH (NOLOCK) WHERE Id = @id FOR JSON AUTO"
         sql = sql.replace("@id", str(id));
 
         try:
@@ -1124,15 +1124,16 @@ class SQL():
     def update_server(server):
         sql = ''
         if str(server[0]) != "0":
-            sql = "UPDATE CodeServers SET ServerId = '@serverId', AccountId = @accountId, Nickname = '@nickname', DailyWisdom = @dailyWisdom, UpdateDate = '@date' WHERE Id = @id"
+            sql = "UPDATE CodeServers SET ServerId = '@serverId', AccountId = @accountId, Nickname = '@nickname', DailyWisdom = @dailyWisdom, WeeklyStory = @weeklyStory, UpdateDate = '@date' WHERE Id = @id"
         else:
-            sql = "INSERT INTO CodeServers (ServerId, AccountId, Nickname, DailyWisdom, UpdateDate) VALUES ('@serverId', @accountId, '@nickname', @dailyWisdom, '@date')"
+            sql = "INSERT INTO CodeServers (ServerId, AccountId, Nickname, DailyWisdom, WeeklyStory, UpdateDate) VALUES ('@serverId', @accountId, '@nickname', @dailyWisdom, @weeklyStory, '@date')"
         
         current_date = datetime.now()
         sql = sql.replace("@serverId", str(server[1]))
         sql = sql.replace("@accountId", str(server[2]))
         sql = sql.replace("@nickname", server[3])
         sql = sql.replace("@dailyWisdom", Helpers.bool_to_int(server[4]))
+        sql = sql.replace("@weeklyStory", Helpers.bool_to_int(server[5]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         if str(server[0]) != "0":
