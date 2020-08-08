@@ -4,7 +4,8 @@ WORKDIR /SkaldBotUI
 ENV TZ=America/Los_Angeles
 
 RUN ln -snf /usr/share/zoneinfo/$TZ/etc/localtime && echo %TZ > /etc/timezone
-RUN	apt-get install --assume-yes nodejs npm && \
+RUN	apt-get update && \
+	apt-get install --assume-yes nodejs npm && \
 	npm install -g @vue/cli && \
 	npm install -g serve &&\
 	npm run build
