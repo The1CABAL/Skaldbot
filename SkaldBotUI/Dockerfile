@@ -10,6 +10,7 @@ RUN	apt-get update && \
 	npm install -g @vue/cli && \
 	npm install -g @vue/cli-service && \
 	npm install -g @vue/cli-plugin-babel && \
+	npm install -g @vue/cli-plugin-eslint && \
 	npm install -g serve &&\
 	npm run build
 
