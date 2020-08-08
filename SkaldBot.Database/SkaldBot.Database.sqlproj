@@ -62,6 +62,7 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Seed" />
+    <Folder Include="Scripts\Seed\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Stored Procedures\UpsertCodeSystems.sql" />
@@ -103,6 +104,7 @@
     <None Include="Scripts\Seed\CodeServers.sql" />
     <None Include="Scripts\Seed\Accounts.sql" />
     <None Include="Scripts\Seed\HelpDocumentation.sql" />
+    <None Include="Scripts\Seed\PostDeployment\AddStoryJobColumn.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Seed\Seed.PostDeploy.sql" />
