@@ -131,7 +131,7 @@
             },
             formSubmit() {
                 event.preventDefault();
-                if (!this.objectsAreSame(this.userData, this.oldUserData)) {
+                if (!this.objectsAreSame(this.userData, this.oldUserData) || this.selectedRole != this.userData.r[0].Role) {
                     var postData = [];
                     if (this.selectedRole != this.userData.r[0].Role) {
                         this.userData.r[0].Role = this.selectedRole
@@ -178,7 +178,7 @@
 
                 this.$store.dispatch('getUser', userId).then(() => {
                     this.userData = { ...this.$store.getters.getUser };
-                    this.oldUserData = { ...this.$store.getters.getUser };
+                    this.oldUserData = this.$store.getters.getUser;
                     this.selectedRole = this.$store.getters.getUser.r[0].Role;
                 }).catch(err => {
                     console.log(err);
