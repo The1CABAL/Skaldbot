@@ -79,9 +79,6 @@
             }
         },
         mounted: function () {
-            this.getData();
-        },
-        created: function () {
             if (this.$store.getters.isLoggedIn) {
                 this.reloadAuthentication();
             }

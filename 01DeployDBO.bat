@@ -1,1 +1,0 @@
- ..\..\sqlpackage\sqlpackage.exe /Action:Publish /tsn:"ib-2020.ib.local" /tu:"sa" /tp:"pwd4dsn_ib2020" /tdn:"SkaldBot.Database" /SourceFile:".\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac"

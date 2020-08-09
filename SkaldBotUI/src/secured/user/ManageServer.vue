@@ -2,7 +2,7 @@
     <div id="ManageServer">
         <div v-if="hasExistingSever">
             <div class="buttonSection" @change="selectServer($event)">
-                <button type="button" @click="addServer" class="btn-button">Add Server</button>
+                <button type="button" @click="addServer" class="btn-button">Add Channel</button>
                 <select class="select-css" id="serverSelect">
                     <option value="select">Select</option>
                     <option v-for="server in servers" :key="server.Id" :value="server.Id">{{server.Nickname}}</option>
@@ -63,9 +63,6 @@
                 if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin && !this.$store.getters.isClientAdmin) {
                     this.$router.push('/unauthorized')
                 }
-                else {
-                    this.getServers();
-                }
             }
         },
         methods: {
@@ -96,7 +93,8 @@
                     Id: 0,
                     ServerId: "",
                     AccountId: this.$store.getters.getAccountId,
-                    DailyWisdom: 1,
+                    DailyWisdom: true,
+                    WeeklyStory: true,
                     UpdateDate: ""
                 }
                 var model = [defaultModel]

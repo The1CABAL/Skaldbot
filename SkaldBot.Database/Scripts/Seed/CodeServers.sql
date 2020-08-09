@@ -16,7 +16,7 @@ IF NOT EXISTS (SELECT * FROM CodeServers WHERE Id = 2)
 	END
 ELSE
 	BEGIN
-		UPDATE CodeServers SET ServerId = '726640547019751458', Nickname = 'Test', DailyWisdom = 1 WHERE id = 2
+		UPDATE CodeServers SET ServerId = '726640547019751458', Nickname = 'Test', DailyWisdom = 0 WHERE id = 2
 	END
 
 SET IDENTITY_INSERT dbo.CodeServers OFF

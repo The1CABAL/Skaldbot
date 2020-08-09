@@ -1,1 +1,0 @@
-..\..\MSBuild\Current\Bin\amd64\MSBuild.exe "./SkaldBot.sln" /t:rebuild

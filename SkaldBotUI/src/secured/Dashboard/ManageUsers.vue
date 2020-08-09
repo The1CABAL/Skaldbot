@@ -87,20 +87,6 @@
                 selectedRow: []
             }
         },
-        created: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                    this.$router.push('/unauthorized')
-                }
-                else {
-                    this.isLoaded = true
-                    this.fetchData();
-                }
-            }
-        },
         mounted: function () {
             if (this.$store.getters.isLoggedIn) {
                 this.reloadAuthentication();

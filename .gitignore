@@ -352,3 +352,7 @@ healthchecksdb
 /isaac
 /SkaldBotCore/SkaldBotToken.json
 /SkaldBotCore/isaac
+/SkaldBotAPI/env
+
+/SkaldBotAPI/config.ini
+/SkaldBotCore/config.ini

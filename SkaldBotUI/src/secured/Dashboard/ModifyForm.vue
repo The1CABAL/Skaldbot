@@ -100,14 +100,6 @@
                 }
             }
         },
-        created: function () {
-            if (this.formKey != null && this.formKey != '')
-                this.fetchData();
-            else {
-                this.loaded = true;
-                this.isNewForm = true;
-            }
-        },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
                 vm.prevRoute = from

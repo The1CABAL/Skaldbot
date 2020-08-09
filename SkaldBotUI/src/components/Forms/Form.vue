@@ -90,10 +90,11 @@
         mounted: function () {
             if (!this.admin && this.$store.getters.isLoggedIn) {
                 this.reloadAuthentication();
-            }
-            else {
                 this.getData();
             }
+        },
+        created: function () {
+            this.getData();
         },
         watch: {
             formKey: function () {
@@ -136,13 +137,6 @@
                     validateAfterLoad: false,
                     validateAfterChanged: true
                 },
-            }
-        },
-        created() {
-            if (!this.admin && this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            } else {
-                this.getData();
             }
         },
         methods: {
@@ -253,9 +247,11 @@
                     this.schema = { ...this.$store.getters.getFormSchema };
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
-                    this.newModel();
                     if (this.passedModel != undefined && this.passedModel != null) {
                         this.setModel();
+                    }
+                    else {
+                        this.newModel();
                     }
                     this.loaded = true;
                 }).catch((err) => {
@@ -267,16 +263,16 @@
                 this.$store.dispatch('loadRoles').then(() => {
                     if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                         this.admin = false
-                        this.getData();
                     }
                     else {
                         this.admin = true
-                        this.getData();
                     }
                 });
             },
             setModel() {
-                this.model = this.passedModel[0];
+                if (this.passedModel[0] != undefined && this.passedModel[0] != null) {
+                    this.model = VueFormGenerator.schema.createDefaultObject(this.schema, this.passedModel[0])
+                }
             }
         },
         computed: {

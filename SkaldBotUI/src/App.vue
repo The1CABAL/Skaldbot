@@ -18,7 +18,7 @@
                     <li><router-link to="/dashboard" v-if="authenticated && (admin || masterAdmin)" v-on:click.native="Hide()">Dashboard</router-link></li>
                     <li><router-link to="/accountprofile" v-if="authenticated && clientAdmin" v-on:click.native="account(); Hide()">Account Profile</router-link></li>
                     <li><router-link to="/userprofile" v-if="authenticated" v-on:click.native="profile(); Hide()">User Profile</router-link></li>
-                    <li><router-link to="/manageserver" v-if="authenticated" v-on:click.native="Hide()">Manage Servers</router-link></li>
+                    <li><router-link to="/manageserver" v-if="authenticated" v-on:click.native="Hide()">Manage Channels</router-link></li>
                     <li><router-link to="/" v-if="authenticated" v-on:click.native="logout(); Hide()">Logout</router-link></li>
                     <li><router-link to="login" v-if="!authenticated" v-on:click.native="Hide()">Login</router-link></li>
                 </ul>
