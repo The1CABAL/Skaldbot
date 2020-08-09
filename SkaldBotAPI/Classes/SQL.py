@@ -953,9 +953,12 @@ class SQL():
             print(formInfo)
             return False
 
-    def get_account_info_by_id(accountId):
+    def get_account_info_by_id(accountId, isMaster):
         accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO"
-        usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
+        if isMaster == "true":
+            usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
+        else:
+            usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 AND u.Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F' FOR JSON AUTO"
 
         accountSql = accountSql.replace("@accountId", str(accountId))
         usersSql = usersSql.replace("@accountId", str(accountId))

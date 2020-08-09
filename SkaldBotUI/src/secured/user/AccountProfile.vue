@@ -188,7 +188,9 @@
             },
             getData() {
                 let that = this;
-                this.$store.dispatch('getAccountInformation', this.accountId).then(() => {
+                var accountId = this.accountId;
+                var isMasterAdmin = this.$store.getters.isMasterAdmin;
+                this.$store.dispatch('getAccountInformation', { accountId, isMasterAdmin }).then(() => {
                     that.accountData = { ...this.$store.getters.accountInformation };
                     that.accountUsers = this.$store.getters.accountUsers;
                 }).catch(err => {
