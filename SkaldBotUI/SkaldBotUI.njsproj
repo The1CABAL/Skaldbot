@@ -34,6 +34,10 @@
     <Content Include="src\account\ChangePassword.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\Offline\Dockerfile" />
+    <Content Include="src\Offline\Maintenance.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\user\ManageServer.vue">
       <SubType>Code</SubType>
     </Content>
@@ -159,6 +163,7 @@
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
+    <Folder Include="src\Offline\" />
     <Folder Include="src\style\" />
     <Folder Include="src\secured\" />
     <Folder Include="src\secured\Dashboard\" />
