@@ -51,6 +51,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="config.ini" />
     <Content Include="requirements.txt" />
     <Content Include="SkaldBotToken.json" />
   </ItemGroup>
