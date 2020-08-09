@@ -8,8 +8,9 @@ class Account(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             accountId = request.args.get('accountId')
+            isMaster = request.args.get('isMaster')
 
-            accountInformation = SQL.get_account_info_by_id(accountId)
+            accountInformation = SQL.get_account_info_by_id(accountId, isMaster)
 
             response = app.response_class(
                 response = json.dumps(accountInformation),
