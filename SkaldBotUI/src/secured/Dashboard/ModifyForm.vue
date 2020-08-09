@@ -1,5 +1,6 @@
 <template>
     <div id="ModifyForm">
+        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
         <div v-if="modalVisible">
             <transition name="modal-fade">
                 <div class="modal-backdrop">
@@ -99,18 +100,15 @@
                 }
             }
         },
-        created: function () {
-            if (this.formKey != null && this.formKey != '')
-                this.fetchData();
-            else {
-                this.loaded = true;
-                this.isNewForm = true;
-            }
+        beforeRouteEnter(to, from, next) {
+            next((vm) => {
+                vm.prevRoute = from
+            })
         },
         methods: {
             fetchData() {
                 if (this.formKey != null && this.formKey != '') {
-                    return this.$store.dispatch('fetchFormByFormKey', this.formKey).then(() => {
+                    return this.$store.dispatch('fetchFormToEdit', this.formKey).then(() => {
                         this.getData();
                     });
                 }
@@ -191,164 +189,13 @@
             },
             close() {
                 this.modalVisible = false;
-            }
+            },
+            goBack() {
+                this.$router.push(this.prevRoute.path)
+            },
         }
     }
 </script>
 
 <style scoped>
-    .btn-button {
-        border: 1px solid black;
-        display: inline-block;
-        padding: 8px 16px;
-        vertical-align: middle;
-        overflow: hidden;
-        text-decoration: none;
-        color: black;
-        background-color: lightgray;
-        text-align: center;
-        cursor: pointer;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 4px;
-    }
-
-    .close {
-        position: absolute;
-        font-size: 15px;
-        top: 1px;
-        right: 0;
-        border: 0;
-        padding-right: 5px;
-        background-color: rgba(0,0,0,0.0);
-    }
-
-    .successMsg {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        background: #93FFA1;
-        border-radius: 10px 10px 10px 10px;
-        overflow: hidden;
-        padding-left: 10px;
-    }
-
-    .errorMsg {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        background: #FF9393;
-        border-radius: 10px 10px 10px 10px;
-        overflow: hidden;
-        padding-left: 10px;
-    }
-
-    .panel {
-        margin-top: 5px;
-        margin-bottom: 20px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        border-color: #ddd;
-    }
-
-    .panel-heading {
-        color: #333;
-        background-color: #f5f5f5;
-        border-color: #ddd;
-        padding: 5px 15px;
-        border-bottom: 1px solid transparent;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
-    }
-
-    .panel-body {
-        padding: 15px;
-        background-color: #fff;
-    }
-
-    input[type=text] {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    textarea {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        min-height: 250px;
-    }
-
-    .sectionHeading {
-        color: #00b1b1;
-    }
-
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 3;
-    }
-
-    .modal {
-        background: #FFFFFF;
-        box-shadow: 2px 2px 20px 1px;
-        overflow-x: auto;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        border-radius: 5px;
-    }
-
-    .modal-header,
-    .modal-footer {
-        padding-left: 10px;
-        display: flex;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-    }
-
-    .modal-header {
-        border-bottom: 1px solid #eeeeee;
-        color: #479194;
-        justify-content: space-between;
-    }
-
-    .modal-footer {
-        border-top: 1px solid #eeeeee;
-        justify-content: center;
-    }
-
-    .modal-body {
-        position: relative;
-        padding: 20px 10px;
-    }
-
-    .topright {
-        position: initial;
-        margin-left: 90%;
-        margin-right: 0;
-        margin-top: 2px;
-    }
 </style>

@@ -31,6 +31,12 @@
   <ItemGroup>
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
+    <Content Include="src\account\ChangePassword.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\user\ManageServer.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\account\Register.vue" />
     <Content Include="src\account\Login.vue">
       <SubType>Code</SubType>
@@ -42,6 +48,9 @@
     <Content Include="README.md" />
     <Content Include="src\assets\SbBackground.jpg" />
     <Content Include="src\components\CustomFields\fieldPassword.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\components\HelpDocumentation.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\components\ModalComponent.vue">
@@ -83,6 +92,9 @@
     <Content Include="src\secured\Dashboard\GitHub.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\Dashboard\ManageDocumentation.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\Dashboard\ManageForms.vue">
       <SubType>Code</SubType>
     </Content>
@@ -102,16 +114,37 @@
     <Content Include="src\secured\Unauthorized.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\secured\user\AccountProfile.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\secured\user\RegisterUser.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\secured\user\UserProfile.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\store\index.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\account.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\store\modules\authentication.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\documentation.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\store\modules\forms.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\store\modules\servers.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\store\modules\suggestions.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\style\main.css">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
@@ -126,6 +159,7 @@
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
+    <Folder Include="src\style\" />
     <Folder Include="src\secured\" />
     <Folder Include="src\secured\Dashboard\" />
     <Folder Include="src\secured\user\" />

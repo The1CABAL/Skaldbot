@@ -26,8 +26,6 @@
 
 <script>
     import VueLoading from '../../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../../helpers/constants';
 
     export default {
         name: "ManageForms",
@@ -76,14 +74,16 @@
             }
         },
         mounted: function () {
-            this.fetchData();
-        },
-        created: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
+            if (this.$store.getters.isLoggedIn) {
+                this.reloadAuthentication();
             }
             else {
-                this.fetchData()
+                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                    this.$router.push('/unauthorized')
+                }
+                else {
+                    this.fetchData();
+                }
             }
         },
         methods: {
@@ -93,7 +93,7 @@
                 });
             },
             getData() {
-                this.data = this.$store.getters.allForms
+                this.data = this.$store.getters.getForms
                 this.loaded = true;
             },
             handleSelectionChange(val) {
@@ -107,6 +107,16 @@
             },
             newForm() {
                 this.$router.push('/modifyform')
+            },
+            reloadAuthentication() {
+                this.$store.dispatch('loadRoles').then(() => {
+                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+                    else {
+                        this.fetchData();
+                    }
+                });
             }
         }
     }

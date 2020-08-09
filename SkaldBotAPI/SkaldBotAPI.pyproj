@@ -17,7 +17,9 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SkaldBotAPI</Name>
     <RootNamespace>SkaldBotAPI</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>
+    </InterpreterId>
+    <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,16 +45,25 @@
     <Compile Include="Models\Models.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\Accounts.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Forms.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\GenerateFernetKey.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\HelpDocumentation.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Resource\Items.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\Roles.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Resource\Servers.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Resource\Users.py">
@@ -102,17 +113,6 @@
     <Content Include="SkaldBotAPI\templates\contact.html" />
     <Content Include="SkaldBotAPI\templates\index.html" />
     <Content Include="SkaldBotAPI\templates\layout.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>env</Id>
-      <Version>3.7</Version>
-      <Description>env (Python 3.7 (64-bit))</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X64</Architecture>
-    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
