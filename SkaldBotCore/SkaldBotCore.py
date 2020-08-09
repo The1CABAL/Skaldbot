@@ -73,7 +73,7 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
-    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
+    if message.content.startswith('$announce') or message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
         await client.process_commands(message)
 
 
@@ -218,6 +218,28 @@ async def sing(ctx, url: str):
 '''
 ======================
 END PLAYBACK FUNCTIONS
+======================
+'''
+
+'''
+========================
+BEGIN ANNOUNCE FUNCTIONS
+========================
+'''
+@client.command(pass_context=True, aliases=['a', 'an'])
+async def announce(ctx, choice: str, message: str):
+    channels, users = SQL.get_announce_ids()
+    if choice.lower() == 'channels' or choice.lower == 'both':
+        for channel in channels:
+            message_channel = int(channels)
+            await message_channel.send(str(message))
+    if choice.lower() == 'users' or choice.lower == 'both':
+        for id in users:
+            user = await client.get_user_info(id)
+            await client.send_message(user, message)
+'''
+======================
+END ANNOUNCE FUNCTIONS
 ======================
 '''
 

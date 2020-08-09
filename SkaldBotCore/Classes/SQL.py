@@ -298,3 +298,25 @@ class SQL():
             channels.append(row[0])
 
         return channels
+
+    def get_announce_ids():
+        channels = []
+        users = []
+
+        conn = SQL.open_connection()
+        c = conn.cursor()
+
+        channelQuery = 'SELECT ServerId FROM CodeServers WHERE IsActive = 1'
+        usersQuery = 'SELECT DiscordUserId FROM Users WHERE IsActive = 1 AND DiscordUserId IS NOT NULL'
+
+        c.execute(channelQuery)
+        result = c.fetchall()
+        for channel in result:
+            channels.append(channel[0])
+
+        c.execute(usersQuerey)
+        result = c.fetchall()
+        for id in result:
+            users.append(id[0])
+
+        return channels, users
