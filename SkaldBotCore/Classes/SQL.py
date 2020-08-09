@@ -299,6 +299,7 @@ class SQL():
 
         return channels
 
+    #This Query gets the stored discord information for the $announce command
     def get_announce_ids():
         channels = []
         users = []
@@ -314,7 +315,7 @@ class SQL():
         for channel in result:
             channels.append(channel[0])
 
-        c.execute(usersQuerey)
+        c.execute(usersQuery)
         result = c.fetchall()
         for id in result:
             users.append(id[0])

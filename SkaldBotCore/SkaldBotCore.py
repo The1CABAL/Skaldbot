@@ -73,7 +73,29 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
-    if message.content.startswith('$announce') or message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
+    if message.content.startswith('$announce'):
+        msg = message.content
+        msg = str(msg).strip('$announce')
+        messagelist = msg.split()
+        mess_length = len(messagelist)
+        choice = messagelist[0]
+        msg = ' '.join(messagelist[1:])
+        if message.author.id == 270864751947546625:
+            channels, users = SQL.get_announce_ids()
+            if choice.lower() == 'channels' or choice.lower == 'both':
+                for channel in channels:
+                    message_channel = int(channels)
+                    await message_channel.send(str(message))
+            elif choice.lower() == 'users' or choice.lower == 'both':
+                for id in users:
+                    user = await client.get_user_info(id)
+                    await client.send_message(user, message)
+            else:
+                await message.channel.send('Please format your command as "$announce (who) (message)" \n\nOptions for who to send the message to include "Users" "Channels" and "Both"')
+        else:
+            await message.channel.send('I dont have to follow this order from you... (Permission error)')
+
+    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
         await client.process_commands(message)
 
 
@@ -218,28 +240,6 @@ async def sing(ctx, url: str):
 '''
 ======================
 END PLAYBACK FUNCTIONS
-======================
-'''
-
-'''
-========================
-BEGIN ANNOUNCE FUNCTIONS
-========================
-'''
-@client.command(pass_context=True, aliases=['a', 'an'])
-async def announce(ctx, choice: str, message: str):
-    channels, users = SQL.get_announce_ids()
-    if choice.lower() == 'channels' or choice.lower == 'both':
-        for channel in channels:
-            message_channel = int(channels)
-            await message_channel.send(str(message))
-    if choice.lower() == 'users' or choice.lower == 'both':
-        for id in users:
-            user = await client.get_user_info(id)
-            await client.send_message(user, message)
-'''
-======================
-END ANNOUNCE FUNCTIONS
 ======================
 '''
 
