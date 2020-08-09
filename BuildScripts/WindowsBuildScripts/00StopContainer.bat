@@ -8,4 +8,4 @@ docker rmi skaldbotui
 docker rmi skaldbotapi
 cd ../../SkaldBotUI/src/Offline
 docker build --tag skaldbotoffline "./"
-docker run --name skaldbotoffline -p 8080:8080 skaldbotoffline
+docker run --name skaldbotoffline -p 8080:80 skaldbotoffline
