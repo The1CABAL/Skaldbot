@@ -85,7 +85,6 @@
     <Folder Include="SkaldBotAPI\templates\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.ini" />
     <Content Include="requirements.txt" />
     <Content Include="SkaldBotAPI\static\content\bootstrap.css" />
     <Content Include="SkaldBotAPI\static\content\bootstrap.min.css" />
