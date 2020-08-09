@@ -1,1 +1,1 @@
-..\..\..\..\..\sqlpackage\sqlpackage.exe /Action:Publish /tsn:"(local)" /tu:"sa" /tp:"pwd4dsn_dw" /tdn:"SkaldBot.Database" /SourceFile:"..\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac"
+..\..\..\..\..\sqlpackage\sqlpackage.exe /Action:Publish /tsn:"(local)" /tu:"sa" /tp:"pwd4dsn_dw" /tdn:"SkaldBot.Database" /SourceFile:"..\..\SkaldBot.Database\bin\Debug\SkaldBot.Database.dacpac"
