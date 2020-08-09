@@ -12,9 +12,9 @@ const getters = {
 }
 
 const actions = {
-    async getAccountInformation({ commit }, accountId) {
+    async getAccountInformation({ commit }, accountInfo) {
         return new Promise((resolve, reject) => {
-            let url = BaseUrl + 'account?accountId=' + accountId
+            let url = BaseUrl + `account?accountId=${accountInfo.accountId}&isMaster=${accountInfo.isMasterAdmin}`
             axios.get(url).then(resp => {
                 commit('set_account_information', resp.data)
                 resolve(resp);
