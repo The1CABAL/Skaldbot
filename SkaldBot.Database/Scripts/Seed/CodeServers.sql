@@ -7,7 +7,7 @@ IF NOT EXISTS (SELECT * FROM CodeServers WHERE Id = 1)
 	END
 ELSE
 	BEGIN
-		UPDATE CodeServers SET ServerId = '725880649356935192', DailyWisdom = 1, AccountId = 1, WeeklyStory = 1 WHERE id = 1
+		--UPDATE CodeServers SET ServerId = '725880649356935192', DailyWisdom = 1, AccountId = 1, WeeklyStory = 1 WHERE id = 1
 	END
 
 IF NOT EXISTS (SELECT * FROM CodeServers WHERE Id = 2)
@@ -16,7 +16,7 @@ IF NOT EXISTS (SELECT * FROM CodeServers WHERE Id = 2)
 	END
 ELSE
 	BEGIN
-		UPDATE CodeServers SET ServerId = '726640547019751458', AccountId = 1, DailyWisdom = 0, WeeklyStory = 0 WHERE id = 2
+		--UPDATE CodeServers SET ServerId = '726640547019751458', AccountId = 1, DailyWisdom = 0, WeeklyStory = 0 WHERE id = 2
 	END
 
 SET IDENTITY_INSERT dbo.CodeServers OFF
