@@ -1,1 +1,0 @@
-This folder is to get the UI docker file to run on Windows.
