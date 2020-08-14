@@ -806,9 +806,9 @@ class SQL():
         server = "SELECT Id FROM CodeServers WHERE ServerId = @serverId"
         current_date = datetime.now()
 
-        sql = sql.replace("@wisdom", wisdom[2])
-        server = server.replace("@serverId", str(wisdom[3]))
-        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[4]))
+        sql = sql.replace("@wisdom", wisdom[1])
+        server = server.replace("@serverId", str(wisdom[2]))
+        sql = sql.replace("@isActive", Helpers.bool_to_int(wisdom[3]))
         sql = sql.replace("@date", current_date.strftime('%Y-%m-%d %H:%M:%S'))
         sql = sql.replace("@Id", str(wisdom[0]))
 
@@ -829,7 +829,7 @@ class SQL():
                 serverId = c.fetchone()[0]
 
                 updateServer = "UPDATE CodeServers SET ServerId = @newServer WHERE Id = @oldServer"
-                updateServer = updateServer.replace("@newServer", str(wisdom[3]))
+                updateServer = updateServer.replace("@newServer", str(wisdom[2]))
                 updateServer = updateServer.replace("@oldServer", str(serverId))
 
                 c.execute(updateServer)
