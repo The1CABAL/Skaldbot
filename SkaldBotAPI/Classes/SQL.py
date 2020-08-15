@@ -774,7 +774,7 @@ class SQL():
                 #If the server is linked to the story account or does not exist, then continue, else return false
                 if canContinue:
                     insert_new_server = "INSERT INTO CodeServers (ServerId, Nickname, AccountId) VALUES ('@newServer', '@name', @accountId); SELECT CAST(scope_identity() as int)"
-                    insert_new_server = insert_new_server.replace("@newServer", str(wisdom[2]))
+                    insert_new_server = insert_new_server.replace("@newServer", str(story[3]))
                     insert_new_server = insert_new_server.replace("@name", "Server created Story - {}".format(current_date.strftime('%Y-%m-%d %H:%M:%S')))
                     insert_new_server = insert_new_server.replace("@accountId", str(accountId))
 
