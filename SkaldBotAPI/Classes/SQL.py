@@ -756,11 +756,11 @@ class SQL():
                 checkForExistingServer = checkForExistingServer.replace("@serverId", str(story[3]))
                 
                 c.execute(checkForExistingServer)
-                existingServerId = c.fetchone()[0]
+                existingServerId = c.fetchone()
                 
                 if existingServerId:
                     linkedToAccount = "SELECT 1 FROM CodeServers WHERE Id = @id AND AccountId = @accountId"
-                    linkedToAccount = linkedToAccount.replace("@id", existingServerId)
+                    linkedToAccount = linkedToAccount.replace("@id", existingServerId[0])
                     linkedToAccount = linkedToAccount.replace("@accountId", accountId)
 
                     c.execute(linkedToAccount)
@@ -880,11 +880,11 @@ class SQL():
                 checkForExistingServer = checkForExistingServer.replace("@serverId", str(wisdom[2]))
                 
                 c.execute(checkForExistingServer)
-                existingServerId = c.fetchone()[0]
+                existingServerId = c.fetchone()
                 
                 if existingServerId:
                     linkedToAccount = "SELECT 1 FROM CodeServers WHERE Id = @id AND AccountId = @accountId"
-                    linkedToAccount = linkedToAccount.replace("@id", existingServerId)
+                    linkedToAccount = linkedToAccount.replace("@id", existingServerId[0])
                     linkedToAccount = linkedToAccount.replace("@accountId", accountId)
 
                     c.execute(linkedToAccount)
