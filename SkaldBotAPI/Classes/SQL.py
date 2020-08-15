@@ -728,15 +728,16 @@ class SQL():
             conn = SQL.open_connection()
             c = conn.cursor()
 
+            #Check to see if server passed from site exists in CodeServers
             c.execute(server)
             serverId = c.fetchone()
 
-            #Check to see if server passed from site exists in CodeServers
+            #If it does set serverId to the current server
             if serverId:
                 serverId = serverId[0]
                 sql = sql.replace("@serverId", serverId)
             else:
-                #Else, get the account id for the stories current server, create a new server, and assign the wisdom to a new server id
+                #Else, get the account id for the stories current server, create a new server, and assign the story to a new server id
                 getCurrentServerAccountId = "SELECT AccountId FROM CodeServers WHERE Id = (SELECT ServerId FROM Stories WHERE Id = @id)"
                 getCurrentServerAccountId = getCurrentServerAccountId.replace("@id", str(story[0]))
 
