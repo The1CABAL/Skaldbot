@@ -735,7 +735,7 @@ class SQL():
             #If it does set serverId to the current server
             if serverId:
                 serverId = serverId[0]
-                sql = sql.replace("@serverId", serverId)
+                sql = sql.replace("@serverId", str(serverId))
             else:
                 #Else, get the account id for the stories current server, create a new server, and assign the story to a new server id
                 getCurrentServerAccountId = "SELECT AccountId FROM CodeServers WHERE Id = (SELECT ServerId FROM Stories WHERE Id = @id)"
@@ -744,16 +744,16 @@ class SQL():
                 c.execute(getCurrentServerAccountId)
                 accountId = c.fetchone()[0]
 
-                insert_new_server = "INSERT INTO CodeServers (ServerId, Nickname, AccountId) VALUES ('@newServer', '@name', '@accountId'); SELECT CAST(scope_identity() as int)"
+                insert_new_server = "INSERT INTO CodeServers (ServerId, Nickname, AccountId) VALUES ('@newServer', '@name', @accountId); SELECT CAST(scope_identity() as int)"
                 insert_new_server = insert_new_server.replace("@newServer", str(wisdom[3]))
                 insert_new_server = insert_new_server.replace("@name", "Server created Story - {}".format(current_date.strftime('%Y-%m-%d %H:%M:%S')))
-                insert_new_server = insert_new_server.replace("@accountId", accountId)
+                insert_new_server = insert_new_server.replace("@accountId", str(accountId))
 
                 c.execute(insert_new_server)
                 serverId = c.fetchone()[0]
                 conn.commit()
 
-                sql = sql.replace("@serverId", serverId)
+                sql = sql.replace("@serverId", str(serverId))
 
                 c.execute(update_wisdom_server)
                 conn.commit()
@@ -834,7 +834,7 @@ class SQL():
             #If it does set serverId to the current server
             if serverId:
                 serverId = serverId[0]
-                sql = sql.replace("@serverId", serverId)
+                sql = sql.replace("@serverId", str(serverId))
             else:
                 #Else, get the account id for the wisdoms current server, create a new server, and assign the wisdom to a new server id
                 getCurrentServerAccountId = "SELECT AccountId FROM CodeServers WHERE Id = (SELECT ServerId FROM Wisdoms WHERE Id = @id)"
@@ -846,13 +846,13 @@ class SQL():
                 insert_new_server = "INSERT INTO CodeServers (ServerId, Nickname, AccountId) VALUES ('@newServer', '@name', '@accountId'); SELECT CAST(scope_identity() as int)"
                 insert_new_server = insert_new_server.replace("@newServer", str(wisdom[2]))
                 insert_new_server = insert_new_server.replace("@name", "Server created Wisdom - {}".format(current_date.strftime('%Y-%m-%d %H:%M:%S')))
-                insert_new_server = insert_new_server.replace("@accountId", accountId)
+                insert_new_server = insert_new_server.replace("@accountId", str(accountId))
 
                 c.execute(insert_new_server)
                 serverId = c.fetchone()[0]
                 conn.commit()
 
-                sql = sql.replace("@serverId", serverId)
+                sql = sql.replace("@serverId", str(serverId))
 
                 c.execute(update_wisdom_server)
                 conn.commit()
