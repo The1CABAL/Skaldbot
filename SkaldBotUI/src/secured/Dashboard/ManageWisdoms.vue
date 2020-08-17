@@ -6,7 +6,7 @@
             <div style="margin-bottom: 10px">
                 <el-row>
                     <el-col :span="6">
-                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
+                        <el-input placeholder="Wisdom..." v-model="filters[0].value"></el-input>
                     </el-col>
                 </el-row>
             </div>
@@ -47,13 +47,13 @@
                         label: "Wisdom Id"
                     },
                     {
-                        prop: "Title",
-                        label: "Wisdom Title"
+                        prop: "Wisdom",
+                        label: "Wisdom"
                     }
                 ],
                 filters: [
                     {
-                        prop: 'Title',
+                        prop: 'Wisdom',
                         value: ''
                     }
                 ],

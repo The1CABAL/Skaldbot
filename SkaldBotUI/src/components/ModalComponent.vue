@@ -58,8 +58,8 @@
                         <section class="modal-body" id="modalDescription">
                             <slot name="body">
                                 <div>
-                                    <label for="title">Title:</label>
-                                    <input type="text" id="title" v-model="lookupData[0].Title" />
+                                    <label v-if="modalDisplayTypeId == 2" for="title">Title:</label>
+                                    <input v-if="modalDisplayTypeId == 2" type="text" id="title" v-model="lookupData[0].Title" />
                                     <label for="itemText">Content:</label>
                                     <br />
                                     <textarea id="itemText" v-if="modalDisplayTypeId == 2" v-model="lookupData[0].Story" class="modal-textarea"></textarea>
