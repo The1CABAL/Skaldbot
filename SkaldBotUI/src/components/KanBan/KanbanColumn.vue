@@ -1,7 +1,7 @@
 <template>
     <div id="column" class="kanban">
         <ul>
-            <li v-for="card in cards">
+            <li v-for="card in cards" :key="card.id">
                 <div>
                     <KanbanCard :contentUrl="card.content_url"></KanbanCard>
                 </div>
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-    import KanbanCard from '../components/KanbanCard';
+    import KanbanCard from '../KanBan/KanbanCard';
     export default {
         name: "KanbanColumn",
         components: {
@@ -48,8 +48,8 @@
     .kanban ul {
         list-style: none;
         margin: 0;
-        max-height: calc(100% - 36px - 36px);
-        overflow-y: auto;
+        max-height: 600px;
+        overflow: auto;
         padding-left: 0px;
     }
 

@@ -5,14 +5,16 @@ const state = {
     projects: [],
     projectColumns: [],
     columnCards: [],
-    cardInfo: []
+    cardInfo: [],
+    cardComments: []
 }
 
 const getters = {
     getProjects: state => state.projects,
     getProjectColumns: state => state.projectColumns,
     getColumnCards: state => state.columnCards,
-    getCardInfo: state => state.cardInfo
+    getCardInfo: state => state.cardInfo,
+    getCardComments: state => state.cardComments
 }
 
 const actions = {
@@ -28,7 +30,7 @@ const actions = {
                 commit('set_projects', resp.data)
                 resolve(resp)
             }).catch(err => {
-                alert(err)
+                console.log(err)
                 reject(err)
             })
         })
@@ -45,7 +47,7 @@ const actions = {
                 commit('set_project_columns', resp.data)
                 resolve(resp)
             }).catch(err => {
-                alert(err)
+                console.log(err)
                 reject(err)
             })
         })
@@ -62,7 +64,7 @@ const actions = {
                 commit('set_column_cards', resp.data)
                 resolve(resp)
             }).catch(err => {
-                alert(err)
+                console.log(err)
                 reject(err)
             })
         })
@@ -78,7 +80,23 @@ const actions = {
                 commit('set_card_info', resp.data)
                 resolve(resp)
             }).catch(err => {
-                alert(err)
+                console.log(err)
+                reject(err)
+            })
+        })
+    },
+    async getAllCardComments({ commit }, commentUrl) {
+        return new Promise((resolve, reject) => {
+            axios.get(commentUrl, {
+                headers: {
+                    Authorization: 'bearer ' + OauthPersonalToken,
+                    Accept: AcceptMediaType
+                }
+            }).then(resp => {
+                commit('set_card_comments', resp.data)
+                resolve(resp)
+            }).catch(err => {
+                console.log(err)
                 reject(err)
             })
         })
@@ -98,13 +116,16 @@ const mutations = {
         })
     },
     set_project_columns(state, projectColumns) {
-        state.projectColumns = projectColumns
+        state.projectColumns = projectColumns;
     },
     set_column_cards(state, columnCards) {
-        state.columnCards = columnCards
+        state.columnCards = columnCards;
     },
     set_card_info(state, cardInfo) {
-        state.cardInfo = cardInfo
+        state.cardInfo = cardInfo;
+    },
+    set_card_comments(state, cardComments) {
+        state.cardComments = cardComments;
     }
 }
 

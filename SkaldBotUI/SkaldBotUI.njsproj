@@ -35,6 +35,11 @@
     <Content Include="src\account\ChangePassword.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\components\KanBan\KanbanCard.vue" />
+    <Content Include="src\components\KanBan\KanbanColumn.vue" />
+    <Content Include="src\components\KanBan\KanbanComments.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\Offline\Dockerfile" />
     <Content Include="src\Offline\html\index.html" />
     <Content Include="src\secured\user\ManageServer.vue">
@@ -160,6 +165,7 @@
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
     <Folder Include="src\components\CustomFields\" />
+    <Folder Include="src\components\KanBan\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
     <Folder Include="src\components\Forms\" />

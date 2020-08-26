@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import KanbanColumn from '../../components/KanbanColumn';
+    import KanbanColumn from '../../components/KanBan/KanbanColumn';
     export default {
         name: "GitHub",
         components: {
@@ -34,7 +34,6 @@
         },
         methods: {
             async loadProject() {
-                console.log("Getting projects");
                 await this.$store.dispatch('getProjects').then(() => {
                     this.project = this.$store.getters.getProjects;
                 }).catch(() => {
