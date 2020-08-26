@@ -56,10 +56,13 @@ export const router = new Router({
                 {
                     path: '/managedocumentation', name: "managedocumentation", component: ManageDocumentation
                 },
+                //{
+                //    path: '/github', name: "github", beforeEnter() {
+                //        window.open("https://github.com/The1CABAL/SkaldBot/projects/1", '_blank')
+                //    }
+                //},
                 {
-                    path: '/github', name: "github", beforeEnter() {
-                        window.open("https://github.com/The1CABAL/SkaldBot/projects/1", '_blank')
-                    }
+                    path: '/github', name: "github", component: GitHub
                 },
                 {
                     path: '/modifyform', name: "modifyform", component: ModifyForm

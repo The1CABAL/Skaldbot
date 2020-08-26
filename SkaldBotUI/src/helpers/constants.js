@@ -1,3 +1,6 @@
-export const BaseUrl = 'http://98.255.81.19:5555/api/'
-//export const BaseUrl = 'http://127.0.0.1:5000/api/'
+//export const BaseUrl = 'http://98.255.81.19:5555/api/'
+export const BaseUrl = 'http://127.0.0.1:5000/api/'
 //export const BaseUrl = 'http://192.168.1.33:5555/api/'
+export const BaseGithubUrl = 'https://api.github.com/'
+export const OauthPersonalToken = '0812647ed839a7f833b5165d36fd905603b1adaa'
+export const AcceptMediaType = 'application/vnd.github.inertia-preview'
