@@ -40,6 +40,7 @@
     <Content Include="src\components\KanBan\KanbanComments.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\helpers\constants.js" />
     <Content Include="src\Offline\Dockerfile" />
     <Content Include="src\Offline\html\index.html" />
     <Content Include="src\secured\user\ManageServer.vue">
