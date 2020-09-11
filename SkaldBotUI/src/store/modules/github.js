@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { BaseGithubUrl, OauthPersonalToken, AcceptMediaType } from '../../helpers/constants'
 
+
 const state = {
+    msg: '',
     projects: [],
     projectColumns: [],
     columnCards: [],
@@ -10,6 +12,7 @@ const state = {
 }
 
 const getters = {
+    getGitHubUpdateMsg: state => state.msg,
     getProjects: state => state.projects,
     getProjectColumns: state => state.projectColumns,
     getColumnCards: state => state.columnCards,
@@ -100,6 +103,36 @@ const actions = {
                 reject(err)
             })
         })
+    },
+    async updateProjectIssue({ commit }, projectIssue) {
+        let url = projectIssue.url;
+        let issue = projectIssue.updatedCardInfo;
+        console.log(url);
+        return new Promise((resolve, reject) => {
+            axios({
+                method: 'patch',
+                url: url,
+                headers: {
+                    Authorization: 'bearer ' + OauthPersonalToken,
+                    Accept: AcceptMediaType,
+                },
+                data: {
+                    title: issue.title,
+                    body: issue.body,
+                    state: issue.state,
+                    milestone: issue.milestone,
+                    labels: issue.labels,
+                    assignees: issue.assignees
+                }
+            }).then(resp => {
+                commit('set_update_issue', resp.data)
+                resolve(resp)
+            }).catch(err => {
+                commit('set_fail_update_issue')
+                console.log(err)
+                reject(err)
+            })
+        })
     }
 }
 
@@ -126,6 +159,13 @@ const mutations = {
     },
     set_card_comments(state, cardComments) {
         state.cardComments = cardComments;
+    },
+    set_update_issue(state, updatedIssue) {
+        state.cardInfo = updatedIssue;
+        state.msg = 'Success';
+    },
+    set_fail_update_issue(state) {
+        state.msg = 'Fail'
     }
 }
 

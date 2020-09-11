@@ -6,7 +6,7 @@
         <div class="lists">
             <div v-for="column in columns" class="list">
                 <header>{{column.name}}</header>
-                <KanbanColumn :columnId="column.id"></KanbanColumn>
+                <KanbanColumn :columnId="column.id" @ReloadGithubPage="reloadPage"></KanbanColumn>
                 <footer><a href="https://github.com/The1CABAL/SkaldBot/projects/1" target="_blank" style="text-decoration: none; color: black;">View Board</a></footer>
             </div>
         </div>
@@ -52,6 +52,16 @@
                 else {
                     this.loaded = true;
                     this.msg = "Error getting data";
+                }
+            },
+            async reloadPage(value) {
+                if (value == "Reload") {
+                    this.loaded = false;
+                    this.project = [];
+                    this.columns = [];
+                    this.cards = [];
+
+                    await this.loadProject();
                 }
             }
         }

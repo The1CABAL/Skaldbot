@@ -3,7 +3,7 @@
         <ul>
             <li v-for="card in cards" :key="card.id">
                 <div>
-                    <KanbanCard :contentUrl="card.content_url"></KanbanCard>
+                    <KanbanCard :contentUrl="card.content_url" @ReloadGithub="reloadGithub"></KanbanCard>
                 </div>
             </li>
         </ul>
@@ -40,6 +40,9 @@
                     this.$message("Error loading cards for column id" + colId);
                 })
             },
+            reloadGithub(value) {
+                this.$emit('ReloadGithubPage', value);
+            }
         }
     }
 </script>
