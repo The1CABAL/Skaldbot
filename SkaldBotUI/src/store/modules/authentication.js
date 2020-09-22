@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios';
-import { BaseUrl } from '../../helpers/constants';
+import { BaseUrl, CryptoSecret } from '../../helpers/constants';
+var fernet = require('fernet');
 
 Vue.prototype.$http = axios
 const token = localStorage.getItem('token')
@@ -44,6 +45,14 @@ const actions = {
     async login({ commit }, user) {
         return new Promise((resolve, reject) => {
             commit('auth_request')
+            var token = new fernet.Token({
+                secret: new fernet.Secret(CryptoSecret),
+                time: Date.parse(1),
+                iv: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            })
+
+            user.password = token.encode(user.password);
+
             let url = BaseUrl + 'login'
             axios.post(url, user).then(resp => {
                 const token = JSON.parse(resp.data)[0].Id

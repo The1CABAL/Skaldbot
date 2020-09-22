@@ -344,6 +344,7 @@ class SQL():
 
         username = user[0]
         passedPassword = user[1]
+        passedPassword = Cryptography.dehashPassword(passedPassword)
 
         try:
             conn = SQL.open_connection()
