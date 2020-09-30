@@ -9,5 +9,5 @@ RUN npm run build
 
 FROM nginx as production-stage
 RUN mkdir /SkaldbotUI
-COPY --from=build-stage /TaskTracker/dist /TaskTracker
+COPY --from=build-stage /SkaldbotUI/dist /SkaldbotUI
 COPY nginx.conf /etc/nginx/nginx.conf
