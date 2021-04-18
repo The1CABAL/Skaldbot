@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="bg-primary text-white">
         <div v-if="!loading">
-            <nav-bar @logged-out="reloadAuthentication" />
+            <nav-bar />
             <header>
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <h1 class="text-2xl font-bold border-b-2 border-gray-200 pb-2">
@@ -11,7 +11,7 @@
             </header>
             <main>
                 <div class="max-w-7xl mx-auto py-3 sm:px-6 lg:px-8 min-h-screen h-full">
-                    <router-view @authenticated="reloadAuthentication" />
+                    <router-view />
                 </div>
             </main>
 
@@ -21,25 +21,26 @@
 
 <script>
     import navBar from './components/Nav/navBar.vue';
+    import PageMixin from '@/mixins/page-mixin.js'
+    import fieldButton from '@/components/CustomFields/fieldButton'
     export default {
         name: "app",
+
         data() {
             return {
-                currentPage: 'Home',
-                loading: false
+                currentPage: 'Home'
             }
         },
 
+        mixins: [PageMixin],
+
         components: {
-            'nav-bar': navBar
+            'nav-bar': navBar,
+            'vue-button': fieldButton
         },
 
         mounted() {
             this.currentPage = this.$route.name.toUpperCase();
-
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
         },
 
         created: function () {
@@ -53,29 +54,12 @@
             });
         },
 
-        methods: {
-            reloadAuthentication() {
-                if (!this.$store.getters.isLoggedIn) {
-                    return;
-                }
-
-                this.loading = true;
-
-                this.$store.dispatch('loadRoles').then(() => {
-                    this.loading = false;
-                });
-            },
-        },
-
         watch: {
-            '$route.name' (newVal, oldVal) {
+            '$route.name'(newVal, oldVal) {
                 if (newVal !== oldVal) {
-                    this.currentPage = this.$route.name.toUpperCase();
+                    this.currentPage = newVal.toUpperCase();
                 }
             }
         }
     }
 </script>
-
-<style src="@/style/main.css">
-</style>

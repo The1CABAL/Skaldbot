@@ -41,7 +41,10 @@ const actions = {
 const mutations = {
     set_account_information(state, data) {
         state.accountInformation = JSON.parse(data[0])[0];
-        state.users = JSON.parse(data[1]);
+
+        if (data[1].length > 0) {
+            state.users = JSON.parse(data[1]);
+        }
     },
     auth_error(state) {
         state.accountInformation = [];

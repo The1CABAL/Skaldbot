@@ -5,16 +5,25 @@
 </template>
 
 <script>
+    import PageMixin from '@/mixins/page-mixin.js';
+
     export default {
         name: "HomePage",
+
+        mixins: [PageMixin],
 
         data() {
             return {
                 background: require('@/assets/SbBackground.jpg'),
             }
+        },
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted();
         }
     }
 </script>
-
-<style scoped>
-</style>

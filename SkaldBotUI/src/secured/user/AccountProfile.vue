@@ -1,5 +1,8 @@
 <template>
     <div id="AccountProfile">
+        <div class="pb-3">
+            <vue-button @click="goBack">Go Back</vue-button>
+        </div>
         <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
             <p style="font-weight: bold;">{{msg}}</p>
             <vue-button varient="close" @click="closeNotification">x</vue-button>
@@ -7,46 +10,33 @@
         <tabs>
             <tab title="Account Information">
                 <div class="panel">
-                    <div class="panel-heading"><h4>Account Profile</h4></div>
+                    <div class="panel-heading"><h4 class="font-bold tracking-wide">Account Profile</h4></div>
                     <div class="panel-body">
-                        <h4 class="sectionHeading">{{accountData.AccountName}}</h4>
-                        <hr />
+                        <h4 class="font-bold tracking-wide">{{accountData.AccountName}}</h4>
+                        <hr class="mt-3" />
                         <form v-on:submit="formSubmit">
-                            <label for="accountName">Account Name:</label>
-                            <input type="text" id="accountName" name="accountName" v-model="accountData.AccountName" />
-                            <label for="createDate">Date Created:</label>
-                            <input type="text" id="createDate" name="createDate" :value="getDate(accountData.CreateDate)" disabled />
+                            <vue-input name="accountName" id="accountName" v-model="accountData.AccountName">Account Name</vue-input>
+                            <vue-input name="createDate" id="createDate" :value="getDate(accountData.CreateDate)" :is-disabled="true">Date Created</vue-input>
                             <vue-checkbox v-model="accountData.IsActive">Is Active</vue-checkbox>
-                            <br />
                             <vue-button type="submit">Save</vue-button>
                         </form>
                     </div>
                 </div>
             </tab>
-            <tab title="Users">
+            <tab title="Users" class="panel p-3">
                 <vue-button v-on:click="registerUser">Add User</vue-button>
-                <div style="margin-bottom: 10px">
-                    <el-row>
-                        <el-col :span="6">
-                            <el-input placeholder="Search Username" v-model="filters[0].value"></el-input>
-                        </el-col>
-                    </el-row>
-                </div>
-
-                <data-tables :data="accountUsers" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
-                    <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
-                    </el-table-column>
-                    <el-table-column prop="IsActive" label="User Active">
-                        <template slot-scope="scope">
-                            <div>{{getBool(scope.row.IsActive)}}</div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="CreateDate" label="Date Created">
-                        <template slot-scope="scope">
-                            <div>{{getDate(scope.row.CreateDate)}}</div>
-                        </template>
-                    </el-table-column>
-                </data-tables>
+                <vue-table-filtered :hidden-columns="['Id']"
+                                    showPerPage
+                                    showSearchField
+                                    showPagination
+                                    :items="accountUsers"
+                                    :pages="1"
+                                    @editClick="handleSelectionChange">
+                    <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
+                    <vue-table-column label="User Active" is-sortable />
+                    <vue-table-column label="User Locked" is-sortable />
+                    <vue-table-column prop="CreateDate" label="Date Created" is-sortable />
+                </vue-table-filtered>
             </tab>
         </tabs>
     </div>
@@ -55,9 +45,15 @@
 <script>
     import fieldButton from '../../components/CustomFields/fieldButton'
     import fieldCheckbox from '../../components/CustomFields/fieldCheckbox'
+    import fieldInput from '../../components/CustomFields/fieldInput'
+    import vueTableFiltered from '../../components/Tables/vueTableFiltered'
+    import vueTableColumn from '../../components/Tables/vueTableColumn'
+    import PageMixin from '@/mixins/page-mixin.js'
+    import UtilMixin from '@/mixins/util-mixin.js'
 
     export default {
         name: "AccountProfile",
+
         props: {
             accountId: {
                 type: String,
@@ -65,27 +61,25 @@
             }
         },
 
+        mixins: [PageMixin, UtilMixin],
+
         components: {
             'vue-button': fieldButton,
-            'vue-checkbox': fieldCheckbox
+            'vue-checkbox': fieldCheckbox,
+            'vue-input': fieldInput,
+            'vue-table-filtered': vueTableFiltered,
+            'vue-table-column': vueTableColumn
         },
 
         data() {
             return {
                 accountData: [],
                 accountUsers: [],
-                prevRoute: {},
                 msg: '',
                 isError: true,
                 submitted: false,
                 success: false,
-                masterAdmin: false,
-                admin: false,
                 titles: [
-                    {
-                        prop: "Id",
-                        label: "User Id"
-                    },
                     {
                         prop: "Username",
                         label: "Username"
@@ -122,10 +116,10 @@
                             label: 'Edit'
                         }
                     ]
-                },
-                selectedRow: []
+                }
             }
         },
+
         watch: {
             submitted: function () {
                 if (this.submitted) {
@@ -133,31 +127,30 @@
                 }
             }
         },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-                vm.prevRoute = from
-            })
+
+        beforeMount() {
+            this.pageMounting();
         },
-        mounted: function () {
-            this.getData();
+
+        mounted() {
+            this.pageMounted().then(() => {
+                this.getData().then(() => {
+                    if (!this.masterAdmin && !this.admin && !this.clientAdmin) {
+                        this.$router.push('/unauthorized')
+                    }
+
+                    this.pageReady();
+                });
+            });
         },
-        created: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
+
+        computed: {
+            hasAccountUsers() {
+                return this.accountUsers.length > 0;
             }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin && !this.$store.getters.isClientAdmin) {
-                    this.$router.push('/unauthorized')
-                }
-            }
         },
+
         methods: {
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
-            },
             formSubmit() {
                 event.preventDefault();
                 if (!this.objectsAreSame(this.accountData, this.$store.getters.accountInformation)) {
@@ -177,6 +170,7 @@
                     this.setNotification(false);
                 }
             },
+
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
@@ -189,16 +183,24 @@
                     this.msg = "There was an error updating the account. Please try again.";
                 }
             },
+
             closeNotification() {
                 this.msg = '';
                 this.submitted = false;
                 this.isError = false;
             },
-            getData() {
+
+            async getData() {
+                await this.getAccountInformation();
+                //await this.getAccountUsers();
+            },
+
+            async getAccountInformation() {
+                let accountId = this.accountId;
+                let masterAdmin = this.masterAdmin;
                 let that = this;
-                var accountId = this.accountId;
-                var isMasterAdmin = this.$store.getters.isMasterAdmin;
-                this.$store.dispatch('getAccountInformation', { accountId, isMasterAdmin }).then(() => {
+
+                this.$store.dispatch('getAccountInformation', { accountId, masterAdmin }).then(() => {
                     that.accountData = { ...this.$store.getters.accountInformation };
                     that.accountUsers = this.$store.getters.accountUsers;
                 }).catch(err => {
@@ -206,41 +208,33 @@
                     console.log(err);
                 })
             },
-            objectsAreSame(x, y) {
-                var objectsAreSame = true;
-                for (var propertyName in x) {
-                    if (x[propertyName] != y[propertyName]) {
-                        objectsAreSame = false;
-                    }
-                }
 
-                return objectsAreSame;
+            async getAccountUsers() {
+                let accountId = this.accountId;
+                let masterAdmin = this.masterAdmin;
+
+                this.$store.dispatch('getAccountUsers', { accountId, masterAdmin }).then(() => {
+                    that.accountUsers = this.$store.getters.accountUsers;
+                }).catch(err => {
+                    that.$message('Error loading account data!');
+                    console.log(err);
+                })
             },
+
+            objectsAreSame(x, y) {
+                return this.areEquivalient(x, y)
+            },
+
             goBack() {
-                this.$router.push(this.prevRoute.path)
+                this.redirectUser(this.prevRoute.path)
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles').then(() => {
-                    if (this.$store.getters.isMasterAdmin) {
-                        this.masterAdmin = true;
-                        this.admin = true;
-                    }
-                    else if (this.$store.getters.isAdmin) {
-                        this.admin = true;
-                    }
-                });
-            },
+
             handleSelectionChange(val) {
-                this.selectedRow = val
+                this.redirectUser(`/userprofile/${val}`)
             },
-            getBool(value) {
-                if (value)
-                    return "True"
-                else
-                    return "False"
-            },
+
             registerUser() {
-                this.$router.push('/registerUser/' + this.accountId)
+                this.redirectUser(`/registerUser/${this.accountId}`);
             }
         }
     }

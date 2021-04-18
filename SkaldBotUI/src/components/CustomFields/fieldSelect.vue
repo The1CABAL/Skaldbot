@@ -72,7 +72,11 @@
             },
             items: {
                 type: Array,
-                default: []
+                default: () => []
+            },
+            defaultSelectedItem: {
+                type: Number | String,
+                required: false
             }
         },
 
@@ -148,6 +152,11 @@
                     this.selectedName = 'Select'
                     this.selectedValue = 'Select'
                     this.selectedItem = 'Select'
+                }
+                else if (this.defaultSelectedItem) {
+                    this.selectedItem = this.items.find(item => item[this.valueKey] === this.defaultSelectedItem);
+                    this.selectedValue = this.selectedItem[this.valueKey];
+                    this.selectedName = this.selectedItem[this.nameKey];
                 }
             }
         }

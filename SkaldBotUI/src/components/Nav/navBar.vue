@@ -84,11 +84,14 @@
 <script>
     import navLink from './navLink.vue';
     import multiavatar from '@multiavatar/multiavatar'
+    import PageMixin from '@/mixins/page-mixin'
 
     export default {
         components: {
             'nav-link': navLink
         },
+
+        mixins: [PageMixin],
 
         data() {
             return {
@@ -101,22 +104,6 @@
         computed: {
             avatarUrl() {
                 return multiavatar('Binx Bond')
-            },
-
-            masterAdmin() {
-                return this.$store.getters.isMasterAdmin
-            },
-
-            clientAdmin() {
-                return this.$store.getters.isClientAdmin || this.masterAdmin || this.admin;
-            },
-
-            admin() {
-                return this.$store.getters.isAdmin || this.masterAdmin;
-            },
-
-            authenticated() {
-                return this.$store.getters.isLoggedIn;
             }
         },
 

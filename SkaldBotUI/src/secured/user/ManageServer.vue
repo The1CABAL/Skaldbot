@@ -1,7 +1,10 @@
 <template>
     <div id="ManageServer">
         <div v-if="hasExistingSever">
-            <vue-button @click="addServer">Add Channel</vue-button>
+            <div class="flex flex-1 w-full space-x-2">
+                <vue-button @click="goBack">Go Back</vue-button>
+                <vue-button @click="addServer">Add Channel</vue-button>
+            </div>
 
             <vue-select :items="servers" name-key="Nickname" value-key="Id" @change="selectServer" class="pb-2"/>
 
@@ -27,15 +30,20 @@
     import HelpDocumentation from '../../components/HelpDocumentation'
     import fieldSelect from '../../components/CustomFields/fieldSelect';
     import fieldButton from '../../components/CustomFields/fieldButton';
+    import PageMixin from '@/mixins/page-mixin.js'
 
     export default {
         name: "ManageServer",
+
         components: {
             Form,
             HelpDocumentation,
             'vue-select': fieldSelect,
             'vue-button': fieldButton
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 formKey: 'ManageServer',
@@ -49,24 +57,22 @@
                 selectedServer: []
             }
         },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-                vm.prevRoute = from
-            })
+
+        beforeMount() {
+            this.pageMounting();
         },
-        mounted: function () {
-            this.getServers();
-        },
-        created: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin && !this.$store.getters.isClientAdmin) {
+
+        mounted() {
+            this.pageMounted().then(() => {
+                if (!this.masterAdmin && !this.admin && !this.clientAdmin) {
                     this.$router.push('/unauthorized')
                 }
-            }
+
+                this.getServers();
+                this.pageReady();
+            })
         },
+
         methods: {
             getServers() {
                 this.newServer = false;
@@ -87,9 +93,7 @@
                     this.$message("Error loading account servers");
                 })
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles');
-            },
+
             addServer() {
                 var defaultModel = {
                     Id: 0,
@@ -108,6 +112,7 @@
                 }
                 event.preventDefault;
             },
+
             selectServer(e) {
                 this.newServer = false
 
@@ -126,12 +131,15 @@
                     })
                 }
             },
+
             openHelp() {
                 this.showHelp = true;
             },
+
             closeHelp() {
                 this.showHelp = false;
             },
+
             setSuccess() {
                 this.$message("Successfully updated!");
                 this.getServers();

@@ -37,7 +37,8 @@ const getters = {
     user: state => state.user,
     getUser: state => state.userData,
     getUsers: state => state.users,
-    getAllRoles: state => state.roles
+    getAllRoles: state => state.roles,
+    getRole: state => state.role
 };
 
 const actions = {

@@ -42,6 +42,8 @@
     </Content>
     <Content Include="src\components\CustomFields\fieldButton.vue" />
     <Content Include="src\components\CustomFields\fieldCheckbox.vue" />
+    <Content Include="src\components\CustomFields\fieldInput.vue" />
+    <Content Include="src\components\CustomFields\fieldSearchInput.vue" />
     <Content Include="src\components\CustomFields\fieldSelect.vue" />
     <Content Include="src\components\KanBan\KanbanCard.vue" />
     <Content Include="src\components\KanBan\KanbanColumn.vue" />
@@ -50,7 +52,12 @@
     </Content>
     <Content Include="src\components\Nav\navBar.vue" />
     <Content Include="src\components\Nav\navLink.vue" />
+    <Content Include="src\components\Tables\vueTable.vue" />
+    <Content Include="src\components\Tables\vueTableColumn.vue" />
+    <Content Include="src\components\Tables\vueTableFiltered.vue" />
     <Content Include="src\helpers\constants.js" />
+    <Content Include="src\mixins\page-mixin.js" />
+    <Content Include="src\mixins\util-mixin.js" />
     <Content Include="src\Offline\Dockerfile" />
     <Content Include="src\Offline\html\index.html" />
     <Content Include="src\secured\user\ManageServer.vue">
@@ -177,11 +184,13 @@
     <Folder Include="src\components\CustomFields\" />
     <Folder Include="src\components\KanBan\" />
     <Folder Include="src\components\Nav\" />
+    <Folder Include="src\components\Tables\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
+    <Folder Include="src\mixins\" />
     <Folder Include="src\Offline\" />
     <Folder Include="src\Offline\html\" />
     <Folder Include="src\style\" />
