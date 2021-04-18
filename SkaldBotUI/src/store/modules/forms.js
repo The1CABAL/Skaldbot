@@ -2,18 +2,16 @@ import axios from 'axios';
 import { BaseUrl } from '../../helpers/constants'
 
 const state = {
-    formSchema: [],
-    formActionLink: '',
-    formName: '',
     forms: [],
     form: [],
     postStatus: ''
 };
 
 const getters = {
-    getFormSchema: state => state.formSchema,
-    getFormName: state => state.formName,
-    getFormActionLink: state => state.formActionLink,
+    getFormSchema: state => state.form.FieldInfo.FieldSchema,
+    getFormName: state => state.form.FormInfo.FormName,
+    getFormActionLink: state => state.form.FieldInfo.ActionLink,
+    getShowFormName: state => state.form.FormInfo.ShowFormName,
     getForms: state => state.forms,
     getForm: state => state.form,
     getPostStatus: state => state.postStatus
@@ -46,43 +44,7 @@ const actions = {
         })
     },
 
-    async fetchFormByFormKey({ commit }, formKey) {
-        return new Promise((resolve, reject) => {
-            let schemaUrl = BaseUrl + 'getFormSchema?formKey=' + formKey;
-            let actionUrl = BaseUrl + 'getActionLink?formKey=' + formKey;
-            let nameUrl = BaseUrl + 'getFormName?formKey=' + formKey;
-
-            var schema = null;
-            var actionLink = '';
-            var name = '';
-
-            axios.get(schemaUrl).then(resp => {
-                schema = resp.data;
-                axios.get(actionUrl).then(resp => {
-                    actionLink = resp.data;
-                    axios.get(nameUrl).then(resp => {
-                        name = resp.data;
-
-                        commit('set_form_information', { schema, actionLink, name })
-                        resolve(resp);
-                    }).catch(err => {
-                        console.log(err);
-                        reject(err)
-                    })
-                }).catch(err => {
-                    console.log(err);
-                    reject(err)
-                })
-
-            }).catch(err => {
-                console.log(err);
-                reject(err)
-            })
-
-        })
-    },
-
-    async fetchFormToEdit({ commit }, formKey) {
+    async fetchForm({ commit }, formKey) {
         return new Promise((resolve, reject) => {
             let url = BaseUrl + 'form?formKey=' + formKey
             axios.get(url).then(resp => {
@@ -123,16 +85,30 @@ const actions = {
 };
 
 const mutations = {
-    set_form_information(state, formData) {
-        state.formSchema = JSON.parse(formData.schema);
-        state.formName = JSON.parse(formData.name)[0].FormName
-        state.formActionLink = JSON.parse(formData.actionLink)[0].ActionLink;
-    },
     set_forms(state, forms) {
         state.forms = JSON.parse(forms);
     },
     set_form(state, form) {
-        state.form = JSON.parse(form);
+        let fieldInfo = JSON.parse(form);
+
+        if (!fieldInfo) {
+            return;
+        }
+
+        fieldInfo = fieldInfo[0]
+
+        if (!fieldInfo.Form) {
+            return;
+        }
+
+        let formData = fieldInfo.Form[0];
+
+        let obj = {
+            FieldInfo: fieldInfo,
+            FormInfo: formData
+        }
+
+        state.form = obj;
     },
     set_post_status(state, message) {
         state.postStatus = message;

@@ -9,41 +9,44 @@
             <button class="close" @click="closeNotification">x</button>
         </div>
 
-        <div v-if="loaded" class="panel">
-            <div class="panel-heading">{{formName}}</div>
-            <hr />
-            <div class="panel-body">
-                <form action="" v-on:submit="formSubmit">
-                    <vue-form-generator v-if="loaded" :schema="schema" :model="model" :options="formOptions" v-on:validated="validateForm"></vue-form-generator>
-                </form>
+        <div v-if="loaded">
+            <div class="panel">
+                <div v-if="showFormName">
+                    <h2 class="font-bold tracking-wide">{{formName}}</h2>
+                    <hr class="my-3" />
+                </div>
+                <div class="panel-body">
+                    <form action="" v-on:submit="formSubmit">
+                        <vue-form-generator v-if="loaded" :schema="schema" :model="model" :options="formOptions" v-on:validated="validateForm"></vue-form-generator>
+                    </form>
+                </div>
             </div>
-        </div>
-        <div v-if="admin">
-            <input type="checkbox" id="cbShowFormDetails" name="cbShowFormDetails" v-on:change="showFormDetails" />
-            <label for="cbShowFormDetails">Show Form Information</label>
-        </div>
-        <div v-if="showFormExtras" class="panel panel-default">
-            <div class="panel-heading">Model</div>
-            <div class="panel-body">
-                <pre v-if="model" v-html="prettyJSON(model)"></pre>
+            <div v-if="admin">
+                <vue-checkbox @change="showFormDetails">Show Form Information</vue-checkbox>
             </div>
-        </div>
+            <div v-if="showFormExtras" class="panel panel-default">
+                <div class="panel-heading">Model</div>
+                <div class="panel-body">
+                    <pre v-if="model" v-html="prettyJSON(model)"></pre>
+                </div>
+            </div>
 
-        <div v-if="showFormExtras" class="panel panel-default">
-            <div class="panel-heading">Schema</div>
-            <div class="panel-body">
-                <pre v-if="model" v-html="prettyJSON(schema)"></pre>
+            <div v-if="showFormExtras" class="panel panel-default">
+                <div class="panel-heading">Schema</div>
+                <div class="panel-body">
+                    <pre v-if="model" v-html="prettyJSON(schema)"></pre>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import VueLoading from '../VueLoading';
     import VueFormGenerator from 'vue-form-generator'
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
-    import { mapGetters, mapActions } from "vuex";
+    import { mapActions } from "vuex";
+    import fieldCheckbox from "../CustomFields/fieldCheckbox.vue";
 
     VueFormGenerator.validators.emailValidation = function (value, field, model) {
         let email = model.email;
@@ -72,6 +75,7 @@
         name: "Form",
         components: {
             VueLoading,
+            'vue-checkbox': fieldCheckbox
         },
         props: {
             formKey: {
@@ -121,6 +125,7 @@
                 action: '',
                 model: {},
                 schema: null,
+                showFormName: true,
                 options: {
                     validatedAfterLoad: false,
                     validatedAfterChange: true
@@ -243,10 +248,11 @@
                     this.showFormExtras = true;
             },
             getData() {
-                this.$store.dispatch('fetchFormByFormKey', this.formKey).then(() => {
-                    this.schema = { ...this.$store.getters.getFormSchema };
+                this.$store.dispatch('fetchForm', this.formKey).then(() => {
+                    this.schema = JSON.parse(this.$store.getters.getFormSchema);
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
+                    this.showFormName = this.$store.getters.showFormName;
                     if (this.passedModel != undefined && this.passedModel != null) {
                         this.setModel();
                     }
@@ -279,6 +285,3 @@
         }
     }
 </script>
-
-<style scoped>
-</style>

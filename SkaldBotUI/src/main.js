@@ -4,14 +4,16 @@ import { router } from './helpers';
 import store from './store';
 import App from './App';
 
+
 import VueFormGenerator from 'vue-form-generator'
 Vue.use(VueFormGenerator);
 
 import fieldPassword from './components/CustomFields/fieldPassword';
 Vue.component("fieldPassword", fieldPassword);
 
+import './style/styles.css'
+
 import ElementUI from 'element-ui'
-import 'element-theme-dark';
 Vue.use(ElementUI);
 
 import lang from 'element-ui/lib/locale/lang/en'

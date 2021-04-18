@@ -27,34 +27,34 @@ Vue.use(Router);
 export const router = new Router({
     mode: 'history',
     routes: [
-        { path: '/home', name: "home", component: HomePage },
-        { path: '/login', name: "login", component: Login },
-        { path: '/register', name: "register", component: Register },
-        { path: '/about', component: About },
-        { path: '/suggestions', component: Suggestions },
+        { path: '/home', name: "home", component: HomePage, meta: { accessibleLoggedOut: true, accessibleLoggedIn: true } },
+        { path: '/login', name: "login", component: Login, meta: { accessibleLoggedOut: true, accessibleLoggedIn: false } },
+        { path: '/register', name: "register", component: Register, meta: { accessibleLoggedOut: true, accessibleLoggedIn: false } },
+        { path: '/about', name: "about", component: About, meta: { accessibleLoggedOut: true, accessibleLoggedIn: true } },
+        { path: '/suggestions', name: "suggestions", component: Suggestions, meta: { accessibleLoggedOut: true, accessibleLoggedIn: true } },
         {
-            path: '/dashboard', component: Dashboard, redirect: '/dashboardhome',
+            path: '/dashboard', name:"dashboard", component: Dashboard, redirect: '/dashboardhome', meta: { accessibleLoggedOut: false, accessibleLoggedIn: true },
             children: [
                 {
-                    path: '/dashboardhome', name: "dashboardhome", component: DashboardHome
+                    path: '/dashboardhome', name: "dashboard home", component: DashboardHome, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/manageusers', name: "manageusers", component: ManageUsers
+                    path: '/manageusers', name: "manage users", component: ManageUsers, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/pendingitems', name: "pendingitems", component: PendingItems
+                    path: '/pendingitems', name: "pending items", component: PendingItems, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/managestories', name: "managestories", component: ManageStories
+                    path: '/managestories', name: "manage stories", component: ManageStories, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/managewisdoms', name: "managewisdoms", component: ManageWisdoms
+                    path: '/managewisdoms', name: "manage wisdoms", component: ManageWisdoms, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/manageforms', name: "manageforms", component: ManageForms
+                    path: '/manageforms', name: "manage forms", component: ManageForms, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/managedocumentation', name: "managedocumentation", component: ManageDocumentation
+                    path: '/managedocumentation', name: "manage documentation", component: ManageDocumentation, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 //{
                 //    path: '/github', name: "github", beforeEnter() {
@@ -62,23 +62,58 @@ export const router = new Router({
                 //    }
                 //},
                 {
-                    path: '/github', name: "github", component: GitHub
+                    path: '/github', name: "github", component: GitHub, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/modifyform', name: "modifyform", component: ModifyForm
+                    path: '/modifyform', name: "modify form", component: ModifyForm, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
                 },
                 {
-                    path: '/modifyform/:formKey', name: "modifyform", component: ModifyForm, props: true
-                }]
+                    path: '/modifyform/:formKey', name: "modify form", component: ModifyForm, props: true, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true }
+                }],
         },
-        { path: '/userprofile/:userId', name: 'userprofile', component: UserProfile, props: true },
-        { path: '/accountprofile/:accountId', name: 'accountprofile', component: AccountProfile, props: true },
-        { path: '/registerUser/:accountId', name: 'registeraccountuser', component: RegisterUser, props: true },
-        { path: '/manageserver', name: 'manageserver', component: ManageServer },
-        { path: '/unauthorized', component: Unauthorized },
+        { path: '/userprofile/:userId', name: 'user profile', component: UserProfile, props: true, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true } },
+        { path: '/accountprofile/:accountId', name: 'account profile', component: AccountProfile, props: true, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true } },
+        { path: '/registerUser/:accountId', name: 'register account user', component: RegisterUser, props: true, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true } },
+        { path: '/manageserver', name: 'manage server', component: ManageServer, meta: { accessibleLoggedOut: false, accessibleLoggedIn: true } },
+        { path: '/unauthorized', name: 'unauthorized', component: Unauthorized, meta: { accessibleLoggedOut: true, accessibleLoggedIn: true } },
 
         // otherwise redirect to home
         { path: '*', redirect: '/home' },
-    ],
-    linkExactActiveClass: "activeLink"
+    ]
 });
+
+
+router.beforeEach((to, from, next) => {
+    if (!to.meta.accessibleLoggedIn && !to.meta.accessibleLoggedOut) {
+        console.error(`Route guard for route ${to.name} is not configured correctly!`)
+        next({ name: 'home' });
+        return;
+    }
+
+    if (to.meta.accessibleLoggedIn && to.meta.accessibleLoggedOut) {
+        next();
+        return;
+    }
+
+    const loggedIn = !!window.localStorage.getItem('token');
+
+    if (to.meta.accessibleLoggedIn) {
+        if (!loggedIn) {
+            next({ name: 'unauthorized' })
+            return;
+        }
+
+        next();
+        return;
+    }
+
+    if (to.meta.accessibleLoggedOut) {
+        if (!to.meta.accessibleLoggedIn && loggedIn) {
+            next({ to: 'unauthorized' })
+            return;
+        }
+
+        next();
+        return;
+    }
+})

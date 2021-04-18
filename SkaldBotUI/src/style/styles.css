@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.panel {
+    @apply mb-5 bg-dark border border-white shadow rounded-md;
+}
+
+.panel-heading {
+    @apply text-white bg-dark px-2 py-3 border-b;
+}
+
+.panel-body {
+    @apply p-2;
+}
+
+/* Works on Firefox */
+* {
+    scrollbar-color: rgb(129, 140, 248) #E5E7EB;
+}
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    *::-webkit-scrollbar-track {
+        @apply bg-gray-300;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        @apply bg-hover border-2 rounded-lg;
+    }
+
+
+.vue-tablist {
+    @apply list-none flex pl-0;
+}
+
+.vue-tab {
+    @apply py-2 px-3 cursor-pointer bg-primary relative bottom-1 rounded-md hover:bg-hoverLight hover:text-primary;
+}
+
+    .vue-tab[aria-selected="true"] {
+        @apply bg-hover border-b border-white text-primary;
+    }
+
+    .vue-tab[aria-disabled="true"] {
+        @apply cursor-not-allowed bg-gray-600;
+    }

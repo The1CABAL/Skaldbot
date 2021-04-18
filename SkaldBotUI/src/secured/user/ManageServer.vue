@@ -1,13 +1,10 @@
 <template>
     <div id="ManageServer">
         <div v-if="hasExistingSever">
-            <div class="buttonSection" @change="selectServer($event)">
-                <button type="button" @click="addServer" class="btn-button">Add Channel</button>
-                <select class="select-css" id="serverSelect">
-                    <option value="select">Select</option>
-                    <option v-for="server in servers" :key="server.Id" :value="server.Id">{{server.Nickname}}</option>
-                </select>
-            </div>
+            <vue-button @click="addServer">Add Channel</vue-button>
+
+            <vue-select :items="servers" name-key="Nickname" value-key="Id" @change="selectServer" class="pb-2"/>
+
             <div v-if="serverLoaded && !newServer">
                 <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="setSuccess" />
             </div>
@@ -20,7 +17,7 @@
             <Form :formKey="formKey" :passedModel="selectedServer" @ServerSuccess="setSuccess" />
         </div>
         <hr />
-        <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+        <vue-button @click="openHelp" varient="secondary" class="mt-2">Help</vue-button>
         <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
     </div>
 </template>
@@ -28,11 +25,16 @@
 <script>
     import Form from '../../components/Forms/Form';
     import HelpDocumentation from '../../components/HelpDocumentation'
+    import fieldSelect from '../../components/CustomFields/fieldSelect';
+    import fieldButton from '../../components/CustomFields/fieldButton';
+
     export default {
         name: "ManageServer",
         components: {
             Form,
-            HelpDocumentation
+            HelpDocumentation,
+            'vue-select': fieldSelect,
+            'vue-button': fieldButton
         },
         data() {
             return {
@@ -107,19 +109,21 @@
                 event.preventDefault;
             },
             selectServer(e) {
-                const serverId = e.target.options[e.target.options.selectedIndex].value;
-
                 this.newServer = false
 
-                if (serverId != "select") {
+                if (!e) {
+                    this.selectedServer = [];
+                    this.serverLoaded = false;
+                    return;
+                }
+
+                const serverId = e['Id'];
+
+                if (serverId != "Select") {
                     this.$store.dispatch('getServerById', serverId).then(() => {
                         this.selectedServer = { ...this.$store.getters.getServer };
                         this.serverLoaded = true;
                     })
-                }
-                else {
-                    this.selectedServer = [];
-                    this.serverLoaded = false;
                 }
             },
             openHelp() {

@@ -256,8 +256,8 @@ class SQL():
             print("Error getting forms. Error: " + e)
             print("SQL" + sql)
 
-    def get_form_schema(formKey):
-        sql = "SELECT FieldSchema FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1"
+    def get_form(formKey):
+        sql = "SELECT luVF.FormName, vff.ActionLink, vff.FieldSchema, luFV.ShowFormName FROM CodeVueForms luVF JOIN VueFormFields vff WITH (NOLOCK) ON luVF.FormKey = vff.FormKey WHERE luVF.FormKey = '@formKey' AND luVF.IsActive = 1"
         sql = sql.replace("@formKey", formKey)
 
         try:
@@ -273,39 +273,39 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting form for FormKey " + formKey + ". Error: " + e)
 
-    def get_form_actionlink(formKey):
-        sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
-        sql = sql.replace("@formKey", formKey)
+    #def get_form_actionlink(formKey):
+    #    sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+    #    sql = sql.replace("@formKey", formKey)
 
-        try:
-            conn = SQL.open_connection()
-            c = conn.cursor()
+    #    try:
+    #        conn = SQL.open_connection()
+    #        c = conn.cursor()
 
-            c.execute(sql)
-            forms = c.fetchall()[0]
-            c.close()
-            conn.close()
+    #        c.execute(sql)
+    #        forms = c.fetchall()[0]
+    #        c.close()
+    #        conn.close()
                 
-            return forms
-        except pymssql.Error as e:
-            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+    #        return forms
+    #    except pymssql.Error as e:
+    #        print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
-    def get_form_name(formKey):
-        sql = "SELECT FormName FROM CodeVueForms WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
-        sql = sql.replace("@formKey", formKey)
+    #def get_form_name(formKey):
+    #    sql = "SELECT FormName FROM CodeVueForms WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+    #    sql = sql.replace("@formKey", formKey)
 
-        try:
-            conn = SQL.open_connection()
-            c = conn.cursor()
+    #    try:
+    #        conn = SQL.open_connection()
+    #        c = conn.cursor()
 
-            c.execute(sql)
-            forms = c.fetchall()[0]
-            c.close()
-            conn.close()
+    #        c.execute(sql)
+    #        forms = c.fetchall()[0]
+    #        c.close()
+    #        conn.close()
                 
-            return forms
-        except pymssql.Error as e:
-            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+    #        return forms
+    #    except pymssql.Error as e:
+    #        print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
         sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, DiscordUserId, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, @discordId, '@date')"
@@ -924,7 +924,7 @@ class SQL():
             return False
 
     def get_form_by_form_key(formKey):
-        sql = "SELECT vff.FormKey, vff.FieldSchema, vff.ActionLink, vff.IsActive, luVF.FormName FROM VueFormFields vff WITH (NOLOCK) JOIN CodeVueForms luVF WITH (NOLOCK) ON vff.FormKey = luVF.FormKey WHERE vff.FormKey = '@formKey' FOR JSON AUTO"
+        sql = "SELECT Fields.FormKey, Fields.FieldSchema, Fields.ActionLink, Fields.IsActive, Form.FormName, Form.ShowFormName FROM VueFormFields Fields WITH (NOLOCK) JOIN CodeVueForms Form WITH (NOLOCK) ON Fields.FormKey = Form.FormKey WHERE Fields.FormKey = '@formKey' FOR JSON AUTO"
 
         sql = sql.replace("@formKey", formKey)
 

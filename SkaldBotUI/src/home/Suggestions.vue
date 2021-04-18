@@ -1,5 +1,5 @@
 <template>
-    <div class="suggestions">
+    <div class="space-y-4">
         <SelectForm v-on:formKey="onChildChange" :pageId="pageId" />
         <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error" />
     </div>

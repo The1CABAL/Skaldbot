@@ -2,7 +2,7 @@
     <div id="AccountProfile">
         <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
             <p style="font-weight: bold;">{{msg}}</p>
-            <button class="close" @click="closeNotification">x</button>
+            <vue-button varient="close" @click="closeNotification">x</vue-button>
         </div>
         <tabs>
             <tab title="Account Information">
@@ -16,16 +16,15 @@
                             <input type="text" id="accountName" name="accountName" v-model="accountData.AccountName" />
                             <label for="createDate">Date Created:</label>
                             <input type="text" id="createDate" name="createDate" :value="getDate(accountData.CreateDate)" disabled />
-                            <label for="isActive">Is Active:</label>
-                            <input type="checkbox" id="isActive" name="isActive" v-model="accountData.IsActive" />
+                            <vue-checkbox v-model="accountData.IsActive">Is Active</vue-checkbox>
                             <br />
-                            <button type="submit" class="btn-button">Save</button>
+                            <vue-button type="submit">Save</vue-button>
                         </form>
                     </div>
                 </div>
             </tab>
             <tab title="Users">
-                <button type="button" class="btn-button" v-on:click="registerUser">Add User</button>
+                <vue-button v-on:click="registerUser">Add User</vue-button>
                 <div style="margin-bottom: 10px">
                     <el-row>
                         <el-col :span="6">
@@ -54,6 +53,9 @@
 </template>
 
 <script>
+    import fieldButton from '../../components/CustomFields/fieldButton'
+    import fieldCheckbox from '../../components/CustomFields/fieldCheckbox'
+
     export default {
         name: "AccountProfile",
         props: {
@@ -62,6 +64,12 @@
                 required: true
             }
         },
+
+        components: {
+            'vue-button': fieldButton,
+            'vue-checkbox': fieldCheckbox
+        },
+
         data() {
             return {
                 accountData: [],
