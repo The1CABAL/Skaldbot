@@ -12,7 +12,10 @@
         <div v-if="loaded">
             <div class="panel">
                 <div v-if="showFormName">
-                    <h2 class="font-bold tracking-wide">{{formName}}</h2>
+                    <div class="flex flex-1 justify-between">
+                        <h2 class="font-bold tracking-wide ml-3 mt-3">{{formName}}</h2>
+                        <vue-button varient="close" @click="close" aria-label="Close modal" v-if="showCloseButton">x</vue-button>
+                    </div>
                     <hr class="my-3" />
                 </div>
                 <div class="panel-body">
@@ -47,6 +50,7 @@
     import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapActions } from "vuex";
     import fieldCheckbox from "../CustomFields/fieldCheckbox.vue";
+    import fieldButton from '../CustomFields/fieldButton';
 
     VueFormGenerator.validators.emailValidation = function (value, field, model) {
         let email = model.email;
@@ -75,7 +79,8 @@
         name: "Form",
         components: {
             VueLoading,
-            'vue-checkbox': fieldCheckbox
+            'vue-checkbox': fieldCheckbox,
+            'vue-button': fieldButton
         },
         props: {
             formKey: {
@@ -89,6 +94,10 @@
             passedModel: {
                 type: [Object, Array],
                 required: false
+            },
+            showCloseButton: {
+                type: Boolean,
+                default: false
             }
         },
         mounted: function () {
@@ -252,7 +261,7 @@
                     this.schema = JSON.parse(this.$store.getters.getFormSchema);
                     this.action = this.$store.getters.getFormActionLink;
                     this.formName = this.$store.getters.getFormName;
-                    this.showFormName = this.$store.getters.showFormName;
+                    this.showFormName = this.$store.getters.getShowFormName;
                     if (this.passedModel != undefined && this.passedModel != null) {
                         this.setModel();
                     }
@@ -279,6 +288,9 @@
                 if (this.passedModel[0] != undefined && this.passedModel[0] != null) {
                     this.model = VueFormGenerator.schema.createDefaultObject(this.schema, this.passedModel[0])
                 }
+            },
+            close() {
+                this.$emit('close');
             }
         },
         computed: {

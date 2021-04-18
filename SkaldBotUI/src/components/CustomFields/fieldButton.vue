@@ -45,15 +45,8 @@
                 }
 
                 if (this.varient.toLowerCase() === 'close') {
-                    return `${baseButtonClass} absolute top-1 right-0`
+                    return `justify-end text-right pr-4`
                 }
-                //position: absolute;
-                //font - size: 15px;
-                //top: 1px;
-                //right: 0;
-                //border: 0;
-                //padding - right: 5px;
-                //background - color: rgba(0, 0, 0, 0.0);
 
                 return `${baseButtonClass} bg-secondary hover:bg-hover`
             }

@@ -2,11 +2,11 @@
     <div id="UserProfile">
         <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
             <p style="font-weight: bold;">{{msg}}</p>
-            <button class="close" @click="closeNotification">x</button>
+            <vue-button varient="close" @click="closeNotification">x</vue-button>
         </div>
         <div class="w-full space-x-2">
             <vue-button @click="goBack">Go Back</vue-button>
-            <vue-button @click="changePassword">Change Password</vue-button>
+            <vue-button varient="secondary" @click="changePassword">Change Password</vue-button>
         </div>
         <ChangePassword v-if="showChangePassword" @close="closeChangePassword"></ChangePassword>
         <div class="panel">
@@ -40,7 +40,7 @@
                     <hr class="mt-3 mb-3" />
                     <div class="space-x-2">
                         <vue-button type="submit">Save</vue-button>
-                        <vue-button type="secondary" @click="openHelp">Help</vue-button>
+                        <vue-button varient="secondary" type="secondary" @click="openHelp">Help</vue-button>
                     </div>
                     <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
                 </form>
