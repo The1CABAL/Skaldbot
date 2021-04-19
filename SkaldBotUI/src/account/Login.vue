@@ -9,19 +9,25 @@
 
 <script>
     import Form from '../components/Forms/Form';
+    import PageMixin from '@/mixins/page-mixin';
     export default {
         name: 'Login',
+
         components: {
             Form
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 formKey: 'LoginForm'
             }
         },
+
         methods: {
             login() {
-                this.$emit("authenticated", true)
+                this.redirectUser('/')
             }
         }
     }

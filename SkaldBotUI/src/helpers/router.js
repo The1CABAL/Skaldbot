@@ -109,7 +109,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.accessibleLoggedOut) {
         if (!to.meta.accessibleLoggedIn && loggedIn) {
-            next({ to: 'unauthorized' })
+            next({ name: 'home' })
             return;
         }
 
