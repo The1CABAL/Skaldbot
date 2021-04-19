@@ -52,6 +52,7 @@
     </Content>
     <Content Include="src\components\Nav\navBar.vue" />
     <Content Include="src\components\Nav\navLink.vue" />
+    <Content Include="src\components\Nav\sideNavBar.vue" />
     <Content Include="src\components\Tables\vueTable.vue" />
     <Content Include="src\components\Tables\vueTableColumn.vue" />
     <Content Include="src\components\Tables\vueTableFiltered.vue" />

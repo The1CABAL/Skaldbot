@@ -23,7 +23,16 @@ export default {
         },
 
         getTrueString(value) {
-            if (value)
+            let localTest;
+
+            if (typeof value === 'string') {
+                localTest = value === 'true';
+            }
+            else {
+                localTest = value;
+            }
+
+            if (localTest)
                 return "True"
             else
                 return "False"

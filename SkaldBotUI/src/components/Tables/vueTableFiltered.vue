@@ -1,7 +1,7 @@
 <template>
     <div id="filtered-table">
         <div class="flex-1 flex justify-between pb-3">
-            <vue-select
+            <vue-select class="w-1/4"
                         v-if="showPerPage"
                         :items="itemsPerPage"
                         @change="perPageChange"
@@ -16,9 +16,9 @@
                    @editClick="editClick">
             <slot></slot>
         </vue-table>
-        <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0 bg-white rounded-md pb-3 mt-3" v-if="showPagination">
+        <nav class="px-4 flex items-center justify-between sm:px-0 bg-primaryLight rounded-md pb-3 mt-3" v-if="showPagination">
             <div class="-mt-px w-0 flex-1 flex">
-                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasPrevious">
                     <!-- Heroicon name: solid/arrow-narrow-left -->
                     <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
@@ -31,13 +31,13 @@
                    :key="page" 
                    href="#" 
                    class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium" 
-                   :class="{'border-indigo-500 text-indigo-600' : isPageSelected(page), 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' : !isPageSelected(page)}"
+                   :class="{'border-secondary text-hoverLight' : isPageSelected(page), 'border-transparent hover:text-hover hover:border-gray-300' : !isPageSelected(page)}"
                    aria-current="isPageSelected(page)">
                     {{page}}
                 </a>
             </div>
             <div class="-mt-px w-0 flex-1 flex justify-end">
-                <a href="#" class="border-t-2 border-transparent pt-3 pr-2 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasNext">
                     Next
                     <!-- Heroicon name: solid/arrow-narrow-right -->
                     <svg class="ml-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -161,6 +161,41 @@
 
             editClick(e) {
                 this.$emit('editClick', e)
+            },
+
+            changePageByButton(isSubtract = false) {
+                if (!isSubtract) {
+                    this.selectedPage += 1;
+                    return;
+                }
+                else {
+                    this.selectedPage -= 1;
+                }
+            },
+
+            changePageByClick(pageNumber) {
+                this.selectedPage = pageNumber;
+            },
+
+            incrementPageNumber() {
+                if (this.hasNext) {
+                    this.selectedPage += 1;
+                }
+            },
+
+            decreasePageNumber() {
+                if (this.hasPrevious) {
+                    this.selectedPage -= 1;
+                }
+            }
+        },
+
+        computed: {
+            hasPrevious() {
+                return this.selectedPage - 1 != 0;
+            },
+            hasNext() {
+                return this.selectePage < this.pages;
             }
         },
 
