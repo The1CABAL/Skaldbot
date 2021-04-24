@@ -15,7 +15,7 @@
                         <loader size="large" />
                     </div>
                 </div>
-                <div class="h-screen">
+                <div class="min-h-screen h-full">
                     <router-view v-show="contentReady" />
                 </div>
             </div>
