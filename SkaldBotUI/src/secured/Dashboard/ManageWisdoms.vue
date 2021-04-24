@@ -2,15 +2,13 @@
     <div id="ManageWisdoms">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
-        <div v-if="loaded">
+        <div v-show="loaded">
             <vue-table-filtered showPerPage
                                 showSearchField
                                 showPagination
-                                :items="data"
-                                :pages="1"
+                                :columns="titles"
+                                :searchFunction="getData"
                                 @editClick="handleSelectionChange">
-                <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                <vue-table-column label="Is Active" is-sortable />
             </vue-table-filtered>
         </div>
     </div>
@@ -21,7 +19,6 @@
     import Modal from '../../components/ModalComponent';
     import PageMixin from '@/mixins/page-mixin.js';
     import vueTableFiltered from '@/components/Tables/vueTableFiltered';
-    import vueTableColumn from '@/components/Tables/vueTableColumn';
 
     export default {
         name: "ManageWisdoms",
@@ -29,8 +26,7 @@
         components: {
             VueLoading,
             Modal,
-            'vue-table-filtered': vueTableFiltered,
-            'vue-table-column': vueTableColumn,
+            'vue-table-filtered': vueTableFiltered
         },
 
         mixins: [PageMixin],
@@ -41,16 +37,22 @@
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
-                data: [],
                 titles: [
                     {
                         prop: "Id",
-                        label: "Wisdom Id"
+                        label: "Wisdom Id",
+                        sortable: false
                     },
                     {
                         prop: "Wisdom",
-                        label: "Wisdom"
-                    }
+                        label: "Wisdom",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
                 ]
             }
         },
@@ -61,21 +63,18 @@
                     return;
                 }
 
-                this.getData();
                 this.pageReady();
             })
                 
         },
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
-                this.$store.dispatch('getAllWisdoms').then(() => {
-                    this.data = this.$store.getters.getWisdoms;
-                    this.loaded = true
-                }).catch(err => {
-                    console.log(err);
-                    this.$message("Error getting wisdoms");
-                })
+
+                await this.$store.dispatch('getAllWisdoms', model);
+
+                this.loaded = true
+                return this.$store.getters.getWisdoms;
             },
 
             handleSelectionChange(val) {
@@ -90,7 +89,6 @@
             closeModal() {
                 this.isModalVisible = false;
                 this.lookupId = 0;
-                this.getData();
             }
         }
     }

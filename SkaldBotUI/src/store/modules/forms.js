@@ -18,11 +18,15 @@ const getters = {
 };
 
 const actions = {
-    async fetchAllForms({ commit }) {
+    async fetchAllForms({ commit }, model) {
         return new Promise((resolve, reject) => {
             let url = BaseUrl + 'getForms';
-            axios.get(url).then(resp => {
-                commit('set_forms', resp.data);
+            axios.get(url, {
+                params: {
+                    ...model
+                }
+            }).then(resp => {
+                commit('set_all_forms', resp.data);
                 resolve(resp);
             }).catch(err => {
                 console.log(err);
@@ -68,6 +72,7 @@ const actions = {
             })
         })
     },
+
     async postFormData({ commit }, formData) {
         let url = BaseUrl + formData.url
         let model = formData.model
@@ -85,9 +90,27 @@ const actions = {
 };
 
 const mutations = {
+    set_all_forms(state, forms) {
+        if (forms.length <= 0) {
+            return;
+        }
+
+        if (forms.length === 1) {
+            const totalRecords = JSON.parse(forms[0]);
+            state.forms = { ...totalRecords }
+            return;
+        }
+
+        const formData = JSON.parse(forms[0]);
+        const records = JSON.parse(forms[1]);
+
+        state.forms = { ...formData, ...records };
+    },
+
     set_forms(state, forms) {
         state.forms = JSON.parse(forms);
     },
+
     set_form(state, form) {
         let fieldInfo = JSON.parse(form);
 
@@ -110,6 +133,7 @@ const mutations = {
 
         state.form = obj;
     },
+
     set_post_status(state, message) {
         state.postStatus = message;
     }

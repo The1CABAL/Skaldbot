@@ -165,6 +165,7 @@
     <Content Include="src\store\modules\github.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\page.js" />
     <Content Include="src\store\modules\servers.js">
       <SubType>Code</SubType>
     </Content>

@@ -1,34 +1,39 @@
 <template>
     <div id="app" class="bg-primary text-white">
-        <div v-if="!loading">
-            <nav-bar />
-            <header>
-                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-2xl font-bold border-b-2 border-gray-200 pb-2">
-                        {{currentPage}}
-                    </h1>
+        <nav-bar v-if="contentReady" />
+        <header v-if="contentReady">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-2xl font-bold border-b-2 border-gray-200 pb-2">
+                    {{currentPage}}
+                </h1>
+            </div>
+        </header>
+        <main>
+            <div class="max-w-7xl mx-auto py-3 sm:px-6 lg:px-8">
+                <div class="flex justify-center items-center h-screen" v-if="!contentReady">
+                    <div class="text-center text-2xl">
+                        <loader size="large" />
+                    </div>
                 </div>
-            </header>
-            <main>
-                <div class="max-w-7xl mx-auto py-3 sm:px-6 lg:px-8 min-h-screen h-full">
-                    <router-view />
+                <div class="h-screen">
+                    <router-view v-show="contentReady" />
                 </div>
-            </main>
-
-        </div>
+            </div>
+        </main>
     </div>
 </template>
 
 <script>
     import navBar from './components/Nav/navBar.vue';
     import PageMixin from '@/mixins/page-mixin.js'
-    import fieldButton from '@/components/CustomFields/fieldButton'
+    import VueLoading from '@/components/VueLoading'
     export default {
         name: "app",
 
         data() {
             return {
-                currentPage: 'Home'
+                currentPage: 'Home',
+                contentReady: false
             }
         },
 
@@ -36,7 +41,7 @@
 
         components: {
             'nav-bar': navBar,
-            'vue-button': fieldButton
+            'loader': VueLoading
         },
 
         mounted() {
@@ -58,6 +63,11 @@
             '$route.name'(newVal, oldVal) {
                 if (newVal !== oldVal) {
                     this.currentPage = newVal.toUpperCase();
+                }
+            },
+            '$store.state.page.loading'(newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    this.contentReady = !newVal;
                 }
             }
         }

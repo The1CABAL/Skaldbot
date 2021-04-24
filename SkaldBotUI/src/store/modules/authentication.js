@@ -124,10 +124,14 @@ const actions = {
                 });
         })
     },
-    async getAllUsers({ commit }, isMasterAdmin) {
-        let url = BaseUrl + 'getUsers?isMaster=' + isMasterAdmin
+    async getAllUsers({ commit }, model) {
+        let url = `${BaseUrl}getUsers`;
         return new Promise((resolve, reject) => {
-            axios.get(url).then(resp => {
+            axios.get(url, {
+                params: {
+                    ...model
+                }
+            }).then(resp => {
                 commit('set_users', resp.data);
                 resolve(resp);
             }).catch(err => {
@@ -200,7 +204,21 @@ const mutations = {
         state.status = 'error'
     },
     set_users(state, users) {
-        state.users = JSON.parse(users);
+        if (users.length <= 0) {
+            return;
+        }
+
+        if (users.length === 1) {
+            const totalRecords = JSON.parse(users[0]);
+            state.users = { ...totalRecords };
+            return;
+        }
+
+        const userData = JSON.parse(users[0]);
+        const totalRecords = JSON.parse(users[1])
+
+        state.users = { ...userData, ...totalRecords }
+
     },
     set_user_data(state, user) {
         state.userData = JSON.parse(user)[0]

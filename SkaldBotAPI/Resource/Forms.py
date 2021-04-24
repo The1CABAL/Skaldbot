@@ -3,6 +3,7 @@ from Classes.SQL import SQL
 from SkaldBotAPI import app
 from Models.Models import *
 from flask import json, request
+from Classes.PaginationHelper import PaginationHelper
 
 class GetFormName(Resource):
     def get(self):
@@ -70,8 +71,10 @@ class GetFormSchema(Resource):
 class GetForms(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
-            forms = SQL.get_all_forms()
-            forms = forms[0]
+            paginationModel = PaginationHelper(request.args, 'FormKey', ["FormKey", "FormName", "IsActive"]);
+
+            forms = SQL.get_all_forms(paginationModel)
+
             response = app.response_class(
                 response = json.dumps(forms),
                 status=200,
@@ -168,7 +171,9 @@ class ManageSubmittedItems(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             
-            items = SQL.get_submitted_items()
+            paginationModel = PaginationHelper(request.args, 'CreateDate', ["Title", "CreateDate", "ItemType", "IsApproved", "IsReviewed"])
+
+            items = SQL.get_submitted_items(paginationModel)
 
             response = app.response_class(
                 response = json.dumps(items),

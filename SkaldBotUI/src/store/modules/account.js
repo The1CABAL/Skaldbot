@@ -12,10 +12,14 @@ const getters = {
 }
 
 const actions = {
-    async getAccountInformation({ commit }, accountInfo) {
+    async getAccountInformation({ commit }, accountId) {
         return new Promise((resolve, reject) => {
-            let url = BaseUrl + `account?accountId=${accountInfo.accountId}&isMaster=${accountInfo.isMasterAdmin}`
-            axios.get(url).then(resp => {
+            let url = BaseUrl + `account`
+            axios.get(url, {
+                params: {
+                    accountId
+                }
+            }).then(resp => {
                 commit('set_account_information', resp.data)
                 resolve(resp);
             }).catch(err => {
@@ -24,6 +28,25 @@ const actions = {
             })
         })
     },
+
+    async getAccountUsers({ commit }, model) {
+        return new Promise((resolve, reject) => {
+            let url = `${BaseUrl}accountUsers`
+
+            axios.get(url, {
+                params: {
+                    ...model
+                }
+            }).then(resp => {
+                commit('set_account_users', resp.data)
+                resolve(resp);
+            }).catch(err => {
+                commit('auth_error')
+                reject(err)
+            })
+        })    
+    },
+
     async updateAccountInformation({ commit }, account) {
         return new Promise((resolve, reject) => {
             let url = BaseUrl + 'account'
@@ -40,12 +63,25 @@ const actions = {
 
 const mutations = {
     set_account_information(state, data) {
-        state.accountInformation = JSON.parse(data[0])[0];
-
-        if (data[1].length > 0) {
-            state.users = JSON.parse(data[1]);
-        }
+        state.accountInformation = JSON.parse(data)[0];
     },
+
+    set_account_users(state, data) {
+        if (data.length <= 0) {
+            return;
+        }
+
+        if (data.length == 1) {
+            const totalRecords = JSON.parse(data[0]);
+            state.users = { ...totalRecords };
+        }
+
+        const items = JSON.parse(data[0]);
+        const totalRecords = JSON.parse([data[1]]);
+
+        state.users = { ...items, ...totalRecords }
+    },
+
     auth_error(state) {
         state.accountInformation = [];
         state.users = [];

@@ -12,3 +12,4 @@ AccountProfile = collections.namedtuple('accountprofile', ['accountid', 'account
 Documentation = collections.namedtuple('documentation', ['helpcontentkey', 'helptitle', 'helpcontent', 'isactive', 'updatebyuserid', 'isadmin'])
 AccountServerModel = collections.namedtuple('accountserver', ['id', 'serverid', 'accountid', 'nickname', 'dailywisdom', 'weeklystory'])
 ChangePasswordModel = collections.namedtuple('changepassword', ['userid', 'password'])
+PaginationModel = collections.namedtuple('pagination', ['orderBy', 'perPage', 'SearchTerm', 'CurrentPage', 'TotalPages', 'IsAscending'])

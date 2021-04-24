@@ -2,17 +2,15 @@
     <div>
         <VueLoading v-if="!loaded"></VueLoading>
         <HelpDocumentation v-if="isModalVisible" :HelpContentKey="helpContentKey" @close="closeModal"></HelpDocumentation>
-        <div v-if="loaded">
+        <div v-show="loaded">
 
             <vue-table-filtered :action-button-options="{Visible: true,Label: 'Edit', EmitValue: 'HelpContentKey'}"
                                 showPerPage
                                 showSearchField
                                 showPagination
-                                :items="data"
-                                :pages="1"
+                                :columns="titles"
+                                :searchFunction="getData"
                                 @editClick="handleSelectionChange">
-                <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                <vue-table-column label="Is Active" is-sortable />
             </vue-table-filtered>
         </div>
     </div>
@@ -23,15 +21,13 @@
     import HelpDocumentation from '../../components/HelpDocumentation';
     import PageMixin from '@/mixins/page-mixin.js';
     import vueTableFiltered from '@/components/Tables/vueTableFiltered';
-    import vueTableColumn from '@/components/Tables/vueTableColumn';
 
     export default {
         name: "ManageDocumentation",
         components: {
             VueLoading,
             HelpDocumentation,
-            'vue-table-filtered': vueTableFiltered,
-            'vue-table-column': vueTableColumn
+            'vue-table-filtered': vueTableFiltered
         },
 
         mixins: [PageMixin],
@@ -41,20 +37,27 @@
                 helpContentKey: '',
                 loaded: false,
                 isModalVisible: false,
-                data: [],
                 titles: [
                     {
                         prop: "HelpContentKey",
-                        label: "Help Content Key"
+                        label: "Help Content Key",
+                        sortable: true
                     },
                     {
                         prop: "HelpTitle",
-                        label: "Help Title"
+                        label: "Help Title",
+                        sortable: true
                     },
                     {
                         prop: "HelpContent",
-                        label: "Help Content"
-                    }
+                        label: "Help Content",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
                 ]
             }
         },
@@ -63,28 +66,26 @@
             this.pageMounting();
         },
 
-        mounted(){
+        mounted() {
             this.pageMounted().then(() => {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+                if (!this.masterAdmin && !this.admin) {
                     this.redirectUser('/unauthorized')
                     return;
                 }
-                this.getData();
+
                 this.pageReady();
             });
         },
 
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
 
-                this.$store.dispatch('getAllDocumentation').then(() => {
-                    this.data = this.$store.getters.helpDocumentation
-                    this.loaded = true
-                }).catch((err) => {
-                    console.log(err)
-                    this.$message("There was an error getting the help documentations")
-                })
+                await this.$store.dispatch('getAllDocumentation', model);
+
+                this.loaded = true
+
+                return this.$store.getters.helpDocumentation
             },
 
             handleSelectionChange(val) {
@@ -94,12 +95,11 @@
 
             showModal() {
                 this.isModalVisible = true
-            }, 
+            },
 
             closeModal() {
                 this.isModalVisible = false;
                 this.helpContentKey = '';
-                this.getData();
             },
         }
     }

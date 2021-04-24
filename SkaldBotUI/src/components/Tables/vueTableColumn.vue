@@ -18,12 +18,16 @@
             label: {
                 type: String,
                 required: true
+            },
+            prop: {
+                type: String,
+                required: true
             }
         },
 
         data() {
             return {
-                isAscending: false,
+                isAscending: true,
             }
         },
 
@@ -35,7 +39,12 @@
 
                 this.isAscending = !this.isAscending;
 
-                this.$emit('sort', this.label);
+                const sortProperties = {
+                    Column: this.prop,
+                    IsAscending: this.isAscending
+                }
+
+                this.$emit('sort', sortProperties);
             }
         },
 

@@ -68,14 +68,20 @@
 </template>
 
 <script>
+    import PageMixin from '@/mixins/page-mixin'
+
     export default {
         name: "ModifyForm",
+
         props: {
             formKey: {
                 type: String,
                 required: false
             }
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 loaded: false,
@@ -87,18 +93,21 @@
                 model: {}
             }
         },
-        mounted: function () {
-            if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                this.$router.push('/unauthorized')
-            }
-            else {
-                if (this.formKey != null && this.formKey != '')
-                    this.fetchData();
-                else {
-                    this.loaded = true;
-                    this.isNewForm = true;
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted().then(() => {
+                if (!this.masterAdmin && !this.admin) {
+                    this.redirectUser('/unauthorized');
+                    return;
                 }
-            }
+
+                this.fetchData();
+                this.pageReady();
+            })
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
@@ -108,7 +117,8 @@
         methods: {
             fetchData() {
                 if (this.formKey != null && this.formKey != '') {
-                    return this.$store.dispatch('fetchFormToEdit', this.formKey).then(() => {
+                    this.loaded = false;
+                    return this.$store.dispatch('fetchForm', this.formKey).then(() => {
                         this.getData();
                     });
                 }

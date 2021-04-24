@@ -55,6 +55,8 @@
             else {
                 this.fetchAllFormsByPageId(this.pageId);
             }
+
+            this.$emit('select-forms-loaded')
         }
     }
 </script>

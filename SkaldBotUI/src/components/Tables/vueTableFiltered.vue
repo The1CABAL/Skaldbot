@@ -14,11 +14,11 @@
                    :action-button-options="actionButtonOptions"
                    :hidden-columns="hiddenColumns"
                    @editClick="editClick">
-            <slot></slot>
+            <vue-table-column v-for="column in columns" :prop="column.prop" :label="column.label" :key="column.prop" :is-sortable="column.sortable" @sort="setSort"/>
         </vue-table>
         <nav class="px-4 flex items-center justify-between sm:px-0 bg-primaryLight rounded-md pb-3 mt-3" v-if="showPagination">
             <div class="-mt-px w-0 flex-1 flex">
-                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasPrevious">
+                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasPrevious" @click.prevent="changePageByButton(true)">
                     <!-- Heroicon name: solid/arrow-narrow-left -->
                     <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
@@ -27,17 +27,18 @@
                 </a>
             </div>
             <div class="hidden md:-mt-px md:flex">
-                <a v-for="page in pages" 
-                   :key="page" 
-                   href="#" 
-                   class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium" 
+                <a v-for="page in localModel.TotalPages"
+                   :key="page"
+                   href="#"
+                   class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
                    :class="{'border-secondary text-hoverLight' : isPageSelected(page), 'border-transparent hover:text-hover hover:border-gray-300' : !isPageSelected(page)}"
-                   aria-current="isPageSelected(page)">
+                   aria-current="isPageSelected(page)"
+                   @click.prevent="changePageByClick(page)">
                     {{page}}
                 </a>
             </div>
             <div class="-mt-px w-0 flex-1 flex justify-end">
-                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasNext">
+                <a href="#" class="border-t-2 border-transparent pt-3 pl-2 pr-1 inline-flex items-center text-sm font-medium hover:text-hover hover:border-gray-300" v-if="hasNext" @click.prevent="changePageByButton(false)">
                     Next
                     <!-- Heroicon name: solid/arrow-narrow-right -->
                     <svg class="ml-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -54,6 +55,7 @@
     import fieldSearchInput from '@/components/CustomFields/fieldSearchInput';
     import UtilMixin from '@/mixins/util-mixin';
     import vueTable from '@/components/Tables/vueTable'
+    import vueTableColumn from '@/components/Tables/vueTableColumn';
 
     export default {
         name: "FilteredTable",
@@ -81,14 +83,14 @@
                 default: false
             },
 
-            items: {
-                type: Array,
-                default: () => []
+            model: {
+                type: Object,
+                default: () => { }
             },
 
-            pages: {
-                type: Number,
-                default: 1
+            columns: {
+                type: Array,
+                required: true
             },
 
             actionButtonOptions: {
@@ -102,6 +104,11 @@
                 }
             },
 
+            searchFunction: {
+                type: Function,
+                required: true
+            },
+
             hiddenColumns: {
                 type: Array,
                 default: () => []
@@ -111,11 +118,17 @@
         components: {
             'vue-select': fieldSelect,
             'vue-search-input': fieldSearchInput,
-            'vue-table': vueTable
+            'vue-table': vueTable,
+            'vue-table-column': vueTableColumn,
+        },
+
+        mounted() {
+            this.performSearch();
         },
 
         data() {
             return {
+                localModel: this.cloneModel(this.convertToPagination(this.model)),
                 itemsPerPage: [
                     {
                         name: '10',
@@ -134,9 +147,8 @@
                         value: 100
                     },
                 ],
-                perPage: null,
                 searchValue: '',
-                selectedPage: 1
+                items: []
             }
         },
 
@@ -146,17 +158,19 @@
                     return;
                 };
 
-                this.perPage = page.value;
+                this.localModel.PerPage = page.value;
 
-                this.emit('perPageChange', this.perPage)
+                this.performSearch();
             },
 
             searchFieldChange() {
-                this.emit('search', this.searchValue);
+                this.localModel.SearchTerm = this.searchValue;
+
+                this.performSearch();
             },
 
             isPageSelected(page) {
-                return this.selectedPage === page;
+                return this.localModel.CurrentPage === page;
             },
 
             editClick(e) {
@@ -164,38 +178,69 @@
             },
 
             changePageByButton(isSubtract = false) {
+                debugger;
                 if (!isSubtract) {
-                    this.selectedPage += 1;
+                    this.incrementPageNumber();
                     return;
                 }
-                else {
-                    this.selectedPage -= 1;
-                }
+
+                this.decreasePageNumber();
             },
 
             changePageByClick(pageNumber) {
-                this.selectedPage = pageNumber;
+                this.localModel.CurrentPage = pageNumber;
+                this.performSearch();
             },
 
             incrementPageNumber() {
-                if (this.hasNext) {
-                    this.selectedPage += 1;
+                if (!this.hasNext) {
+                    return;
                 }
+
+                this.localModel.CurrentPage += 1;
+                this.performSearch();
             },
 
             decreasePageNumber() {
-                if (this.hasPrevious) {
-                    this.selectedPage -= 1;
+                if (!this.hasPrevious) {
+                    return;
                 }
+                this.localModel.CurrentPage -= 1;
+                this.performSearch();
+            },
+
+            async performSearch() {
+                const tableRecords = this.cloneModel(await this.searchFunction(this.localModel));
+
+                const totalRecords = tableRecords.TotalRecords
+                delete tableRecords.TotalRecords
+
+                let records = []
+
+                Object.entries(tableRecords).forEach(entry => {
+                    const [key, value] = entry;
+                    records.push(value);
+                });
+
+                this.localModel.TotalPages = Math.ceil(totalRecords / this.localModel.PerPage);
+
+                this.items = records;
+            },
+
+            setSort(sortProperties) {
+                this.localModel.OrderBy = sortProperties.Prop;
+                this.localModel.IsAscending = sortProperties.IsAscending;
+
+                this.performSearch();
             }
         },
 
         computed: {
             hasPrevious() {
-                return this.selectedPage - 1 != 0;
+                return this.localModel.CurrentPage - 1 != 0;
             },
             hasNext() {
-                return this.selectePage < this.pages;
+                return this.localModel.CurrentPage < this.localModel.TotalPages;
             }
         },
 
@@ -203,6 +248,12 @@
             searchValue(newVal, oldVal) {
                 if (newVal !== oldVal) {
                     this.debounce(this.searchFieldChange, 2000);
+                }
+            },
+
+            model(newVal, oldVal) {
+                if (!this.areEquivalent(newVal, oldVal)) {
+                    this.localModel = this.cloneModel(this.convertToPagination(newVal))
                 }
             }
         }

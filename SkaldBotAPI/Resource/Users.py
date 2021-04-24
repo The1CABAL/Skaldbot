@@ -3,6 +3,7 @@ from Classes.SQL import SQL
 from SkaldBotAPI import app
 from flask import json, request
 from Models.Models import *
+from Classes.PaginationHelper import PaginationHelper
 
 
 class Login(Resource):
@@ -89,7 +90,9 @@ class GetAllUsers(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             isMaster = request.args.get('isMaster')
-            data = SQL.get_all_users(isMaster)
+            paginationModel = PaginationHelper(request.args, 'Username', ["Id", "Username", "FirstName", "LastName", "IsActive", "CreateDate"]);
+
+            data = SQL.get_all_users(isMaster, paginationModel)
 
             response = app.response_class(response = json.dumps(data),
                 status=200,

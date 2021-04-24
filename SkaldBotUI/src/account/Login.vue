@@ -25,6 +25,16 @@
             }
         },
 
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted().then(() => {
+                this.pageReady();
+            })
+        },
+
         methods: {
             login() {
                 this.redirectUser('/')
@@ -48,6 +58,7 @@
         text-align: center;
         text-decoration: none;
     }
+
         .link:hover {
             background: #B8B8B8;
         }

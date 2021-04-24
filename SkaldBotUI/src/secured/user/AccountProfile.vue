@@ -7,7 +7,7 @@
             <p style="font-weight: bold;">{{msg}}</p>
             <vue-button varient="close" @click="closeNotification">x</vue-button>
         </div>
-        <tabs>
+        <tabs :onSelect="activeTab">
             <tab title="Account Information">
                 <div class="panel">
                     <div class="panel-heading"><h4 class="font-bold tracking-wide">Account Profile</h4></div>
@@ -25,17 +25,15 @@
             </tab>
             <tab title="Users" class="panel p-3">
                 <vue-button v-on:click="registerUser">Add User</vue-button>
-                <vue-table-filtered :hidden-columns="['Id']"
+                <vue-table-filtered v-if="isViewingUsers"
+                                    :hidden-columns="['Id']"
                                     showPerPage
                                     showSearchField
                                     showPagination
-                                    :items="accountUsers"
-                                    :pages="1"
+                                    :model="model"
+                                    :columns="titles"
+                                    :searchFunction="getAccountUsers"
                                     @editClick="handleSelectionChange">
-                    <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                    <vue-table-column label="User Active" is-sortable />
-                    <vue-table-column label="User Locked" is-sortable />
-                    <vue-table-column prop="CreateDate" label="Date Created" is-sortable />
                 </vue-table-filtered>
             </tab>
         </tabs>
@@ -79,49 +77,48 @@
                 isError: true,
                 submitted: false,
                 success: false,
+                currentTab: 'account',
                 titles: [
                     {
                         prop: "Username",
-                        label: "Username"
+                        label: "Username",
+                        sortable: true
                     },
                     {
                         prop: "FirstName",
-                        label: "First Name"
+                        label: "First Name",
+                        sortable: true
                     },
                     {
                         prop: "LastName",
-                        label: "Last Name"
-                    }
-                ],
-                filters: [
-                    {
-                        prop: 'Username',
-                        value: ''
-                    }
-                ],
-                actionCol: {
-                    props: {
-                        label: 'Actions',
+                        label: "Last Name",
+                        sortable: true
                     },
-                    buttons: [
-                        {
-                            props:
-                            {
-                                type: 'primary'
-                            },
-                            handler: row => {
-                                this.userId = row.Id
-                                this.$router.push('/userprofile/' + this.userId)
-                            },
-                            label: 'Edit'
-                        }
-                    ]
+                    {
+                        prop: "IsActive",
+                        label: "User Active",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsLocked",
+                        label: "User Locked",
+                        sortable: true
+                    },
+                    {
+                        prop: "CreateDate",
+                        label: "Date Created",
+                        sortable: true
+                    }
+                ],
+                model: {
+                    accountId: this.accountId,
+                    masterAdmin: false
                 }
             }
         },
 
         watch: {
-            submitted: function () {
+            submitted() {
                 if (this.submitted) {
                     setTimeout(this.closeNotification, 5000);
                 }
@@ -134,23 +131,31 @@
 
         mounted() {
             this.pageMounted().then(() => {
-                this.getData().then(() => {
-                    if (!this.masterAdmin && !this.admin && !this.clientAdmin) {
-                        this.$router.push('/unauthorized')
-                    }
+                if (!this.masterAdmin && !this.admin && !this.clientAdmin) {
+                    this.$router.push('/unauthorized')
+                }
 
-                    this.pageReady();
-                });
+                this.model.masterAdmin = this.masterAdmin;
+                this.getAccountInformation();
+                this.pageReady();
             });
         },
 
         computed: {
             hasAccountUsers() {
                 return this.accountUsers.length > 0;
+            },
+
+            isViewingUsers() {
+                return this.currentTab === 'users'
             }
         },
 
         methods: {
+            activeTab(e, i) {
+                this.currentTab = i === 0 ? "account" : "users";
+            },
+
             formSubmit() {
                 event.preventDefault();
                 if (!this.objectsAreSame(this.accountData, this.$store.getters.accountInformation)) {
@@ -190,35 +195,16 @@
                 this.isError = false;
             },
 
-            async getData() {
-                await this.getAccountInformation();
-                //await this.getAccountUsers();
+            getAccountInformation() {
+                this.$store.dispatch('getAccountInformation', this.model.accountId).then(() => {
+                    this.accountData = this.cloneModel(this.$store.getters.accountInformation);
+                });
             },
 
-            async getAccountInformation() {
-                let accountId = this.accountId;
-                let masterAdmin = this.masterAdmin;
-                let that = this;
+            async getAccountUsers(model) {
+                await this.$store.dispatch('getAccountUsers', model);
 
-                this.$store.dispatch('getAccountInformation', { accountId, masterAdmin }).then(() => {
-                    that.accountData = { ...this.$store.getters.accountInformation };
-                    that.accountUsers = this.$store.getters.accountUsers;
-                }).catch(err => {
-                    that.$message('Error loading account data!');
-                    console.log(err);
-                })
-            },
-
-            async getAccountUsers() {
-                let accountId = this.accountId;
-                let masterAdmin = this.masterAdmin;
-
-                this.$store.dispatch('getAccountUsers', { accountId, masterAdmin }).then(() => {
-                    that.accountUsers = this.$store.getters.accountUsers;
-                }).catch(err => {
-                    that.$message('Error loading account data!');
-                    console.log(err);
-                })
+                return this.$store.getters.accountUsers;
             },
 
             objectsAreSame(x, y) {

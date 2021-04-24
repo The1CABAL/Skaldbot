@@ -9,7 +9,7 @@
                                 <slot>
 
                                 </slot>
-                                <vue-table-column v-if="actionButtonOptions.Visible" label="Action" />
+                                <vue-table-column v-if="actionButtonOptions.Visible" label="Action" prop="Action" />
                             </tr>
                         </thead>
                         <tbody>

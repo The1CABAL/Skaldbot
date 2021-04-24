@@ -24,6 +24,7 @@
 
         mounted() {
             this.pageMounted();
+            this.pageReady();
         }
     }
 </script>

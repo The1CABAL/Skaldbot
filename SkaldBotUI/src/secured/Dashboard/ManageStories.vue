@@ -2,15 +2,13 @@
     <div id="ManageStories">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
-        <div v-if="loaded">
+        <div v-show="loaded">
             <vue-table-filtered showPerPage
                                 showSearchField
                                 showPagination
-                                :items="data"
-                                :pages="1"
+                                :searchFunction="getData"
+                                :columns="titles"
                                 @editClick="handleSelectionChange">
-                <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                <vue-table-column label="Is Active" is-sortable />
             </vue-table-filtered>
         </div>
     </div>
@@ -21,7 +19,6 @@
     import Modal from '../../components/ModalComponent';
     import PageMixin from '@/mixins/page-mixin.js';
     import vueTableFiltered from '@/components/Tables/vueTableFiltered';
-    import vueTableColumn from '@/components/Tables/vueTableColumn';
 
     export default {
         name: "ManageStories",
@@ -30,7 +27,6 @@
             VueLoading,
             Modal,
             'vue-table-filtered': vueTableFiltered,
-            'vue-table-column': vueTableColumn,
         },
 
         mixins: [PageMixin],
@@ -45,16 +41,24 @@
                 titles: [
                     {
                         prop: "Id",
-                        label: "Story Id"
+                        label: "Story Id",
+                        sortable: false
                     },
                     {
                         prop: "Title",
-                        label: "Story Title"
+                        label: "Story Title",
+                        sortable: true
                     },
                     {
                         prop: "Story",
-                        label: "Story"
-                    }
+                        label: "Story",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
                 ],
             }
         },
@@ -70,21 +74,18 @@
                     return;
                 }
 
-                this.getData();
                 this.pageReady();
             });
         },
 
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
-                this.$store.dispatch('getAllStories').then(() => {
-                    this.data = this.$store.getters.getStories;
-                    this.loaded = true;
-                }).catch(err => {
-                    console.log(err);
-                    this.$message("There was an error getting all the stories");
-                })
+
+                await this.$store.dispatch('getAllStories', model);
+
+                this.loaded = true;
+                return this.$store.getters.getStories;
             },
 
             handleSelectionChange(val) {

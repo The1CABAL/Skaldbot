@@ -1,7 +1,7 @@
 <template>
     <div id="ManageForms">
         <VueLoading v-if="!loaded"></VueLoading>
-        <div v-if="loaded">
+        <div v-show="loaded">
             <div class="flex flex-1">
                 <vue-button @click="newForm">New Form</vue-button>
             </div>
@@ -9,11 +9,9 @@
                                 showPerPage
                                 showSearchField
                                 showPagination
-                                :items="data"
-                                :pages="1"
+                                :columns="titles"
+                                :searchFunction="fetchData"
                                 @editClick="handleSelectionChange">
-                <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                <vue-table-column label="Is Active" is-sortable />
             </vue-table-filtered>
         </div>
     </div>
@@ -23,7 +21,6 @@
     import VueLoading from '../../components/VueLoading';
     import PageMixin from '@/mixins/page-mixin.js';
     import vueTableFiltered from '@/components/Tables/vueTableFiltered';
-    import vueTableColumn from '@/components/Tables/vueTableColumn';
     import fieldButton from '@/components/CustomFields/fieldButton';
 
     export default {
@@ -34,7 +31,6 @@
         components: {
             VueLoading,
             'vue-table-filtered': vueTableFiltered,
-            'vue-table-column': vueTableColumn,
             'vue-button': fieldButton
         },
 
@@ -45,11 +41,18 @@
                 titles: [
                     {
                         prop: "FormKey",
-                        label: "Form Key"
+                        label: "Form Key",
+                        sortable: true
                     },
                     {
                         prop: "FormName",
-                        label: "Form Name"
+                        label: "Form Name",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
                     }
                 ]
             }
@@ -61,26 +64,24 @@
 
         mounted() {
             this.pageMounted().then(() => {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                    this.$router.push('/unauthorized')
+                if (!this.masterAdmin && !this.admin) {
+                    this.redirectUser('/unauthorized')
                     return;
                 }
-                this.fetchData();
+                
                 this.pageReady();
             });
         },
 
         methods: {
+            async fetchData(model) {
+                this.loaded = false;
 
-            fetchData() {
-                return this.$store.dispatch('fetchAllForms').then(() => {
-                    this.getData();
-                });
-            },
+                await this.$store.dispatch('fetchAllForms', model);
 
-            getData() {
-                this.data = this.$store.getters.getForms
                 this.loaded = true;
+
+                return this.$store.getters.getForms;
             },
 
             handleSelectionChange(val) {

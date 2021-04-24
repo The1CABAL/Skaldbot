@@ -1,17 +1,15 @@
 <template>
     <div>
         <VueLoading v-if="!loaded"></VueLoading>
-        <div v-if="loaded">
+        <div v-show="loaded">
             <vue-table-filtered :hidden-columns="['Id']"
                                 showPerPage
                                 showSearchField
                                 showPagination
-                                :items="data"
-                                :pages="1"
+                                :model="model"
+                                :columns="titles"
+                                :searchFunction="fetchData"
                                 @editClick="handleSelectionChange">
-                <vue-table-column v-for="title in titles" :label="title.label" :key="title.prop" is-sortable />
-                <vue-table-column label="User Active" is-sortable />
-                <vue-table-column prop="CreateDate" label="Date Created" is-sortable />
             </vue-table-filtered>
         </div>
     </div>
@@ -20,39 +18,53 @@
 <script>
     import VueLoading from '../../components/VueLoading';
     import PageMixin from '@/mixins/page-mixin.js';
+    import UtilMixin from '@/mixins/util-mixin.js';
     import vueTableFiltered from '@/components/Tables/vueTableFiltered';
-    import vueTableColumn from '@/components/Tables/vueTableColumn';
 
     export default {
         name: "ManageUsers",
 
         components: {
             VueLoading,
-            'vue-table-filtered': vueTableFiltered,
-            'vue-table-column': vueTableColumn
+            'vue-table-filtered': vueTableFiltered
         },
 
-        mixins: [PageMixin],
+        mixins: [PageMixin, UtilMixin],
 
         data() {
             return {
                 userId: '',
                 loaded: false,
-                data: [],
                 titles: [
                     {
                         prop: "Username",
-                        label: "Username"
+                        label: "Username",
+                        sortable: true
                     },
                     {
                         prop: "FirstName",
-                        label: "First Name"
+                        label: "First Name",
+                        sortable: true
                     },
                     {
                         prop: "LastName",
-                        label: "Last Name"
-                    }
-                ]
+                        label: "Last Name",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
+                    {
+                        prop: "CreateDate",
+                        label: "Date Created",
+                        sortable: true
+                    },
+                ],
+                model: {
+                    isMaster: true
+                }
             }
         },
 
@@ -66,24 +78,21 @@
                     this.$router.push('/unauthorized')
                 }
 
-                this.fetchData();
                 this.pageReady();
             })
         },
 
         methods: {
-            fetchData() {
+            async fetchData(model) {
                 this.loaded = false;
-                var isMaster = this.$store.getters.isMasterAdmin;
 
-                this.$store.dispatch('getAllUsers', isMaster).then(() => {
-                    this.data = this.$store.getters.getUsers;
-                    this.loaded = true
-                }).catch(err => {
-                    console.log(err);
-                    this.$emit('error', true);
-                })
+                await this.$store.dispatch('getAllUsers', model);
+
+                this.loaded = true;
+
+                return this.$store.getters.getUsers
             },
+
             handleSelectionChange(val) {
                 this.redirectUser(`/userprofile/${val}`)
             },
