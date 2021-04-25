@@ -90,7 +90,7 @@
                     }
                 }).catch(err => {
                     console.log(err);
-                    this.$message("Error loading account servers");
+                    this.error("Error loading account servers");
                 })
             },
 
@@ -141,7 +141,7 @@
             },
 
             setSuccess() {
-                this.$message("Successfully updated!");
+                this.success("Successfully updated!");
                 this.getServers();
             }
         }

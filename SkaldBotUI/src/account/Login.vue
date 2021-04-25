@@ -2,7 +2,7 @@
     <div id="login">
         <div>
             <Form v-if="formKey != ''" :formKey="formKey" @LoginSuccess="login" />
-            <router-link to="/register" class="link">Register</router-link>
+            <router-link to="/register" class="min-w-32 max-w-xs w-auto pr-2 pl-2 mb-2 p-2 h-32 rounded-md text-white bg-hover hover:bg-secondary">Register</router-link>
         </div>
     </div>
 </template>

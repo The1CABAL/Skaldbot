@@ -37,7 +37,7 @@
                 await this.$store.dispatch('getProjectCardsByColumn', colId).then(() => {
                     this.cards = this.$store.getters.getColumnCards;
                 }).catch(() => {
-                    this.$message("Error loading cards for column id" + colId);
+                    this.error("Error loading cards for column id" + colId);
                 })
             },
             reloadGithub(value) {

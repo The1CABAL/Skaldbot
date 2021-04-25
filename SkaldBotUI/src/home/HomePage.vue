@@ -23,8 +23,10 @@
         },
 
         mounted() {
-            this.pageMounted();
-            this.pageReady();
+            this.pageMounted().then(() => {
+                this.pageReady();
+            });;
+
         }
     }
 </script>

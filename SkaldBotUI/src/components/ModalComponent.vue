@@ -93,14 +93,18 @@
 
 <script>
     import VueLoading from '../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../helpers/constants';
+    import UtilMixin from '@/mixins/util-mixin'
+    import PageMixin from '@/mixins/page-mixin'
 
     export default {
         name: 'Modal',
+
         components: {
             VueLoading
         },
+
+        mixins: [PageMixin, UtilMixin],
+
         props: {
             modalDisplayTypeId: {
                 type: Number,
@@ -110,83 +114,51 @@
                 type: Number,
                 required: false
             }
-        },
+        }, 
+
         data() {
             return {
                 isLoaded: false,
                 lookupData: {}
             }
         },
+
         watch: {
-            lookupId: function() {
+            lookupId() {
                 this.getData();
             }
         },
         methods: {
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
-            },
             approveSuggestion() {
-                //let url = BaseUrl + 'submittedItems'
                 let postData = { "IsApproved": 1, "Id": this.lookupId, "UserId": this.$store.getters.userId }
 
                 this.submitSuggestionChange(postData);
-                //let that = this;
-                //axios.post(url, postData).then(function (response) {
-                //    var returnVal = response.data;
-                //    if (returnVal.Message.toString() == "Success") {
-                //        that.$message('Successfully updated submitted item!');
-                //        setTimeout(function () {
-                //            that.close()
-                //        }, 2000)
-                //    }
-                //    else {
-                //        //console.log("Setting success to false");
-                //        that.$message('Error updating submitted item!');
-                //    }
-                //});
             },
+
             rejectSuggestion() {
-                //let url = BaseUrl + 'submittedItems'
                 let postData = { "IsApproved": 0, "Id": this.lookupId, "UserId": this.$store.getters.userId }
 
                 this.submitSuggestionChange(postData);
-                //let that = this;
-                //axios.post(url, postData).then(function (response) {
-                //    var returnVal = response.data;
-                //    if (returnVal.Message.toString() == "Success") {
-                //        that.$message('Successfully updated submitted item!');
-                //        setTimeout(function () {
-                //            that.close()
-                //        }, 2000)
-                //    }
-                //    else {
-                //        //console.log("Setting success to false");
-                //        that.$message('Error updating submitted item!');
-                //    }
-                //});
             },
+
             submitSuggestionChange(postData) {
                 this.$store.dispatch('updateSuggestionState', postData).then(() => {
                     var returnVal = this.$store.getters.getSubmittedResponse;
                     if (returnVal == "Success") {
                         let that = this;
-                        this.$message("Successfully updated submitted item!");
+                        this.success("Successfully updated submitted item!");
                         setTimeout(function () {
                             that.closeModal();
                         }, 2000)
                     }
                     else {
-                        this.$message("Error updating submitted item!");
+                        this.error("Error updating submitted item!");
                     }
                 }).catch(err => {
-                    console.log(err);
-                    this.$message("Error updating submitted item!");
+                    this.error("Error updating submitted item!");
                 })
             },
+
             getData() {
                 if (this.lookupId != 0 && this.lookupId != null) {
                     var id = this.modalDisplayTypeId;
@@ -199,8 +171,7 @@
                                 this.lookupData[0].ItemType = this.lookupData[0].luIT[0].ItemType
                                 this.isLoaded = true;
                             }).catch(err => {
-                                console.log(err);
-                                this.$message("There was an error getting the suggestion data");
+                                this.error("There was an error getting the suggestion data");
                             })
                             break;
                         case 2:
@@ -210,7 +181,7 @@
                                 this.isLoaded = true;
                             }).catch(err => {
                                 console.log(err);
-                                this.$message("There was an error getting the story data");
+                                this.error("There was an error getting the story data");
                             })
                             break;
                         case 3:
@@ -220,12 +191,13 @@
                                 this.isLoaded = true;
                             }).catch(err => {
                                 console.log(err);
-                                this.$message("There was an error getting the wisdom data");
+                                this.error("There was an error getting the wisdom data");
                             })
                             break;
                     }
                 }
             },
+
             saveItem() {
                 let that = this;
                 switch (this.modalDisplayTypeId) {
@@ -235,17 +207,16 @@
                             var returnVal = this.$store.getters.getSubmittedResponse;
                             let that = this;
                             if (returnVal == "Success") {
-                                this.$message("Successfully updated story!");
+                                this.success("Successfully updated story!");
                                 setTimeout(function () {
                                     that.closeModal();
                                 }, 2000)
                             }
                             else {
-                                this.$message("Error updating story!");
+                                this.error("Error updating story!");
                             }
                         }).catch(err => {
-                            console.log(err);
-                            this.$message("Error updating story!");
+                            this.error("Error updating story!");
                         })
                         break;
                     case 3:
@@ -254,27 +225,24 @@
                             var returnVal = this.$store.getters.getSubmittedResponse;
                             let that = this;
                             if (returnVal == "Success") {
-                                this.$message("Successfully updated wisdom!");
+                                this.success("Successfully updated wisdom!");
                                 setTimeout(function () {
                                     that.closeModal();
                                 }, 2000)
                             }
                             else {
-                                this.$message("Error updating wisdom!");
+                                this.error("Error updating wisdom!");
                             }
                         }).catch(err => {
-                            console.log(err);
-                            this.$message("Error updating wisdom!");
+                            this.error("Error updating wisdom!");
                         })
                         break;
                 }
             },
+
             closeModal() {
                 this.$emit('close');
             },
         },
     };
 </script>
-
-<style scoped>
-</style>

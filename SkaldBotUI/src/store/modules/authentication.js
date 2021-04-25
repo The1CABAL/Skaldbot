@@ -73,7 +73,6 @@ const actions = {
                 resolve(resp)
             })
                 .catch(err => {
-                    console.log(err);
                     commit('auth_error')
                     localStorage.removeItem('token')
                     localStorage.removeItem('accountId');
@@ -135,7 +134,6 @@ const actions = {
                 commit('set_users', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -147,7 +145,6 @@ const actions = {
                 commit('set_user_data', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -159,7 +156,6 @@ const actions = {
                 commit('set_all_roles', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -171,7 +167,6 @@ const actions = {
                 commit('set_status', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })

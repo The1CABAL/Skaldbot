@@ -8,20 +8,22 @@ import App from './App';
 import VueFormGenerator from 'vue-form-generator'
 Vue.use(VueFormGenerator);
 
-import fieldPassword from './components/CustomFields/fieldPassword';
-Vue.component("fieldPassword", fieldPassword);
+import fieldPassword from './components/vfgFields/vfgPassword';
+Vue.component("field-password", fieldPassword);
+
+import vfgInput from './components/vfgFields/vfgInput';
+Vue.component("field-vue-input", vfgInput);
+
+import vfgButton from './components/vfgFields/vfgButton';
+Vue.component("field-vue-button", vfgButton);
+
+import vfgCheckbox from './components/vfgFields/vfgCheckbox';
+Vue.component("field-vue-checkbox", vfgCheckbox);
+
+import vfgTextArea from './components/vfgFields/vfgTextArea';
+Vue.component("field-vue-textarea", vfgTextArea);
 
 import './style/styles.css'
-
-import ElementUI from 'element-ui'
-Vue.use(ElementUI);
-
-import lang from 'element-ui/lib/locale/lang/en'
-import locale from 'element-ui/lib/locale'
-locale.use(lang);
-
-import VueDataTables from 'vue-data-tables'
-Vue.use(VueDataTables);
 
 import * as Tabs from 'vue-slim-tabs'
 //import 'vue-slim-tabs/themes/default.css'

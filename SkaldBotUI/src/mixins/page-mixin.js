@@ -49,7 +49,45 @@ export default {
             this.redirectUser(this.prevRoute.path);
         },
 
-       
+        success(message, title) {
+            const notification = {
+                type: 'Success',
+                title: title || 'Success!',
+                message: message
+            }
+
+            this.addNotification(notification);
+        },
+
+        warning(message, title) {
+            const notification = {
+                type: 'Warning',
+                title: title || 'Warning!',
+                message: message
+            }
+
+            this.addNotification(notification);
+        },
+
+        error(message, title) {
+            const notification = {
+                type: 'Error',
+                title: title || 'Error!',
+                message: message
+            }
+
+            this.addNotification(notification);
+        },
+
+        addNotification(notification) {
+            this.$store.dispatch('addNotification', notification)
+
+            let currentNotification = this.$store.getters.currentNotification;
+
+            setTimeout(() => {
+                this.$store.dispatch('removeNotification', currentNotification);
+            }, 5000)
+        }
     },
 
     computed: {

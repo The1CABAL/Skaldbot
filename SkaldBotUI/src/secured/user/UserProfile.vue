@@ -184,7 +184,7 @@
                     this.oldUserData = this.cloneModel(this.$store.getters.getUser);
                     this.selectedRole = this.$store.getters.getRole;
                 }).catch(err => {
-                    this.$message("Error getting user data");
+                    this.error("Error getting user data");
                 })
             },
 
@@ -193,7 +193,7 @@
                     this.$store.dispatch('getAllRoles').then(() => {
                         this.roles = this.$store.getters.getAllRoles;
                     }).catch(err => {
-                        this.$message("Error getting user roles");
+                        this.error("Error getting user roles");
                     })
                 }
             },

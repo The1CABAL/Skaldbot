@@ -241,7 +241,7 @@ class Form(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
-            data = req_data['data']
+            data = req_data['data']['FieldInfo']
             userId = req_data['userId']
             isNew = req_data['isNew']
 

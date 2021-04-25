@@ -31,7 +31,7 @@
                 await this.$store.dispatch('getAllCardComments', url).then(() => {
                     this.comments = this.$store.getters.getCardComments;
                 }).catch(() => {
-                    this.$message("Error loading comments");
+                    this.error("Error loading comments");
                 })
             },
             getDate(date) {

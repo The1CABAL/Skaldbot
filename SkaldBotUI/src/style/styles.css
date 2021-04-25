@@ -48,3 +48,7 @@
     .vue-tab[aria-disabled="true"] {
         @apply cursor-not-allowed bg-gray-600;
     }
+
+.field-wrap {
+    @apply w-full;
+}

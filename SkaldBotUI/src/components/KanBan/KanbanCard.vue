@@ -100,7 +100,7 @@
                 await this.$store.dispatch('getCardById', url).then(() => {
                     this.cardInfo = this.$store.getters.getCardInfo;
                 }).catch(() => {
-                    this.$message("Error getting card info for card id " + id);
+                    this.error("Error getting card info for card id " + id);
                 })
             },
             enableMore() {
@@ -156,11 +156,11 @@
                     this.cardInfo = this.$store.getters.getCardInfo;
                     if (this.$store.getters.getGitHubUpdateMsg == "Success") {
                         this.loading = false;
-                        this.$message("Updated Issue!");
+                        this.success("Updated Issue!");
                     }
                 }).catch(() => {
                     this.loading = false;
-                    this.$message("Error Updating Issue!");
+                    this.error("Error Updating Issue!");
                     this.closeModal(true);
                 })
             },

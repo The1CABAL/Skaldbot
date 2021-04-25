@@ -34,7 +34,7 @@
 
         computed: {
             fieldClasses() {
-                let baseButtonClass = 'min-w-32 max-w-xs w-auto pr-2 pl-2 mb-2 h-8 rounded-md'
+                let baseButtonClass = 'min-w-32 max-w-xs w-auto pr-2 pl-2 mb-2 h-8 rounded-md text-white'
 
                 if (this.varient.toLowerCase() === 'secondary') {
                     return `${baseButtonClass} bg-hover hover:bg-secondary`

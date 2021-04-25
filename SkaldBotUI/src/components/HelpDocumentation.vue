@@ -83,7 +83,7 @@
                     this.isLoaded = true;
                 }).catch((err) => {
                     console.log(err)
-                    this.$message("Error getting documentation")
+                    this.error("Error getting documentation")
                 })
             },
             close() {
@@ -105,10 +105,9 @@
                     this.helpTitle = this.$store.getters.helpTitle;
                     this.isActive = this.$store.getters.helpIsActive;
                     this.isLoaded = true;
-                    this.$message("Content updated")
+                    this.success("Content updated")
                 }).catch((err) => {
-                    console.log(err);
-                    this.$message("Error updating content");
+                    this.error("Error updating content");
                 })
             },
             reloadAuthentication() {

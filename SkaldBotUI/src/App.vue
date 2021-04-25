@@ -1,6 +1,7 @@
 <template>
     <div id="app" class="bg-primary text-white">
         <nav-bar v-if="contentReady" />
+        <alerts />
         <header v-if="contentReady">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <h1 class="text-2xl font-bold border-b-2 border-gray-200 pb-2">
@@ -27,6 +28,8 @@
     import navBar from './components/Nav/navBar.vue';
     import PageMixin from '@/mixins/page-mixin.js'
     import VueLoading from '@/components/VueLoading'
+    import VueAlerts from '@/components/Alerts/VueAlerts'
+
     export default {
         name: "app",
 
@@ -41,7 +44,8 @@
 
         components: {
             'nav-bar': navBar,
-            'loader': VueLoading
+            'loader': VueLoading,
+            'alerts': VueAlerts
         },
 
         mounted() {

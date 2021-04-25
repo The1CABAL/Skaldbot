@@ -8,6 +8,7 @@ import suggestions from './modules/suggestions'
 import servers from './modules/servers'
 import github from './modules/github'
 import page from './modules/page'
+import notifications from './modules/notifications'
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
         suggestions,
         servers,
         github,
-        page
+        page,
+        notifications
     }
 });
