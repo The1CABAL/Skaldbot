@@ -1,5 +1,5 @@
 <template>
-    <div class="about">
+    <div class="p-4 md:p-0">
         <div class="mb-3">
             <h1 class="font-bold tracking-wide">About The SkaldBot</h1>
             <hr class="my-3"/>

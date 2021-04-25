@@ -31,10 +31,9 @@ class HelpDocumentation(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
-
             #do something here
             
-            documentation = Documentation(req_data['helpContentKey'], req_data['helpTitle'], req_data['helpContent'], req_data['isActive'], req_data['userId'], req_data['isAdmin'])
+            documentation = Documentation(req_data['helpContentKey'], req_data['helpTitle'], req_data['helpContent'], req_data['isActive'], req_data['userId'], req_data['admin'])
 
             helpContent = SQL.update_documentation(documentation)
 

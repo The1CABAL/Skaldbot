@@ -1,5 +1,5 @@
 <template>
-    <div id="ManageForms">
+    <div id="ManageForms" class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <div v-show="loaded">
             <div class="flex flex-1">

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <HelpDocumentation v-if="isModalVisible" :HelpContentKey="helpContentKey" @close="closeModal"></HelpDocumentation>
         <div v-show="loaded">

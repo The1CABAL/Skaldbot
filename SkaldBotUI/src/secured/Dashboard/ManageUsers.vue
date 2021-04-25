@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <div v-show="loaded">
             <vue-table-filtered :hidden-columns="['Id']"

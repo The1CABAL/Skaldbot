@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="bg-primary text-white">
-        <nav-bar v-if="contentReady" />
+        <nav-bar/>
         <alerts />
         <header v-if="contentReady">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">

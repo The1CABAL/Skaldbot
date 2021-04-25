@@ -3,10 +3,6 @@
         <div class="pb-3">
             <vue-button @click="goBack">Go Back</vue-button>
         </div>
-        <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
-            <p style="font-weight: bold;">{{msg}}</p>
-            <vue-button varient="close" @click="closeNotification">x</vue-button>
-        </div>
         <tabs :onSelect="activeTab">
             <tab title="Account Information">
                 <div class="panel">
@@ -74,9 +70,7 @@
                 accountData: [],
                 accountUsers: [],
                 msg: '',
-                isError: true,
                 submitted: false,
-                success: false,
                 currentTab: 'account',
                 titles: [
                     {
@@ -161,12 +155,10 @@
                 if (!this.objectsAreSame(this.accountData, this.$store.getters.accountInformation)) {
                     let that = this;
                     this.$store.dispatch('updateAccountInformation', this.accountData).then(() => {
-                        that.success = true
-                        that.setNotification(that.success);
+                        that.setNotification(true);
                         that.getData()
                     }).catch(err => {
-                        that.success = false;
-                        that.setNotification(that.success)
+                        that.setNotification(false)
                         that.getData()
                         console.log(err);
                     })
@@ -179,20 +171,17 @@
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
-                    this.isError = false;
-                    this.msg = "Successfully updated the account!";
+                    this.success("Successfully updated the account!")
                 }
                 else {
                     this.submitted = true;
-                    this.isError = true;
-                    this.msg = "There was an error updating the account. Please try again.";
+                    this.error("There was an error updating the account. Please try again.")
                 }
             },
 
             closeNotification() {
                 this.msg = '';
                 this.submitted = false;
-                this.isError = false;
             },
 
             getAccountInformation() {

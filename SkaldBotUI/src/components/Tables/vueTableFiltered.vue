@@ -1,6 +1,6 @@
 <template>
     <div id="filtered-table">
-        <div class="flex-1 flex justify-between pb-3">
+        <div class="flex-1 flex justify-between md:pb-3 space-x-2">
             <vue-select class="w-1/4"
                         v-if="showPerPage"
                         :items="itemsPerPage"
@@ -8,7 +8,7 @@
                         :show-select-option="false"
                         :default-selected-item="defaultPerPageOption" />
 
-            <vue-search-input class="justify-end" v-model="searchValue" v-if="showSearchField" />
+            <vue-search-input class="justify-end pt-1 md:pt-0" v-model="searchValue" v-if="showSearchField" />
         </div>
         <vue-table :items="items"
                    :action-button-options="actionButtonOptions"
@@ -26,7 +26,7 @@
                     Previous
                 </a>
             </div>
-            <div class="hidden md:-mt-px md:flex">
+            <div class="md:-mt-px md:flex">
                 <a v-for="page in localModel.TotalPages"
                    :key="page"
                    href="#"
@@ -178,7 +178,6 @@
             },
 
             changePageByButton(isSubtract = false) {
-                debugger;
                 if (!isSubtract) {
                     this.incrementPageNumber();
                     return;
@@ -222,7 +221,9 @@
                     records.push(value);
                 });
 
-                this.localModel.TotalPages = Math.ceil(totalRecords / this.localModel.PerPage);
+                let totalPages = Math.ceil(totalRecords / this.localModel.PerPage);
+
+                this.localModel.TotalPages = totalPages <= 0 ? 1 : totalPages
 
                 this.items = records;
             },

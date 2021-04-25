@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen flex overflow-hidden bg-primary">
-        <div class="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true" v-show="mobileNav">
+        <div class="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true" v-if="mobileNav">
             <div class="fixed inset-0 bg-primary bg-opacity-75" aria-hidden="true"></div>
             <div class="relative flex-1 flex flex-col max-w-xs w-full bg-primary focus:outline-none">
                 <div class="absolute top-0 right-0 -mr-12 pt-2">
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="flex-1 h-0 pb-4 overflow-y-auto">
-                    <side-nav />
+                    <side-nav @sideNavClick="toggleMobileNav"/>
                 </div>
             </div>
             <div class="flex-shrink-0 w-14" aria-hidden="true">
@@ -21,7 +21,7 @@
         </div>
         <div class="hidden lg:flex lg:flex-shrink-0">
             <div class="flex flex-col w-64">
-                <side-nav />
+                <side-nav @sideNavClick="toggleMobileNav" />
             </div>
         </div>
         <div class="flex flex-col min-w-0 flex-1 overflow-hidden">

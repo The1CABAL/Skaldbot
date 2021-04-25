@@ -1,5 +1,5 @@
 <template>
-    <div id="GitHub">
+    <div id="GitHub" class="h-full overflow-x-auto">
         <div if="loaded">
             <h1>{{project.name}}</h1>
         </div>

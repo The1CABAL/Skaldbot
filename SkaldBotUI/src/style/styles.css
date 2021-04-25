@@ -52,3 +52,9 @@
 .field-wrap {
     @apply w-full;
 }
+
+#HelpDocumentation ol, ul {
+    list-style: disc;
+    padding-top: 16px;
+    padding-left: 40px;
+}

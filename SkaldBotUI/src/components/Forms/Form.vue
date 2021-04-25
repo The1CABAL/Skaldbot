@@ -59,8 +59,22 @@
         }
     }
 
+    VueFormGenerator.validators.passwordStrength = function (value, field, model) {
+        let regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+
+        let password = model.password;
+
+        if (!regex.test(password)) {
+            return ["Password must be a minimum of eight characters and have at least one letter and one number"]
+        }
+        else {
+            return [];
+        }
+    }
+
     VueFormGenerator.validators.passwordValidation = function (value, field, model) {
         let password = model.password;
+
         let confPassword = value;
 
         if (password != confPassword) {

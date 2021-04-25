@@ -66,9 +66,6 @@
                     <div class="h8 w-8 rounded-full ml-3">
                         <div v-html="avatarUrl"></div>
                     </div>
-                    <div class="ml-3">
-                        <div class="text-base font-medium leading-none text-white">Tom Cook</div>
-                    </div>
                 </div>
                 <div class="mt-3 px-2 space-y-1">
                     <nav-link dropdownLink mobile to="/accountprofile" v-if="clientAdmin" v-on:click.native="account(); toggleMobileNav()">Account Profile</nav-link>
@@ -80,7 +77,6 @@
         </div>
     </nav>
 </template>
-
 <script>
     import navLink from './navLink.vue';
     import multiavatar from '@multiavatar/multiavatar'
@@ -97,13 +93,27 @@
             return {
                 profileDropdown: false,
                 showMobileNav: false,
-                logoImage: require('@/assets/logo.png'),
+                logoImage: require('@/assets/logo.png')
             }
+        },
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted().then(() => {
+                this.pageReady();
+            })
         },
 
         computed: {
             avatarUrl() {
-                return multiavatar('Binx Bond')
+                if (!this.$store.getters.isLoggedIn) {
+                    return multiavatar('Binx Bon')
+                }
+
+                return multiavatar(this.$store.getters.userId)
             }
         },
 
@@ -130,6 +140,5 @@
                 })
             },
         }
-        
     }
 </script>

@@ -15,7 +15,7 @@
                 </span>
             </button>
 
-            <ul v-show="listToggled" class="absolute transition ease-in duration-100 mt-1 w-full bg-primaryLight shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" :id="selectListGeneratedId">
+            <ul v-show="listToggled" class="absolute m-0 p-0 list-none transition ease-in duration-100 mt-1 w-full bg-primaryLight shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" :id="selectListGeneratedId">
                 <li class="cursor-default select-none relative py-2 pl-8 pr-4 hover:bg-hoverLight hover:text-primary"
                     :class="{'text-white bg-hover' : isSelectSelected}"
                     id="listbox-option-0"

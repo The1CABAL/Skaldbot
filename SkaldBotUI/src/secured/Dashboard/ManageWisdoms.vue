@@ -1,5 +1,5 @@
 <template>
-    <div id="ManageWisdoms">
+    <div id="ManageWisdoms" class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
         <div v-show="loaded">
