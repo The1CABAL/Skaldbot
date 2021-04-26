@@ -62,9 +62,6 @@
     <Content Include="src\components\VueLoading.vue">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\helpers\constants.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="src\home\About.vue">
       <SubType>Code</SubType>
     </Content>
