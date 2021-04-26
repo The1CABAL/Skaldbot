@@ -3,12 +3,12 @@ from Classes.SQL import SQL
 from SkaldBotAPI import app
 from flask import json, request
 from Models.Models import *
+from Classes.PaginationHelper import PaginationHelper
 
 
 class Login(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
-            #print('Authenticating user...')
             req_data = request.get_json()
 
             user = User(req_data['username'], req_data['password'])
@@ -28,7 +28,6 @@ class Login(Resource):
 class Register(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
-            #print('Registering user...')
             req_data = request.get_json()
             
             user = RegisterUser(req_data['accountname'], req_data['username'], req_data['firstname'], req_data['lastname'], req_data['discorduserid'], req_data['password'])
@@ -70,10 +69,8 @@ class GetUserRoles(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             Id = request.args.get('id')
-            #print('Getting Form Data for FormKey: {}'.format(formKey))
         
             data = SQL.get_user_role(Id)
-            #print(data)
 
             response = app.response_class(response = json.dumps(data),
                 status=200,
@@ -89,7 +86,9 @@ class GetAllUsers(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             isMaster = request.args.get('isMaster')
-            data = SQL.get_all_users(isMaster)
+            paginationModel = PaginationHelper(request.args, 'Username', ["Id", "Username", "FirstName", "LastName", "IsActive", "CreateDate"]);
+
+            data = SQL.get_all_users(isMaster, paginationModel)
 
             response = app.response_class(response = json.dumps(data),
                 status=200,
@@ -152,7 +151,7 @@ class ChangePassword(Resource):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
 
-            password = ChangePasswordModel(req_data['UserId'], req_data['password'])
+            password = ChangePasswordModel(req_data['userId'], req_data['password'])
 
             isUpdated = SQL.update_user_password(password)
 

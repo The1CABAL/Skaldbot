@@ -8,15 +8,16 @@ CREATE PROCEDURE [dbo].[UpsertCodeVueForms]
 	@FormKey nvarchar(255),
 	@FormName nvarchar(255),
 	@PageId int,
-	@isActive bit
+	@IsActive bit,
+	@ShowFormName bit
 AS
 BEGIN
 	IF NOT EXISTS(SELECT 1 FROM CodeVueForms WHERE FormKey = @FormKey)
 	BEGIN
-		INSERT INTO CodeVueForms (FormKey, FormName, PageId, IsActive) VALUES (@FormKey, @FormName, @PageId, @isActive)
+		INSERT INTO CodeVueForms (FormKey, FormName, PageId, IsActive, ShowFormName) VALUES (@FormKey, @FormName, @PageId, @IsActive, @ShowFormName)
 	END
 	ELSE
 	BEGIN
-		UPDATE CodeVueForms SET FormName = @FormName, PageId = @PageId, IsActive = @isActive WHERE FormKey = @FormKey
+		UPDATE CodeVueForms SET FormName = @FormName, PageId = @PageId, IsActive = @IsActive, ShowFormName = @ShowFormName WHERE FormKey = @FormKey
 	END
 END

@@ -1,15 +1,13 @@
-FROM node:lts-alpine
+FROM node:latest as build-stage
 
-# install simple http server for serving static content
-RUN npm install -g http-server
 WORKDIR /SkaldbotUI
-
 COPY package*.json ./
-
-RUN npm install
+RUN npm install 
 RUN npm audit fix
-COPY . .
+COPY ./ .
 RUN npm run build
 
-EXPOSE 8080
-CMD [ "http-server", "dist" ]
+FROM nginx as production-stage
+RUN mkdir /SkaldbotUI
+COPY --from=build-stage /SkaldbotUI/dist /SkaldbotUI
+COPY nginx.conf /etc/nginx/nginx.conf

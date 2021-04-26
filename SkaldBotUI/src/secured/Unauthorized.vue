@@ -5,8 +5,22 @@
 </template>
 
 <script>
+    import PageMixin from '@/mixins/page-mixin'
+
     export default {
-        name: "unauthorized"
+        name: "unauthorized",
+
+        mixins: [PageMixin],
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted().then(() => {
+                this.pageReady();
+            })
+        }
     }
 </script>
 

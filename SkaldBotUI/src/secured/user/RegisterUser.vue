@@ -1,8 +1,8 @@
 <template>
     <div id="RegisterUser">
-        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
+        <vue-button @click="goBack">Go Back</vue-button>
         <Form :formKey="formKey" :accountId="accountId" @RegisterSuccess="alert" />
-        <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+        <vue-button @click="openHelp" varient="secondary">Help</vue-button>
         <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
     </div>
 </template>
@@ -10,6 +10,8 @@
 <script>
     import Form from '../../components/Forms/Form';
     import HelpDocumentation from '../../components/HelpDocumentation'
+    import fieldButton from '../../components/CustomFields/fieldButton'
+
     export default {
         name: 'RegisterUser',
         props: {
@@ -20,7 +22,8 @@
         },
         components: {
             Form,
-            HelpDocumentation
+            HelpDocumentation,
+            'vue-button': fieldButton
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {

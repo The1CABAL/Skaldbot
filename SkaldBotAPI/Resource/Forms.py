@@ -3,13 +3,13 @@ from Classes.SQL import SQL
 from SkaldBotAPI import app
 from Models.Models import *
 from flask import json, request
+from Classes.PaginationHelper import PaginationHelper
 
 class GetFormName(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
             data = SQL.get_form_name(formKey)
-            #print(json.dumps(data))
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -48,10 +48,8 @@ class GetFormSchema(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
-            #print('Getting Form Data for FormKey: {}'.format(formKey))
         
             data = SQL.get_form_schema(formKey)
-            #print(data)
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -70,8 +68,10 @@ class GetFormSchema(Resource):
 class GetForms(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
-            forms = SQL.get_all_forms()
-            forms = forms[0]
+            paginationModel = PaginationHelper(request.args, 'FormKey', ["FormKey", "FormName", "IsActive"]);
+
+            forms = SQL.get_all_forms(paginationModel)
+
             response = app.response_class(
                 response = json.dumps(forms),
                 status=200,
@@ -90,7 +90,6 @@ class GetActionLink(Resource):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
             data = SQL.get_form_actionlink(formKey)
-            #print(json.dumps(data))
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -168,7 +167,9 @@ class ManageSubmittedItems(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             
-            items = SQL.get_submitted_items()
+            paginationModel = PaginationHelper(request.args, 'CreateDate', ["Title", "CreateDate", "ItemType", "IsApproved", "IsReviewed"])
+
+            items = SQL.get_submitted_items(paginationModel)
 
             response = app.response_class(
                 response = json.dumps(items),
@@ -236,16 +237,12 @@ class Form(Resource):
     def post(self):
         if SQL.test_connect_to_dbo():
             req_data = request.get_json()
-            data = req_data['data']
+            data = req_data['data']['FieldInfo']
             userId = req_data['userId']
             isNew = req_data['isNew']
 
-            print(req_data);
-
             form = FormModel(data['FormKey'], data['FieldSchema'], data['ActionLink'], data['IsActive'], req_data['formName'])
             isUpdated = False;
-
-            #print(isNew);
 
             if isNew:
                 isUpdated = SQL.create_form(form, userId);

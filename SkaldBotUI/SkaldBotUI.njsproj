@@ -30,11 +30,45 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".dockerignore" />
+    <Content Include="Dockerfile" />
+    <Content Include="libman.json" />
+    <Content Include="nginx.conf" />
+    <Content Include="postcss.config.js" />
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
     <Content Include="src\account\ChangePassword.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\components\Alerts\VueAlerts.vue" />
+    <Content Include="src\components\Alerts\VueSuccess.vue" />
+    <Content Include="src\components\Alerts\VueWarning.vue" />
+    <Content Include="src\components\CustomFields\fieldButton.vue" />
+    <Content Include="src\components\CustomFields\fieldCheckbox.vue" />
+    <Content Include="src\components\CustomFields\fieldInput.vue" />
+    <Content Include="src\components\CustomFields\fieldSearchInput.vue" />
+    <Content Include="src\components\CustomFields\fieldSelect.vue" />
+    <Content Include="src\components\CustomFields\fieldTextArea.vue" />
+    <Content Include="src\components\KanBan\KanbanCard.vue" />
+    <Content Include="src\components\KanBan\KanbanColumn.vue" />
+    <Content Include="src\components\KanBan\KanbanComments.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\components\Modal\Modal.vue" />
+    <Content Include="src\components\Nav\navBar.vue" />
+    <Content Include="src\components\Nav\navLink.vue" />
+    <Content Include="src\components\Nav\sideNavBar.vue" />
+    <Content Include="src\components\Tables\vueTable.vue" />
+    <Content Include="src\components\Tables\vueTableColumn.vue" />
+    <Content Include="src\components\Tables\vueTableFiltered.vue" />
+    <Content Include="src\components\Alerts\VueError.vue" />
+    <Content Include="src\components\vfgFields\vfgButton.vue" />
+    <Content Include="src\components\vfgFields\vfgCheckbox.vue" />
+    <Content Include="src\components\vfgFields\vfgInput.vue" />
+    <Content Include="src\components\vfgFields\vfgTextArea.vue" />
+    <Content Include="src\helpers\constants.js" />
+    <Content Include="src\mixins\page-mixin.js" />
+    <Content Include="src\mixins\util-mixin.js" />
     <Content Include="src\Offline\Dockerfile" />
     <Content Include="src\Offline\html\index.html" />
     <Content Include="src\secured\user\ManageServer.vue">
@@ -50,7 +84,7 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="src\assets\SbBackground.jpg" />
-    <Content Include="src\components\CustomFields\fieldPassword.vue">
+    <Content Include="src\components\vfgFields\vfgPassword.vue">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\components\HelpDocumentation.vue">
@@ -135,9 +169,14 @@
     <Content Include="src\store\modules\documentation.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\notifications.js" />
     <Content Include="src\store\modules\forms.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\store\modules\github.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\store\modules\page.js" />
     <Content Include="src\store\modules\servers.js">
       <SubType>Code</SubType>
     </Content>
@@ -147,6 +186,9 @@
     <Content Include="src\style\main.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\style\styles.css" />
+    <Content Include="src\validators.js" />
+    <Content Include="tailwind.config.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
@@ -154,11 +196,18 @@
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
     <Folder Include="src\components\CustomFields\" />
+    <Folder Include="src\components\KanBan\" />
+    <Folder Include="src\components\Nav\" />
+    <Folder Include="src\components\Modal\" />
+    <Folder Include="src\components\Tables\" />
+    <Folder Include="src\components\vfgFields\" />
     <Folder Include="src\home\" />
     <Folder Include="src\helpers\" />
     <Folder Include="src\components\Forms\" />
     <Folder Include="src\components\" />
     <Folder Include="src\account\" />
+    <Folder Include="src\mixins\" />
+    <Folder Include="src\components\Alerts\" />
     <Folder Include="src\Offline\" />
     <Folder Include="src\Offline\html\" />
     <Folder Include="src\style\" />

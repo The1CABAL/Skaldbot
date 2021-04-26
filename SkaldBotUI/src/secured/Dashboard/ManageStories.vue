@@ -1,25 +1,17 @@
 <template>
-    <div id="ManageStories">
+    <div id="ManageStories" class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
-        <div v-if="loaded">
-            <div style="margin-bottom: 10px">
-                <el-row>
-                    <el-col :span="6">
-                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
-                    </el-col>
-                </el-row>
-            </div>
-
-            <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
-                <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
-                </el-table-column>
-                <el-table-column prop="IsActive" label="Is Active">
-                    <template slot-scope="scope">
-                        <div>{{getBool(scope.row.IsActive)}}</div>
-                    </template>
-                </el-table-column>
-            </data-tables>
+        <div v-show="loaded">
+            <vue-table-filtered showPerPage
+                                showSearchField
+                                showPagination
+                                :searchFunction="getData"
+                                :columns="titles"
+                                @editClick="handleSelectionChange"
+                                :forceRefresh="refreshData"
+                                @data-reset="resetDataVariable">
+            </vue-table-filtered>
         </div>
     </div>
 </template>
@@ -27,108 +19,95 @@
 <script>
     import VueLoading from '../../components/VueLoading';
     import Modal from '../../components/ModalComponent';
+    import PageMixin from '@/mixins/page-mixin.js';
+    import vueTableFiltered from '@/components/Tables/vueTableFiltered';
 
     export default {
         name: "ManageStories",
+
         components: {
             VueLoading,
-            Modal
+            Modal,
+            'vue-table-filtered': vueTableFiltered,
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 modalDisplayTypeId: 2,
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
+                refreshData: false,
                 data: [],
                 titles: [
                     {
                         prop: "Id",
-                        label: "Story Id"
+                        label: "Story Id",
+                        sortable: false
                     },
                     {
                         prop: "Title",
-                        label: "Story Title"
-                    }
-                ],
-                filters: [
-                    {
-                        prop: 'Title',
-                        value: ''
-                    }
-                ],
-                actionCol: {
-                    props: {
-                        label: 'Actions',
+                        label: "Story Title",
+                        sortable: true
                     },
-                    buttons: [
-                        {
-                            props:
-                            {
-                                type: 'primary'
-                            },
-                            handler: row => {
-                                this.lookupId = row.Id
-                                this.showModal();
-                            },
-                            label: 'View'
-                        }
-                    ]
-                },
-                selectedRow: []
+                    {
+                        prop: "Story",
+                        label: "Story",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
+                ],
             }
         },
-        mounted: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted().then(() => {
                 if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
                     this.$router.push('/unauthorized')
+                    return;
                 }
-                else {
-                    this.isLoaded = true
-                }
-            }
+
+                this.pageReady();
+            });
         },
+
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
-                this.$store.dispatch('getAllStories').then(() => {
-                    this.data = this.$store.getters.getStories;
-                    this.loaded = true;
-                }).catch(err => {
-                    console.log(err);
-                    this.$message("There was an error getting all the stories");
-                })
+
+                await this.$store.dispatch('getAllStories', model);
+
+                this.loaded = true;
+                return this.$store.getters.getStories;
             },
+
             handleSelectionChange(val) {
-                this.selectedRow = val
+                this.lookupId = val
+                this.showModal();
             },
-            getBool(value) {
-                if (value)
-                    return "True"
-                else
-                    return "False"
-            },
+            
             showModal() {
                 this.isModalVisible = true
             },
+
             closeModal() {
                 this.isModalVisible = false;
                 this.lookupId = 0;
-                this.getData();
+                this.refreshData = true;
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles').then(() => {
-                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                        this.$router.push('/unauthorized')
-                    }
-                    else {
-                        this.isLoaded = true
-                        this.getData();
-                    }
-                });
+
+            resetDataVariable() {
+                this.refreshData = false;
             }
         }
     }

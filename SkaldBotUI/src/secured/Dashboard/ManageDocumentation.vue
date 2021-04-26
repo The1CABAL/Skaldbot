@@ -1,25 +1,17 @@
 <template>
-    <div>
+    <div class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <HelpDocumentation v-if="isModalVisible" :HelpContentKey="helpContentKey" @close="closeModal"></HelpDocumentation>
-        <div v-if="loaded">
-            <div style="margin-bottom: 10px">
-                <el-row>
-                    <el-col :span="6">
-                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
-                    </el-col>
-                </el-row>
-            </div>
+        <div v-show="loaded">
 
-            <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
-                <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
-                </el-table-column>
-                <el-table-column prop="IsActive" label="Is Active">
-                    <template slot-scope="scope">
-                        <div>{{getBool(scope.row.IsActive)}}</div>
-                    </template>
-                </el-table-column>
-            </data-tables>
+            <vue-table-filtered :action-button-options="{Visible: true,Label: 'Edit', EmitValue: 'HelpContentKey'}"
+                                showPerPage
+                                showSearchField
+                                showPagination
+                                :columns="titles"
+                                :searchFunction="getData"
+                                @editClick="handleSelectionChange">
+            </vue-table-filtered>
         </div>
     </div>
 </template>
@@ -27,110 +19,88 @@
 <script>
     import VueLoading from '../../components/VueLoading';
     import HelpDocumentation from '../../components/HelpDocumentation';
+    import PageMixin from '@/mixins/page-mixin.js';
+    import vueTableFiltered from '@/components/Tables/vueTableFiltered';
 
     export default {
         name: "ManageDocumentation",
         components: {
             VueLoading,
-            HelpDocumentation
+            HelpDocumentation,
+            'vue-table-filtered': vueTableFiltered
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 helpContentKey: '',
                 loaded: false,
                 isModalVisible: false,
-                data: [],
                 titles: [
                     {
                         prop: "HelpContentKey",
-                        label: "Help Content Key"
+                        label: "Help Content Key",
+                        sortable: true
                     },
                     {
                         prop: "HelpTitle",
-                        label: "Help Title"
-                    }
-                ],
-                filters: [
-                    {
-                        prop: 'HelpTitle',
-                        value: ''
-                    }
-                ],
-                actionCol: {
-                    props: {
-                        label: 'Actions',
+                        label: "Help Title",
+                        sortable: true
                     },
-                    buttons: [
-                        {
-                            props:
-                            {
-                                type: 'primary'
-                            },
-                            handler: row => {
-                                this.helpContentKey = row.HelpContentKey
-                                this.showModal();
-                            },
-                            label: 'View'
-                        }
-                    ]
-                },
-                selectedRow: []
+                    {
+                        prop: "HelpContent",
+                        label: "Help Content",
+                        sortable: true
+                    },
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
+                ]
             }
         },
-        mounted: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                    this.$router.push('/unauthorized')
-                }
-                else {
-                    this.isLoaded = true
-                    this.getData();
-                }
-            }
+
+        beforeMount() {
+            this.pageMounting();
         },
+
+        mounted() {
+            this.pageMounted().then(() => {
+                if (!this.masterAdmin && !this.admin) {
+                    this.redirectUser('/unauthorized')
+                    return;
+                }
+
+                this.pageReady();
+            });
+        },
+
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
 
-                this.$store.dispatch('getAllDocumentation').then(() => {
-                    this.data = this.$store.getters.helpDocumentation
-                    this.loaded = true
-                }).catch((err) => {
-                    console.log(err)
-                    this.$message("There was an error getting the help documentations")
-                })
+                await this.$store.dispatch('getAllDocumentation', model);
+
+                this.loaded = true
+
+                return this.$store.getters.helpDocumentation
             },
+
             handleSelectionChange(val) {
-                this.selectedRow = val
+                this.helpContentKey = val
+                this.showModal();
             },
-            getBool(value) {
-                if (value)
-                    return "True"
-                else
-                    return "False"
-            },
+
             showModal() {
                 this.isModalVisible = true
             },
+
             closeModal() {
                 this.isModalVisible = false;
                 this.helpContentKey = '';
-                this.getData();
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles').then(() => {
-                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                        this.$router.push('/unauthorized')
-                    }
-                    else {
-                        this.isLoaded = true
-                        this.getData();
-                    }
-                });
-            }
         }
     }
 </script>
