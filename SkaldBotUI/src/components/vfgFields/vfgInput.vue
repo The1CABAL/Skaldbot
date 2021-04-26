@@ -1,5 +1,5 @@
 <template>
-    <vue-input :placeholder="schema.placeholder" :required="schema.required" :is-disabled="schema.disabled" v-model="value">{{schema.fieldLabel}}</vue-input>
+    <vue-input :placeholder="schema.placeholder" :required="schema.required" :is-disabled="schema.disabled" v-model="value" :hidden="schema.hidden">{{schema.fieldLabel}}</vue-input>
 </template>
 
 <script>

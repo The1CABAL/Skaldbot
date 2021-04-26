@@ -9,7 +9,7 @@
                 <div v-if="showFormName">
                     <div class="flex flex-1 justify-between">
                         <h2 class="font-bold tracking-wide ml-3 mt-3">{{formName}}</h2>
-                        <vue-button varient="close" @click="close" aria-label="Close modal" v-if="showCloseButton">x</vue-button>
+                        <vue-button varient="close" @click="close" aria-label="Close modal" v-if="showCloseButton">&#10006;</vue-button>
                     </div>
                     <hr class="my-3" />
                 </div>
@@ -42,48 +42,11 @@
 <script>
     import VueLoading from '../VueLoading';
     import VueFormGenerator from 'vue-form-generator'
-    import "vue-form-generator/dist/vfg.css";  // optional full css additions
     import { mapActions } from "vuex";
     import fieldCheckbox from "../CustomFields/fieldCheckbox.vue";
     import fieldButton from '../CustomFields/fieldButton';
     import PageMixin from '@/mixins/page-mixin'
-
-    VueFormGenerator.validators.emailValidation = function (value, field, model) {
-        let email = model.email;
-        let confEmail = value;
-
-        if (email != confEmail) {
-            return ["Emails do not match!"];
-        } else {
-            return [];
-        }
-    }
-
-    VueFormGenerator.validators.passwordStrength = function (value, field, model) {
-        let regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
-
-        let password = model.password;
-
-        if (!regex.test(password)) {
-            return ["Password must be a minimum of eight characters and have at least one letter and one number"]
-        }
-        else {
-            return [];
-        }
-    }
-
-    VueFormGenerator.validators.passwordValidation = function (value, field, model) {
-        let password = model.password;
-
-        let confPassword = value;
-
-        if (password != confPassword) {
-            return ["Passwords do not match!"];
-        }
-        else {
-            return [];
-        }
-    }
+    import UtilMixin from '@/mixins/util-mixin'
 
     export default {
         name: "Form",
@@ -94,7 +57,7 @@
             'vue-button': fieldButton
         },
 
-        mixins: [PageMixin],
+        mixins: [PageMixin, UtilMixin],
 
         props: {
             formKey: {
@@ -131,38 +94,24 @@
                 this.getData();
             },
 
-            loaded() {
-                if (this.loaded) {
-                    this.newModel();
+            passedModel(newVal, oldVal) {
+                if (this.areEquivalent(newVal, oldVal)) {
+                    return;
                 }
-            },
 
-            submitted() {
-                if (this.submitted) {
-                    setTimeout(
-                        this.closeNotification, 5000);
-                }
-            },
-
-            passedModel() {
-                if (this.passedModel != undefined && this.passedModel != null)
+                if (this.passedModel != undefined && this.passedModel != null) {
                     this.setModel();
+                }
             }
         },
 
         data() {
             return {
                 action: '',
-                model: {},
+                model: null,
                 schema: null,
                 showFormName: true,
-                options: {
-                    validatedAfterLoad: false,
-                    validatedAfterChange: true
-                },
                 loaded: false,
-                msg: '',
-                isError: false,
                 submitted: false,
                 formName: 'Test',
                 showFormExtras: false,
@@ -200,8 +149,7 @@
             },
 
             newModel() {
-                if (this.formKey != "LoginForm")
-                    this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
+                this.model = VueFormGenerator.schema.createDefaultObject(this.schema);
             },
 
             validateForm(isValid) {
@@ -210,8 +158,6 @@
 
             formSubmit() {
                 if (this.isValid) {
-                    var url = this.action;
-                    let that = this;
                     if (this.formKey == "LoginForm" || this.formKey == "RegisterForm" || this.formKey == "RegisterUserForm") {
                         if (this.formKey == "LoginForm") {
                             this.dispatchLogin();
@@ -242,6 +188,8 @@
             dispatchRegisterAccount() {
                 var firstname = this.model.firstname;
                 var lastname = this.model.lastname;
+                var username = this.model.username;
+                var password = this.model.password;
                 var accountname = this.model.accountName;
                 var discorduserid = this.model.discordUserId;
 
@@ -253,8 +201,11 @@
             dispatchRegisterUser() {
                 var firstname = this.model.firstname;
                 var lastname = this.model.lastname;
+                var username = this.model.username;
+                var password = this.model.password;
                 var accountid = this.accountId;
                 var discorduserid = this.model.discordUserId;
+
                 this.$store.dispatch('registeruser', { accountid, username, firstname, lastname, discorduserid, password })
                     .then(() => this.success('User created!'))
                     .catch(err => this.error('There was an error registering. Please try agian later.'))
@@ -263,6 +214,7 @@
             dispatchForm() {
                 let model = this.model;
                 let that = this;
+                let url = this.action;
 
                 this.$store.dispatch('postFormData', { url, model }).then(() => {
                     var returnVal = this.$store.getters.getPostStatus;
@@ -281,7 +233,7 @@
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
-                    this.success("Successfully submitted!");
+                    this.success("Performed Action was successful!");
 
                     if (this.formKey == "ManageServer")
                         this.$emit("ServerSuccess", true);
@@ -290,8 +242,7 @@
                 }
                 else {
                     this.submitted = true;
-                    this.isError = true;
-                    this.error("There was an error submitting. Please try again.");
+                    this.error("There was an error. Please try again.");
                 }
             },
 
@@ -324,8 +275,8 @@
             },
 
             setModel() {
-                if (this.passedModel[0] != undefined && this.passedModel[0] != null) {
-                    this.model = VueFormGenerator.schema.createDefaultObject(this.schema, this.passedModel[0])
+                if (this.passedModel != undefined && this.passedModel != null) {
+                    this.model = Object.assign({}, this.model, VueFormGenerator.schema.createDefaultObject(this.schema, this.passedModel))
                 }
             },
 

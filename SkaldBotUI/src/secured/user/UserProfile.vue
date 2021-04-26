@@ -1,9 +1,5 @@
 <template>
     <div id="UserProfile">
-        <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
-            <p style="font-weight: bold;">{{msg}}</p>
-            <vue-button varient="close" @click="closeNotification">x</vue-button>
-        </div>
         <div class="w-full space-x-2">
             <vue-button @click="goBack">Go Back</vue-button>
             <vue-button varient="secondary" @click="changePassword">Change Password</vue-button>
@@ -40,7 +36,7 @@
                     <hr class="mt-3 mb-3" />
                     <div class="space-x-2">
                         <vue-button type="submit">Save</vue-button>
-                        <vue-button varient="secondary" type="secondary" @click="openHelp">Help</vue-button>
+                        <vue-button varient="secondary" type="button" @click="openHelp">Help</vue-button>
                     </div>
                     <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
                 </form>
@@ -81,10 +77,7 @@
                 oldUserData: [],
                 roles: [],
                 selectedRole: '',
-                msg: '',
-                isError: true,
                 submitted: false,
-                success: false,
                 helpContentKey: 'RegisterHelp',
                 showHelp: false,
                 showChangePassword: false
@@ -126,7 +119,7 @@
 
             formSubmit() {
                 event.preventDefault();
-                if (this.areEquivalent(this.userData, this.oldUserData) || this.isPermissionSelected(this.userData.r[0].Role)) {
+                if (this.areEquivalent(this.userData, this.oldUserData) && this.isPermissionSelected(this.oldUserData.r[0].Role)) {
                     this.setNotification(false);
                     return;
                 }
@@ -142,34 +135,24 @@
                 this.$store.dispatch('updateUser', postData).then(() => {
                     var returnVal = this.$store.getters.authStatus;
                     if (returnVal == "Success") {
-                        this.success = true;
                         this.setNotification(this.success);
                         this.getData()
                     }
                     else {
-                        this.success = false;
                         this.setNotification(this.success);
                         this.getData()
                     }
                 })
             },
 
-            closeNotification() {
-                this.msg = '';
-                this.submitted = false;
-                this.isError = false;
-            },
-
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
-                    this.isError = false;
-                    this.msg = "Successfully updated the user!";
+                    this.success("Successfully updated the user!");
                 }
                 else {
                     this.submitted = true;
-                    this.isError = true;
-                    this.msg = "There was an error updating the user. Please try again.";
+                    this.error("There was an error updating the user. Please try again.");
                 }
             },
 
@@ -182,7 +165,7 @@
                 this.$store.dispatch('getUser', this.userId).then(() => {
                     this.userData = this.$store.getters.getUser;
                     this.oldUserData = this.cloneModel(this.$store.getters.getUser);
-                    this.selectedRole = this.$store.getters.getRole;
+                    this.selectedRole = this.userData.r[0].Role;
                 }).catch(err => {
                     this.error("Error getting user data");
                 })

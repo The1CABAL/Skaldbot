@@ -1,7 +1,9 @@
 <template>
     <div id="app" class="bg-primary text-white">
         <nav-bar/>
-        <alerts />
+        <div class="w-full absolute">
+            <alerts />
+        </div>
         <header v-if="contentReady">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <h1 class="text-2xl font-bold border-b-2 border-gray-200 pb-2">

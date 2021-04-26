@@ -1,13 +1,13 @@
 <template>
     <div id="GitHub" class="h-full overflow-x-auto">
         <div if="loaded">
-            <h1>{{project.name}}</h1>
+            <h1 class="font-bold tracking-wide mb-5 border-b-2 border-hoverLight">{{project.name}}</h1>
         </div>
         <div class="lists">
-            <div v-for="column in columns" class="list" :key="column.id">
-                <header>{{column.name}}</header>
-                <KanbanColumn :columnId="column.id" @ReloadGithubPage="reloadPage"></KanbanColumn>
-                <footer><a href="https://github.com/The1CABAL/SkaldBot/projects/1" target="_blank" style="text-decoration: none; color: black;">View Board</a></footer>
+            <div v-for="column in columns" class="list text-white bg-primaryLight rounded-md" :key="column.id">
+                <header class="border-b-2 border-secondary">{{column.name}}</header>
+                <KanbanColumn class="mb-3" :columnId="column.id" @ReloadGithubPage="reloadPage"></KanbanColumn>
+                <footer class="border-t-2 border-secondary pt-1"><a href="https://github.com/The1CABAL/SkaldBot/projects/1" target="_blank" style="text-decoration: none">View Board</a></footer>
             </div>
         </div>
     </div>
@@ -105,8 +105,6 @@
     }
 
         .list > * {
-            background-color: #e2e4e6;
-            color: #333;
             padding: 0 10px;
         }
 

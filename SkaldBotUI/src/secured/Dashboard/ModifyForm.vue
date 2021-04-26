@@ -53,7 +53,7 @@
                     <hr class="pt-3" />
                     <h4 class="font-semibold tracking-wide pb-3">Form View</h4>
                     <hr class="pb-3" />
-                    <vue-form-generator v-if="loaded" :schema="schema" :model="model"></vue-form-generator>
+                    <vue-form-generator v-if="loaded" :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
                 </section>
             </div>
         </div>
@@ -67,6 +67,7 @@
     import fieldCheckbox from '@/components/CustomFields/fieldCheckbox'
     import fieldTextArea from '@/components/CustomFields/fieldTextArea'
     import fieldButton from '@/components/CustomFields/fieldButton'
+    import Vue from 'vue';
 
     export default {
         name: "ModifyForm",
@@ -95,7 +96,11 @@
                 modalVisible: false,
                 formData: [],
                 schema: [],
-                model: {}
+                model: {},
+                formOptions: {
+                    validateAfterLoad: false,
+                    validateAfterChanged: true
+                },
             }
         },
 
@@ -123,12 +128,27 @@
 
         methods: {
             fetchData() {
-                if (this.formKey != null && this.formKey != '') {
-                    this.loaded = false;
-                    return this.$store.dispatch('fetchForm', this.formKey).then(() => {
-                        this.getData();
-                    });
+                if (this.formKey == null || this.formKey == '') {
+                    this.setNewForm();
+                    this.loaded = true;
+                    return; 
                 }
+
+                this.loaded = false;
+                return this.$store.dispatch('fetchForm', this.formKey).then(() => {
+                    this.getData();
+                });
+            },
+
+            setNewForm() {
+                const defaultSchema = {
+                    FormKey: '',
+                    ActionLinke: '',
+                    IsActive: false,
+                    FieldSchema: ''
+                };
+
+                Vue.set(this.formData, 'FieldInfo', defaultSchema);
             },
 
             getData() {

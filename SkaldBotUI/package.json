@@ -21,7 +21,7 @@
     "lodash": "^4.17.20",
     "sass": "^1.26.11",
     "sass-loader": "^9.0.3",
-    "vue": "2.5.17",
+    "vue": "2.6.12",
     "vue-data-tables": "^3.4.5",
     "vue-router": "^3.4.3",
     "vue-slim-tabs": "^0.4.0",
@@ -40,7 +40,7 @@
     "postcss": "^7.0.32",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "vue-form-generator": "^2.3.4",
-    "vue-template-compiler": "2.5.17"
+    "vue-template-compiler": "2.6.12"
   },
   "eslintConfig": {
     "root": true,

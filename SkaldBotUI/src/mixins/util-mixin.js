@@ -149,7 +149,7 @@ export default {
                 }
 
                 for (let i = 0; i < length; i++) {
-                    if (!areEquivalent(value1[i], value2[i], stack)) {
+                    if (!this.areEquivalent(value1[i], value2[i], stack)) {
                         return false;
                     }
                 }
@@ -187,7 +187,7 @@ export default {
 
             // Ensure perfect match across all values
             for (let i = 0; i < numKeys; i++) {
-                if (!areEquivalent(value1[keys1[i]], value2[keys1[i]], stack)) {
+                if (!this.areEquivalent(value1[keys1[i]], value2[keys1[i]], stack)) {
                     return false;
                 }
             }

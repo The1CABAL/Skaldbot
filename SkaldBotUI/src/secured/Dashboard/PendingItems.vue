@@ -3,13 +3,15 @@
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
         <div v-show="loaded">
-            <vue-table-filtered :hidden-columns="['Id']"
+            <vue-table-filtered :hidden-columns="['Id', 'ItemType']"
                                 showPerPage
                                 showSearchField
                                 showPagination
                                 :columns="titles"
+                                :forceRefresh="refreshData"
                                 :searchFunction="getData"
-                                @editClick="handleSelectionChange">
+                                @editClick="handleSelectionChange"
+                                @data-reset="resetDataVariable">
             </vue-table-filtered>
         </div>
     </div>
@@ -38,15 +40,31 @@
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
+                refreshData: false,
                 titles: [
                     {
-                        prop: "ItemType",
+                        prop: "ActualItemType",
                         label: "Submitted Item Type",
                         sortable: true
                     },
                     {
                         prop: "Title",
                         label: "Title",
+                        sortable: true
+                    },
+                    {
+                        prop: "ItemText",
+                        label: "Content",
+                        sortable: false
+                    },
+                    {
+                        prop: "DiscordUserId",
+                        label: "Discord User Id",
+                        sortable: false
+                    },
+                    {
+                        prop: "CreateDate",
+                        label: "Date Created",
                         sortable: true
                     },
                     {
@@ -58,12 +76,7 @@
                         prop: "IsReviewed",
                         label: "Is Reviewed",
                         sortable: true
-                    },
-                    {
-                        prop: "CreateDate",
-                        label: "Date Created",
-                        sortable: true
-                    },
+                    }
                 ]
             }
         },
@@ -104,8 +117,11 @@
             closeModal() {
                 this.isModalVisible = false;
                 this.lookupId = 0;
-                this.getData();
+                this.refreshData = true;
             },
+            resetDataVariable() {
+                this.refreshData = false;
+            }
         }
     }
 </script>

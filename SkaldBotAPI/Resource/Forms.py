@@ -10,7 +10,6 @@ class GetFormName(Resource):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
             data = SQL.get_form_name(formKey)
-            #print(json.dumps(data))
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -49,10 +48,8 @@ class GetFormSchema(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
-            #print('Getting Form Data for FormKey: {}'.format(formKey))
         
             data = SQL.get_form_schema(formKey)
-            #print(data)
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -93,7 +90,6 @@ class GetActionLink(Resource):
         if SQL.test_connect_to_dbo():
             formKey = request.args.get('formKey')
             data = SQL.get_form_actionlink(formKey)
-            #print(json.dumps(data))
 
             response = app.response_class(
                 response = json.dumps(data),
@@ -245,12 +241,8 @@ class Form(Resource):
             userId = req_data['userId']
             isNew = req_data['isNew']
 
-            print(req_data);
-
             form = FormModel(data['FormKey'], data['FieldSchema'], data['ActionLink'], data['IsActive'], req_data['formName'])
             isUpdated = False;
-
-            #print(isNew);
 
             if isNew:
                 isUpdated = SQL.create_form(form, userId);

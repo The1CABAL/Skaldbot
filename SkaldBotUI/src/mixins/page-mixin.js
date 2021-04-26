@@ -83,6 +83,7 @@ export default {
             this.$store.dispatch('addNotification', notification)
 
             let currentNotification = this.$store.getters.currentNotification;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             setTimeout(() => {
                 this.$store.dispatch('removeNotification', currentNotification);

@@ -1,12 +1,13 @@
 <template>
-    <div id="column" class="kanban">
-        <ul>
-            <li v-for="card in cards" :key="card.id">
-                <div>
-                    <KanbanCard :contentUrl="card.content_url" @ReloadGithub="reloadGithub"></KanbanCard>
-                </div>
+    <div id="column">
+        <ul class="list-none m-0 overflow-auto pl-0 text-white space-y-3 size">
+            <li class="bg-primary p-3 rounded-lg shadow-sm" v-for="card in cards" :key="card.id">
+                <KanbanCard :contentUrl="card.content_url" @ReloadGithub="reloadGithub"></KanbanCard>
             </li>
         </ul>
+        <div v-if="noCards" class="bg-primary p-3 rounded-lg shadow-sm">
+            <p>No Issues</p>
+        </div>
     </div>
 </template>
 
@@ -14,23 +15,34 @@
     import KanbanCard from '../KanBan/KanbanCard';
     export default {
         name: "KanbanColumn",
+
         components: {
             KanbanCard
         },
+
         props: {
             columnId: {
                 type: Number,
                 required: true
             }
         },
+
+        computed: {
+            noCards() {
+                return this.cards.length <= 0;
+            }
+        },
+
         data() {
             return {
                 cards: []
             }
         },
-        mounted: function () {
+
+        mounted() {
             this.getCards();
         },
+
         methods: {
             async getCards() {
                 var colId = this.columnId;
@@ -48,22 +60,7 @@
 </script>
 
 <style scoped>
-    .kanban ul {
-        list-style: none;
-        margin: 0;
-        max-height: 600px;
-        overflow: auto;
-        padding-left: 0px;
+    .size{
+        max-height: 740px;
     }
-
-        .kanban ul li {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 3px;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        }
-
-            .kanban ul li:not(:last-child) {
-                margin-bottom: 10px;
-            }
 </style>

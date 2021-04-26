@@ -1,9 +1,11 @@
 <template>
-    <div class="absolute right-0 w-1/4 space-y-2 z-50">
-        <div v-for="notification in notifications" :key="notification.id">
-            <error v-if="isError(notification)" :notification="notification" />
-            <success v-if="isSuccess(notification)" :notification="notification" />
-            <warning v-if="isWarning(notification)" :notification="notification" />
+    <div class="w-full top-3 pr-3 flex justify-end">
+        <div class="w-1/4 space-y-2 z-50 right-0">
+            <div v-for="notification in notifications" :key="notification.id">
+                <error v-if="isError(notification)" :notification="notification" />
+                <success v-if="isSuccess(notification)" :notification="notification" />
+                <warning v-if="isWarning(notification)" :notification="notification" />
+            </div>
         </div>
     </div>
 </template>

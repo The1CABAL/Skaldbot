@@ -112,6 +112,11 @@
             hiddenColumns: {
                 type: Array,
                 default: () => []
+            },
+
+            forceRefresh: {
+                type: Boolean,
+                default: false
             }
         },
 
@@ -255,6 +260,13 @@
             model(newVal, oldVal) {
                 if (!this.areEquivalent(newVal, oldVal)) {
                     this.localModel = this.cloneModel(this.convertToPagination(newVal))
+                }
+            },
+
+            forceRefresh(newVal, oldVal) {
+                if (newVal !== oldVal && newVal === true) {
+                    this.performSearch();
+                    this.$emit('data-reset');
                 }
             }
         }

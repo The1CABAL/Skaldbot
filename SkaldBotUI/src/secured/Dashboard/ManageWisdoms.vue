@@ -8,7 +8,9 @@
                                 showPagination
                                 :columns="titles"
                                 :searchFunction="getData"
-                                @editClick="handleSelectionChange">
+                                @editClick="handleSelectionChange"
+                                :forceRefresh="refreshData"
+                                @data-reset="resetDataVariable">
             </vue-table-filtered>
         </div>
     </div>
@@ -37,6 +39,7 @@
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
+                refreshData: false,
                 titles: [
                     {
                         prop: "Id",
@@ -89,6 +92,11 @@
             closeModal() {
                 this.isModalVisible = false;
                 this.lookupId = 0;
+                this.refreshData = true;
+            },
+
+            resetDataVariable() {
+                this.refreshData = false;
             }
         }
     }

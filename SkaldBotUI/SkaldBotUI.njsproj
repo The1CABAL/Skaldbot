@@ -54,6 +54,7 @@
     <Content Include="src\components\KanBan\KanbanComments.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\components\Modal\Modal.vue" />
     <Content Include="src\components\Nav\navBar.vue" />
     <Content Include="src\components\Nav\navLink.vue" />
     <Content Include="src\components\Nav\sideNavBar.vue" />
@@ -186,6 +187,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\style\styles.css" />
+    <Content Include="src\validators.js" />
     <Content Include="tailwind.config.js" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +198,7 @@
     <Folder Include="src\components\CustomFields\" />
     <Folder Include="src\components\KanBan\" />
     <Folder Include="src\components\Nav\" />
+    <Folder Include="src\components\Modal\" />
     <Folder Include="src\components\Tables\" />
     <Folder Include="src\components\vfgFields\" />
     <Folder Include="src\home\" />

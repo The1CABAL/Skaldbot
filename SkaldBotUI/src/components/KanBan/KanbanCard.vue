@@ -5,65 +5,49 @@
                 <VueLoading></VueLoading>
             </div>
             <div v-if="!loading">
-                <div v-if="!showMore" @click="enableMore">
+                <div @click="enableMore">
                     <p>#{{cardInfo.number}} - {{cardInfo.title}}</p>
                 </div>
             </div>
         </div>
         <div v-if="showMore">
-            <transition name="modal-fade">
-                <div class="modal-backdrop">
-                    <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
-                        <div>
-                            <button type="button" class="btn-close topright" @click="closeModal(false)" aria-label="Close modal">x</button>
-                        </div>
-                        <header class="modal-header" id="modalTitle">
-                            <div>
-                                <h4>#{{cardInfo.number}} - {{cardInfo.title}}</h4>
-                            </div>
-                        </header>
-                        <div v-if="loading">
-                            <section class="model-body" id="modalDescription">
-                                <VueLoading></VueLoading>
-                            </section>
-                        </div>
-                        <div v-if="!loading">
-                            <section class="modal-body" id="modalDescription">
-                                <label for="cardTitle">Title:</label>
-                                <input type="text" id="cardTitle" v-model="cardInfo.title" />
-                                <label for="assigneName">Assigned To:</label>
-                                <input type="text" v-if="cardInfo.assignee != undefined" id="assigneName" :value="cardInfo.assignee.login" disabled />
-                                <input type="text" v-if="cardInfo.assignee == undefined" id="assigneName" value="Unassigned" disabled />
-                                <label for="dateCreated">Date Created:</label>
-                                <input type="text" id="dateCreated" :value="getDate(cardInfo.created_at)" disabled />
+            <modal @close="closeModal(false)">
+                <template #title>
+                    <p>#{{cardInfo.number}} - {{cardInfo.title}}</p>
+                </template>
+                <template #body>
+                    <div v-if="loading">
+                        <section class="model-body" id="modalDescription">
+                            <VueLoading />
+                        </section>
+                    </div>
+                    <div v-if="!loading">
+                        <section class="modal-body" id="modalDescription">
+                            <vue-input id="cardTitle" name="cardTitle" v-model="cardInfo.title">Title</vue-input>
+                            <vue-input id="assigneName" name="assigneName" :value="assignee" :is-disabled="true">Assigned To</vue-input>
+                            <vue-input id="dateCreated" name="dateCreated" :value="getDate(cardInfo.created_at)" :is-disabled="true">Date Created</vue-input>
+                            <hr />
+                            <vue-text-area :id="cardInfo.node_id" v-if="resizeTextarea(cardInfo.node_id)" v-model="cardInfo.body">Description</vue-text-area>
+                            <div v-if="hasComments">
                                 <hr />
-                                <label for="description">Description:</label>
-                                <textarea :id="cardInfo.node_id" v-if="resizeTextarea(cardInfo.node_id)" v-model="cardInfo.body"></textarea>
-                                <div v-if="cardInfo.comments != 0">
-                                    <hr />
-                                    <label>Comments:</label>
-                                    <KanbanComments :commentUrl="cardInfo.comments_url"></KanbanComments>
-                                </div>
-                            </section>
-                        </div>
-                        <section class="modal-footer" id="modalFooter">
-                            <div>
-                                <slot name="footer">
-                                    <button type="button" class="btn-button approve" v-if="!loading" @click="updateCard">
-                                        Update
-                                    </button>
-                                    <button type="button" class="btn-button" @click="viewCard">
-                                        View
-                                    </button>
-                                    <button type="button" class="btn-button" @click="closeModal(false)">
-                                        Close
-                                    </button>
-                                </slot>
+                                <h4 class="font-bold tracking-wide mt-3 mb-3">Comments:</h4>
+                                <KanbanComments :commentUrl="cardInfo.comments_url"></KanbanComments>
                             </div>
                         </section>
                     </div>
-                </div>
-            </transition>
+                </template>
+                <template #actionButtons>
+                    <vue-button type="button" v-if="!loading" @click="updateCard">
+                        Update
+                    </vue-button>
+                    <vue-button varient="secondary" type="button" @click="viewCard">
+                        View
+                    </vue-button>
+                    <vue-button type="button" varient="danger" @click="closeModal(false)">
+                        Close
+                    </vue-button>
+                </template>
+            </modal>
         </div>
     </div>
 </template>
@@ -71,18 +55,33 @@
 <script>
     import KanbanComments from '../KanBan/KanbanComments';
     import VueLoading from '../VueLoading';
+    import fieldInput from '@/components/CustomFields/fieldInput'
+    import fieldTextArea from '@/components/CustomFields/fieldTextArea'
+    import fieldButton from '@/components/CustomFields/fieldButton'
+    import UtilMixin from '@/mixins/util-mixin'
+    import Modal from '@/components/Modal/Modal'
+
     export default {
         name: "KanbanCard",
+
         props: {
             contentUrl: {
                 type: String,
                 required: true
             }
         },
+
+        mixins: [UtilMixin],
+
         components: {
             KanbanComments,
-            VueLoading
+            VueLoading,
+            'vue-input': fieldInput,
+            'vue-text-area': fieldTextArea,
+            'vue-button': fieldButton,
+            'modal': Modal
         },
+
         data() {
             return {
                 cardInfo: [],
@@ -90,9 +89,25 @@
                 loading: false
             }
         },
-        mounted: function () {
+
+        mounted() {
             this.getCardInfo();
         },
+
+        computed: {
+            assignee() {
+                if (this.cardInfo.assignee.login) {
+                    return this.cardInfo.assignee.login;
+                }
+
+                return 'Unassigned';
+            },
+
+            hasComments() {
+                return this.cardInfo.comments != 0;
+            }
+        },
+
         methods: {
             async getCardInfo() {
                 var url = this.contentUrl;
@@ -103,24 +118,22 @@
                     this.error("Error getting card info for card id " + id);
                 })
             },
+
             enableMore() {
                 this.showMore = true;
             },
+
             closeModal(reload) {
                 if (reload) {
                     this.$emit('ReloadGithub', 'Reload');
                 }
                 this.showMore = false;
             },
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
-            },
+
             viewCard() {
                 window.open(this.cardInfo.html_url, '_blank');
             },
+
             async updateCard() {
                 this.loading = true;
                 var title = this.cardInfo.title;
@@ -164,6 +177,7 @@
                     this.closeModal(true);
                 })
             },
+
             resizeTextarea(nodeId) {
                 setTimeout(function () {
                     var textarea = document.getElementById(nodeId);
@@ -176,7 +190,7 @@
     }
 </script>
 
-<style scoped>
+<!--<style scoped>
     label {
         color: white;
     }
@@ -184,4 +198,4 @@
     .cardText {
         color: white;
     }
-</style>
+</style>-->

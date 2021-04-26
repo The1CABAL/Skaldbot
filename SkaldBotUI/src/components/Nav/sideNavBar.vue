@@ -27,7 +27,6 @@
 
         methods: {
             sideNavClick() {
-                console.log("huh");
                 this.$emit('sideNavClick');
             }
         }

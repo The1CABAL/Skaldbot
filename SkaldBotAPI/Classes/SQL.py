@@ -287,7 +287,6 @@ class SQL():
             return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
-            print("SQL" + sql)
 
     def get_all_forms_by_pageId(pageId):
         sql = "SELECT FormKey, FormName FROM CodeVueForms WHERE IsActive = 1 AND PageId = @pageId FOR JSON AUTO"
@@ -307,7 +306,6 @@ class SQL():
             return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
-            print("SQL" + sql)
 
     def get_form(formKey):
         sql = "SELECT luVF.FormName, vff.ActionLink, vff.FieldSchema, luFV.ShowFormName FROM CodeVueForms luVF JOIN VueFormFields vff WITH (NOLOCK) ON luVF.FormKey = vff.FormKey WHERE luVF.FormKey = '@formKey' AND luVF.IsActive = 1"
@@ -388,7 +386,6 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error submitting story. Error {}".format(e))
-            print(sql)
             return False
 
     def login(user):
@@ -412,7 +409,7 @@ class SQL():
             else:
                 return False
 
-            if True:
+            if passedPassword == password:
                 getUserData = "SELECT Id, AccountId, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
                 getUserData = getUserData.replace("@username", user[0])
 
@@ -524,10 +521,7 @@ class SQL():
 
             any = c.fetchone()
 
-            #print(any)
-
             if any == None:
-                #print("No matching users exist");
                 return False
             else:
                 return True
@@ -1242,9 +1236,6 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error updating form. Error {}".format(e))
-            print("SQL")
-            print(field)
-            print(formInfo)
             return False
 
     def create_form(form, userId):
@@ -1283,9 +1274,6 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error updating form. Error {}".format(e))
-            print("SQL")
-            print(field)
-            print(formInfo)
             return False
 
     def get_account_info_by_id(accountId):

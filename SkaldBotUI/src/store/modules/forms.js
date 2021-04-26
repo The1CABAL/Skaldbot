@@ -62,7 +62,6 @@ const actions = {
     },
 
     async updateForm({ commit }, formData) {
-        console.log(formData);
         return new Promise((resolve, reject) => {
             let url = BaseUrl + 'form'
             axios.post(url, formData).then(resp => {

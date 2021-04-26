@@ -8,6 +8,8 @@ import App from './App';
 import VueFormGenerator from 'vue-form-generator'
 Vue.use(VueFormGenerator);
 
+import './validators.js'
+
 import fieldPassword from './components/vfgFields/vfgPassword';
 Vue.component("field-password", fieldPassword);
 

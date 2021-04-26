@@ -16,7 +16,6 @@ const state = {
     isAdmin: false,
     isClientAdmin: false,
     isClientUser: false,
-    isUser: true,
     role: '',
     user: {},
     userData: [],
@@ -29,11 +28,10 @@ const getters = {
     getAccountId: state => state.accountId,
     isLoggedIn: state => state.token != '' ? true : false,
     authStatus: state => state.status,
-    isMasterAdmin: state => state.role == "MasterAdmin" ? true : false,
-    isAdmin: state => state.role == "Admin" ? true : false,
-    isClientAdmin: state => state.role == "ClientAdmin" ? true : false,
-    isClientUser: state => state.role = "ClientUser" ? true : false,
-    isUser: state => state.isUser,
+    isMasterAdmin: state => state.role === "MasterAdmin" ? true : false,
+    isAdmin: state => state.role === "Admin" ? true : false,
+    isClientAdmin: state => state.role === "ClientAdmin" ? true : false,
+    isClientUser: state => state.role === "ClientUser" ? true : false,
     user: state => state.user,
     getUser: state => state.userData,
     getUsers: state => state.users,
@@ -225,21 +223,22 @@ const mutations = {
         state.status = status.Message.toString();
     },
     logout(state) {
-        state.status = ''
-        state.token = ''
-        state.role = ''
-
         localStorage.removeItem('token');
         localStorage.removeItem('accountId');
 
+        state.token = '';
         state.accountId = '';
-
+        state.status = '';
         state.isMasterAdmin = false;
         state.isAdmin = false;
         state.isClientAdmin = false;
         state.isClientUser = false;
         state.isUser = true;
-        state.isLoggedIn = false;
+        state.role = '';
+        state.user = {};
+        state.userData = [];
+        state.roles = [];
+        state.users = [];
     },
 };
 
