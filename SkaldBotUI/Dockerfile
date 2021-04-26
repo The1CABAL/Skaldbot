@@ -3,7 +3,7 @@ FROM node:latest as build-stage
 WORKDIR /SkaldbotUI
 COPY package*.json ./
 RUN npm install -g npm@7.11.1
-RUN npm audit fix
+RUN npm audit fix --force
 COPY ./ .
 RUN npm run build
 
