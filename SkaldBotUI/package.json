@@ -1,7 +1,7 @@
 {
   "name": "skald-bot-ui",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -13,7 +13,8 @@
     "name": ""
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "@multiavatar/multiavatar": "^1.0.6",
+    "axios": "^0.19.2",
     "element-theme-dark": "^1.0.3",
     "element-ui": "^2.13.2",
     "json-bigint": "^1.0.0",
