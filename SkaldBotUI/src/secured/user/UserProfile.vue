@@ -1,55 +1,43 @@
 <template>
     <div id="UserProfile">
-        <div v-if="submitted" v-bind:class="isError ? 'errorMsg' : 'successMsg'">
-            <p style="font-weight: bold;">{{msg}}</p>
-            <button class="close" @click="closeNotification">x</button>
+        <div class="w-full space-x-2">
+            <vue-button @click="goBack">Go Back</vue-button>
+            <vue-button varient="secondary" @click="changePassword">Change Password</vue-button>
         </div>
-        <button type="button" class="btn-button" v-on:click="goBack">Go Back</button>
-        <button type="button" class="btn-button" v-on:click="changePassword">Change Password</button>
         <ChangePassword v-if="showChangePassword" @close="closeChangePassword"></ChangePassword>
         <div class="panel">
-            <div class="panel-heading"><h4>User Profile</h4></div>
+            <div class="panel-heading"><h4 class="font-bold tracking-wide">User Profile</h4></div>
             <div class="panel-body">
-                <h4 class="sectionHeading">{{userData.FirstName}} {{userData.LastName}}</h4>
+                <h4 class="font-bold tracking-wide">{{userData.FirstName}} {{userData.LastName}}</h4>
                 <hr />
                 <form v-on:submit="formSubmit">
-                    <label for="userName">Username:</label>
-                    <input type="text" id="userName" name="userName" v-model="userData.Username" disabled />
-                    <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" name="firstName" v-model="userData.FirstName" />
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" name="lastName" v-model="userData.LastName" />
-                    <label for="discordUserId">Discord User ID:</label>
-                    <input type="text" id="discordUserId" name="discordUserId" v-model="userData.DiscordUserId" />
-                    <label for="createDate">Date Created:</label>
-                    <input type="text" id="createDate" name="createDate" disabled :value="getDate(userData.CreateDate)" />
-                    <div v-if="isAdmin">
+                    <vue-input id="userName" name="userName" v-model="userData.Username" :is-disabled="true">User Name</vue-input>
+                    <vue-input id="firstName" name="firstName" v-model="userData.FirstName">First Name</vue-input>
+                    <vue-input id="lastName" name="lastName" v-model="userData.LastName">Last Name</vue-input>
+                    <vue-input id="discordUserId" name="discordUserId" v-model="userData.DiscordUserId">Discord User Id</vue-input>
+                    <vue-input id="createDate" name="createDate" :is-disabled="true" :value="getDate(userData.CreateDate)">Date Created</vue-input>
+                    <div v-if="admin">
                         <div>
-                            <hr />
-                            <h4 class="sectionHeading">Admin Options</h4>
-                            <div>
-                                <label for="isActive">Is User Active:</label>
-                                <input type="checkbox" id="isActive" name="isActive" v-model="userData.IsActive" />
-                            </div>
-                            <div>
-                                <label for="isLocked">Is User Locked:</label>
-                                <input type="checkbox" id="isLocked" name="isLocked" v-model="userData.IsLocked" />
-                            </div>
+                            <hr class="mb-3" />
+                            <h4 class="font-bold tracking-wide">Admin Options</h4>
+                            <vue-checkbox id="isActive" name="isActive" v-model="userData.IsActive">Is User Active</vue-checkbox>
+                            <vue-checkbox id="isLocked" name="isLocked" v-model="userData.IsLocked">Is User Locked</vue-checkbox>
                         </div>
                         <div>
-                            <hr />
-                            <h4 class="sectionHeading">Permissions</h4>
+                            <hr class="mt-3 mb-3" />
+                            <h4 class="font-bold tracking-wide">Permissions</h4>
                             <div>
                                 <div v-for="item in roles" :key="item.Role">
-                                    <label for="item.Role">{{item.RoleName}}</label>
-                                    <input type="checkbox" :name="item.Role" :value="item.Role" :checked="item.Role == selectedRole ? true : false" @change="updateSelectedRole" />
+                                    <vue-checkbox :id="item.Role" :name="item.Role" :value="isPermissionSelected(item.Role)" @change="updateSelectedRole(item.Role)">{{item.RoleName}}</vue-checkbox>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr />
-                    <button type="submit" class="btn-button">Save</button>
-                    <button type="button" v-on:click="openHelp" class="btn-button">Help</button>
+                    <hr class="mt-3 mb-3" />
+                    <div class="space-x-2">
+                        <vue-button type="submit">Save</vue-button>
+                        <vue-button varient="secondary" type="button" @click="openHelp">Help</vue-button>
+                    </div>
                     <HelpDocumentation v-if="showHelp" :HelpContentKey="helpContentKey" @close="closeHelp"></HelpDocumentation>
                 </form>
             </div>
@@ -60,6 +48,11 @@
 <script>
     import HelpDocumentation from '../../components/HelpDocumentation'
     import ChangePassword from '../../account/ChangePassword'
+    import fieldButton from '@/components/CustomFields/fieldButton'
+    import fieldInput from '@/components/CustomFields/fieldInput'
+    import fieldCheckbox from '@/components/CustomFields/fieldCheckbox'
+    import PageMixin from '@/mixins/page-mixin'
+    import UtilMixin from '@/mixins/util-mixin'
 
     export default {
         name: "UserProfile",
@@ -69,27 +62,28 @@
                 required: true
             }
         },
+        mixins: [PageMixin, UtilMixin],
         components: {
             HelpDocumentation,
-            ChangePassword
+            ChangePassword,
+            'vue-button': fieldButton,
+            'vue-input': fieldInput,
+            'vue-checkbox': fieldCheckbox
         },
+
         data() {
             return {
-                isAdmin: false,
                 userData: [],
                 oldUserData: [],
                 roles: [],
                 selectedRole: '',
-                msg: '',
-                isError: true,
                 submitted: false,
-                success: false,
-                prevRoute: {},
                 helpContentKey: 'RegisterHelp',
                 showHelp: false,
                 showChangePassword: false
             }
         },
+
         watch: {
             submitted: function () {
                 if (this.submitted) {
@@ -98,132 +92,107 @@
                 }
             }
         },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-                vm.prevRoute = from
-            })
+
+        beforeMount() {
+            this.pageMounting();
         },
-        mounted: function () {
-            this.getData();
-        },
-        created: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+
+        mounted() {
+            this.pageMounted().then(() => {
+                if (!this.masterAdmin && !this.admin && this.$store.getters.userId !== this.userId) {
                     this.$router.push('/unauthorized')
                 }
-            }
+
+                this.getData();
+                this.pageReady();
+            })
         },
+
         methods: {
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
+            isPermissionSelected(permission) {
+                return this.selectedRole === permission;
             },
+
             updateSelectedRole(e) {
-                this.selectedRole = ''
-                if (e.target.checked) {
-                    this.selectedRole = (e.target.value);
-                }
+                this.selectedRole = e
             },
+
             formSubmit() {
                 event.preventDefault();
-                if (!this.objectsAreSame(this.userData, this.oldUserData) || this.selectedRole != this.userData.r[0].Role) {
-                    var postData = [];
-                    if (this.selectedRole != this.userData.r[0].Role) {
-                        this.userData.r[0].Role = this.selectedRole
-                    }
-                    postData.push(this.userData)
+                if (this.areEquivalent(this.userData, this.oldUserData) && this.isPermissionSelected(this.oldUserData.r[0].Role)) {
+                    this.setNotification(false);
+                    return;
+                }
 
-                    this.$store.dispatch('updateUser', postData).then(() => {
-                        var returnVal = this.$store.getters.authStatus;
-                        if (returnVal == "Success") {
-                            this.success = true;
-                            this.setNotification(this.success);
-                            this.getData()
-                        }
-                        else {
-                            this.success = false;
-                            this.setNotification(this.success);
-                            this.getData()
-                        }
-                    })
+                var postData = [];
+
+                if (!this.isPermissionSelected(this.userData.r[0].Role)) {
+                    this.userData.r[0].Role = this.selectedRole
                 }
-                else {
-                    this.setNotification(false)
-                }
+
+                postData.push(this.userData)
+
+                this.$store.dispatch('updateUser', postData).then(() => {
+                    var returnVal = this.$store.getters.authStatus;
+                    if (returnVal == "Success") {
+                        this.setNotification(this.success);
+                        this.getData()
+                    }
+                    else {
+                        this.setNotification(this.success);
+                        this.getData()
+                    }
+                })
             },
-            closeNotification() {
-                this.msg = '';
-                this.submitted = false;
-                this.isError = false;
-            },
+
             setNotification(success) {
                 if (success) {
                     this.submitted = true;
-                    this.isError = false;
-                    this.msg = "Successfully updated the user!";
+                    this.success("Successfully updated the user!");
                 }
                 else {
                     this.submitted = true;
-                    this.isError = true;
-                    this.msg = "There was an error updating the user. Please try again.";
+                    this.error("There was an error updating the user. Please try again.");
                 }
             },
+
             getData() {
-                var userId = this.userId
+                this.getUser();
+                this.getRoles();
+            },
 
-                this.$store.dispatch('getUser', userId).then(() => {
-                    this.userData = { ...this.$store.getters.getUser };
-                    this.oldUserData = this.$store.getters.getUser;
-                    this.selectedRole = this.$store.getters.getUser.r[0].Role;
+            getUser() {
+                this.$store.dispatch('getUser', this.userId).then(() => {
+                    this.userData = this.$store.getters.getUser;
+                    this.oldUserData = this.cloneModel(this.$store.getters.getUser);
+                    this.selectedRole = this.userData.r[0].Role;
                 }).catch(err => {
-                    console.log(err);
-                    this.$message("Error getting user data");
-                })
-
-                this.$store.dispatch('getAllRoles').then(() => {
-                    this.roles = this.$store.getters.getAllRoles;
-                }).catch(err => {
-                    console.log(err);
+                    this.error("Error getting user data");
                 })
             },
-            objectsAreSame(x, y) {
-                var objectsAreSame = true;
-                for (var propertyName in x) {
-                    if (propertyName == 'r') {
-                        if (x[propertyName][0].Role != y[propertyName][0].Role) {
-                            objectsAreSame = false;
-                        }
-                    }
-                    else if (x[propertyName] != y[propertyName]) {
-                        objectsAreSame = false;
-                    }
+
+            getRoles() {
+                if (this.admin) {
+                    this.$store.dispatch('getAllRoles').then(() => {
+                        this.roles = this.$store.getters.getAllRoles;
+                    }).catch(err => {
+                        this.error("Error getting user roles");
+                    })
                 }
-                return objectsAreSame;
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles').then(() => {
-                    if (this.$store.getters.isMasterAdmin || this.$store.getters.isAdmin) {
-                        this.isAdmin = true
-                    }
-                });
-            },
-            goBack() {
-                this.$router.push(this.prevRoute.path)
-            },
+
             openHelp() {
                 this.showHelp = true;
             },
+
             closeHelp() {
                 this.showHelp = false;
             },
+
             changePassword() {
                 this.showChangePassword = true;
             },
+
             closeChangePassword() {
                 this.showChangePassword = false;
             }

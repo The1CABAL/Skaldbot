@@ -16,7 +16,6 @@ const state = {
     isAdmin: false,
     isClientAdmin: false,
     isClientUser: false,
-    isUser: true,
     role: '',
     user: {},
     userData: [],
@@ -29,15 +28,15 @@ const getters = {
     getAccountId: state => state.accountId,
     isLoggedIn: state => state.token != '' ? true : false,
     authStatus: state => state.status,
-    isMasterAdmin: state => state.role == "MasterAdmin" ? true : false,
-    isAdmin: state => state.role == "Admin" ? true : false,
-    isClientAdmin: state => state.role == "ClientAdmin" ? true : false,
-    isClientUser: state => state.role = "ClientUser" ? true : false,
-    isUser: state => state.isUser,
+    isMasterAdmin: state => state.role === "MasterAdmin" ? true : false,
+    isAdmin: state => state.role === "Admin" ? true : false,
+    isClientAdmin: state => state.role === "ClientAdmin" ? true : false,
+    isClientUser: state => state.role === "ClientUser" ? true : false,
     user: state => state.user,
     getUser: state => state.userData,
     getUsers: state => state.users,
-    getAllRoles: state => state.roles
+    getAllRoles: state => state.roles,
+    getRole: state => state.role
 };
 
 const actions = {
@@ -72,7 +71,6 @@ const actions = {
                 resolve(resp)
             })
                 .catch(err => {
-                    console.log(err);
                     commit('auth_error')
                     localStorage.removeItem('token')
                     localStorage.removeItem('accountId');
@@ -123,14 +121,17 @@ const actions = {
                 });
         })
     },
-    async getAllUsers({ commit }, isMasterAdmin) {
-        let url = BaseUrl + 'getUsers?isMaster=' + isMasterAdmin
+    async getAllUsers({ commit }, model) {
+        let url = `${BaseUrl}getUsers`;
         return new Promise((resolve, reject) => {
-            axios.get(url).then(resp => {
+            axios.get(url, {
+                params: {
+                    ...model
+                }
+            }).then(resp => {
                 commit('set_users', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -142,7 +143,6 @@ const actions = {
                 commit('set_user_data', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -154,7 +154,6 @@ const actions = {
                 commit('set_all_roles', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -166,7 +165,6 @@ const actions = {
                 commit('set_status', resp.data);
                 resolve(resp);
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
         })
@@ -199,7 +197,21 @@ const mutations = {
         state.status = 'error'
     },
     set_users(state, users) {
-        state.users = JSON.parse(users);
+        if (users.length <= 0) {
+            return;
+        }
+
+        if (users.length === 1) {
+            const totalRecords = JSON.parse(users[0]);
+            state.users = { ...totalRecords };
+            return;
+        }
+
+        const userData = JSON.parse(users[0]);
+        const totalRecords = JSON.parse(users[1])
+
+        state.users = { ...userData, ...totalRecords }
+
     },
     set_user_data(state, user) {
         state.userData = JSON.parse(user)[0]
@@ -211,21 +223,22 @@ const mutations = {
         state.status = status.Message.toString();
     },
     logout(state) {
-        state.status = ''
-        state.token = ''
-        state.role = ''
-
         localStorage.removeItem('token');
         localStorage.removeItem('accountId');
 
+        state.token = '';
         state.accountId = '';
-
+        state.status = '';
         state.isMasterAdmin = false;
         state.isAdmin = false;
         state.isClientAdmin = false;
         state.isClientUser = false;
         state.isUser = true;
-        state.isLoggedIn = false;
+        state.role = '';
+        state.user = {};
+        state.userData = [];
+        state.roles = [];
+        state.users = [];
     },
 };
 

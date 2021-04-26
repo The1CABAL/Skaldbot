@@ -1,6 +1,6 @@
 <template>
-    <div class="suggestions">
-        <SelectForm v-on:formKey="onChildChange" :pageId="pageId" />
+    <div class="space-y-4">
+        <SelectForm v-on:formKey="onChildChange" :pageId="pageId" @select-forms-loaded="pageReady"/>
         <Form v-if="formKey != ''" :formKey="formKey" v-on:error="error" />
     </div>
 </template>
@@ -8,22 +8,35 @@
 <script>
     import SelectForm from '../components/Forms/SelectForm';
     import Form from '../components/Forms/Form';
+    import PageMixin from '@/mixins/page-mixin.js';
 
     export default {
         name: "Suggestions",
+
         components: {
             SelectForm,
             Form
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 formKey: '',
                 pageId: '1'
             }
         },
+
+        beforeMount() {
+            this.pageMounting();
+        },
+
+        mounted() {
+            this.pageMounted();
+        },
+
         methods: {
             onChildChange(value) {
-                //console.log('Parent function called');
                 if (this.formKey != '') {
                     this.formKey = '';
                 }
@@ -33,7 +46,7 @@
                 if (value == true) {
                     this.formKey = '';
                 }
-            }
+            },
         }
     }
 </script>

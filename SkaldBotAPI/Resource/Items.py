@@ -3,12 +3,14 @@ from Classes.SQL import SQL
 from SkaldBotAPI import app
 from Models.Models import *
 from flask import json, request
+from Classes.PaginationHelper import PaginationHelper
 
 class Stories(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
+            paginationModel = PaginationHelper(request.args, 'Title', ["Title", "Story", "IsActive"])
 
-            stories = SQL.get_all_stories()
+            stories = SQL.get_all_stories(paginationModel)
 
             response = app.response_class(
                 response = json.dumps(stories),
@@ -78,7 +80,9 @@ class Wisdoms(Resource):
     def get(self):
         if SQL.test_connect_to_dbo():
 
-            wisdoms = SQL.get_all_wisdoms()
+            paginationModel = PaginationHelper(request.args, 'Wisdom', ["Wisdom", "IsActive"])
+
+            wisdoms = SQL.get_all_wisdoms(paginationModel)
 
             response = app.response_class(
                 response = json.dumps(wisdoms),

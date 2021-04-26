@@ -9,6 +9,24 @@ from Classes.ConfigParser import *
 from Classes.Cryptography import Cryptography
 from Classes.Helpers import Helpers
 class SQL():
+    def get_total_records(data, conn):
+       sql = "SELECT COUNT(*) FROM #temp DROP TABLE #temp"
+
+       c = conn.cursor()
+       c.execute(sql)
+
+       totalRecords = c.fetchone()
+
+       if (totalRecords):
+           totalRecords = totalRecords[0]
+       else: 
+           totalRecords = "0"
+
+       totalRecords = '{"TotalRecords": ' + str(totalRecords) + "}"
+
+       data.append(totalRecords)
+
+       return data
 
     #Test connection to database
     def test_connect_to_dbo():
@@ -218,15 +236,50 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting closest coordinates. Error: " + e)
 
-    def get_all_forms():
-        sql = "SELECT FormKey, FormName, IsActive FROM CodeVueForms FOR JSON AUTO"
+    def get_all_forms(pagination):
+        sql = """
+                DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                DECLARE @IsAscending BIT = @Ascending
+
+                SELECT
+                    FormKey,
+                    FormName,
+                    IsActive
+                INTO #temp
+                FROM
+                    CodeVueForms WITH (NOLOCK)
+                WHERE
+                    ('@SearchTerm' = ''
+                        OR (
+                            FormName LIKE '%' + '@SearchTerm' + '%'
+                            )
+                    )
+            
+                SELECT
+                    *
+                FROM
+                    #temp
+                ORDER BY
+                    CASE WHEN @OrderBy = 'FormKey' AND @IsAscending = 1 THEN FormKey END ASC,
+                    CASE WHEN @OrderBy = 'FormKey' AND @IsAscending <> 1 THEN FormKey END DESC,
+                    CASE WHEN @OrderBy = 'FormName' AND @IsAscending = 1 THEN FormName END ASC,
+                    CASE WHEN @OrderBy = 'FormName' AND @IsAscending <> 1 THEN FormName END DESC,
+                    CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                    CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC
+                OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                FOR JSON AUTO
+        """
         
+        sql = pagination.replaceParams(sql)
+
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
 
             c.execute(sql)
-            forms = c.fetchall()[0]
+            forms = c.fetchall()
+
+            forms = SQL.get_total_records(forms, conn);
 
             c.close()
             conn.close()
@@ -234,7 +287,6 @@ class SQL():
             return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
-            print("SQL" + sql)
 
     def get_all_forms_by_pageId(pageId):
         sql = "SELECT FormKey, FormName FROM CodeVueForms WHERE IsActive = 1 AND PageId = @pageId FOR JSON AUTO"
@@ -254,10 +306,9 @@ class SQL():
             return forms
         except pymssql.Error as e:
             print("Error getting forms. Error: " + e)
-            print("SQL" + sql)
 
-    def get_form_schema(formKey):
-        sql = "SELECT FieldSchema FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1"
+    def get_form(formKey):
+        sql = "SELECT luVF.FormName, vff.ActionLink, vff.FieldSchema, luFV.ShowFormName FROM CodeVueForms luVF JOIN VueFormFields vff WITH (NOLOCK) ON luVF.FormKey = vff.FormKey WHERE luVF.FormKey = '@formKey' AND luVF.IsActive = 1"
         sql = sql.replace("@formKey", formKey)
 
         try:
@@ -273,39 +324,39 @@ class SQL():
         except pymssql.Error as e:
             print("Error getting form for FormKey " + formKey + ". Error: " + e)
 
-    def get_form_actionlink(formKey):
-        sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
-        sql = sql.replace("@formKey", formKey)
+    #def get_form_actionlink(formKey):
+    #    sql = "SELECT ActionLink FROM VueFormFields WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+    #    sql = sql.replace("@formKey", formKey)
 
-        try:
-            conn = SQL.open_connection()
-            c = conn.cursor()
+    #    try:
+    #        conn = SQL.open_connection()
+    #        c = conn.cursor()
 
-            c.execute(sql)
-            forms = c.fetchall()[0]
-            c.close()
-            conn.close()
+    #        c.execute(sql)
+    #        forms = c.fetchall()[0]
+    #        c.close()
+    #        conn.close()
                 
-            return forms
-        except pymssql.Error as e:
-            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+    #        return forms
+    #    except pymssql.Error as e:
+    #        print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
-    def get_form_name(formKey):
-        sql = "SELECT FormName FROM CodeVueForms WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
-        sql = sql.replace("@formKey", formKey)
+    #def get_form_name(formKey):
+    #    sql = "SELECT FormName FROM CodeVueForms WHERE FormKey = '@formKey' AND IsActive = 1 FOR JSON AUTO"
+    #    sql = sql.replace("@formKey", formKey)
 
-        try:
-            conn = SQL.open_connection()
-            c = conn.cursor()
+    #    try:
+    #        conn = SQL.open_connection()
+    #        c = conn.cursor()
 
-            c.execute(sql)
-            forms = c.fetchall()[0]
-            c.close()
-            conn.close()
+    #        c.execute(sql)
+    #        forms = c.fetchall()[0]
+    #        c.close()
+    #        conn.close()
                 
-            return forms
-        except pymssql.Error as e:
-            print("Error getting action link for FormKey " + formKey + ". Error: " + e)
+    #        return forms
+    #    except pymssql.Error as e:
+    #        print("Error getting action link for FormKey " + formKey + ". Error: " + e)
 
     def submit_item_suggestion(suggestion):
         sql = "INSERT INTO SubmittedItems (ItemTypeId, Title, ItemText, ServerId, DiscordUserId, CreateDate) VALUES ('@itemType', '@title', '@text', @serverId, @discordId, '@date')"
@@ -335,7 +386,6 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error submitting story. Error {}".format(e))
-            print(sql)
             return False
 
     def login(user):
@@ -359,7 +409,7 @@ class SQL():
             else:
                 return False
 
-            if True:
+            if passedPassword == password:
                 getUserData = "SELECT Id, AccountId, Username FROM Users WHERE Username = '@username' FOR JSON AUTO"
                 getUserData = getUserData.replace("@username", user[0])
 
@@ -471,10 +521,7 @@ class SQL():
 
             any = c.fetchone()
 
-            #print(any)
-
             if any == None:
-                #print("No matching users exist");
                 return False
             else:
                 return True
@@ -502,14 +549,100 @@ class SQL():
             print("Error getting users roles. Error {}".format(e))
             return None
 
-    def get_all_users(isMaster):
+    def get_all_users(isMaster, pagination):
         sql = ''
 
         if isMaster.lower() == "true":
-            sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) FOR JSON AUTO"
+            sql = """
+                    DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                    DECLARE @IsAscending BIT = @Ascending
+
+                    SELECT 
+	                    Id, 
+	                    Username, 
+	                    FirstName, 
+	                    LastName, 
+	                    IsActive, 
+	                    CreateDate
+                    INTO #temp
+                    FROM 
+                    	Users WITH (NOLOCK)
+                    WHERE
+                        ('@SearchTerm' = '' 
+                            OR (
+                                UserName LIKE '%' + '@SearchTerm' + '%' 
+                                OR FirstName LIKE '%' + '@SearchTerm' + '%' 
+                                OR LastName LIKE '%' + '@SearchTerm' + '%'
+                                )
+                        )
+                        
+                    SELECT
+                    	*
+                    FROM
+                    	#temp
+                    ORDER BY
+                    	CASE WHEN @OrderBy = 'Id' AND @IsAscending = 1 THEN Id END ASC,
+                    	CASE WHEN @OrderBy = 'Id' AND @IsAscending <> 1 THEN Id END DESC,
+                        CASE WHEN @OrderBy = 'Username' AND @IsAscending = 1 THEN Username END ASC,
+                    	CASE WHEN @OrderBy = 'Username' AND @IsAscending <> 1 THEN Username END DESC,
+                        CASE WHEN @OrderBy = 'FirstName' AND @IsAscending = 1 THEN FirstName END ASC,
+                    	CASE WHEN @OrderBy = 'FirstName' AND @IsAscending <> 1 THEN FirstName END DESC,
+                        CASE WHEN @OrderBy = 'LastName' AND @IsAscending = 1 THEN LastName END ASC,
+                    	CASE WHEN @OrderBy = 'LastName' AND @IsAscending <> 1 THEN LastName END DESC,
+                        CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                    	CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC,
+                        CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending = 1 THEN CreateDate END ASC,
+                    	CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending <> 1 THEN CreateDate END DESC
+                    OFFSET ((@CurrentPage - 1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                    FOR JSON AUTO
+                """
         else:
-            sql = "SELECT Id, Username, FirstName, LastName, IsActive, CreateDate FROM Users WITH (NOLOCK) WHERE Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F' FOR JSON AUTO"
-            
+            sql = """
+                    DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                    DECLARE @IsAscending BIT = @Ascending
+
+                    SELECT 
+	                    Id, 
+	                    Username, 
+	                    FirstName, 
+	                    LastName, 
+	                    IsActive, 
+	                    CreateDate
+                    INTO #temp
+                    FROM 
+                    	Users WITH (NOLOCK)
+                    WHERE
+                        ('@SearchTerm' = '' 
+                            OR (
+                                UserName LIKE '%' + '@SearchTerm' + '%' 
+                                OR FirstName LIKE '%' + '@SearchTerm' + '%' 
+                                OR LastName LIKE '%' + '@SearchTerm' + '%'
+                                )
+                        )
+                        AND Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F'
+                        
+                    SELECT
+                    	*
+                    FROM
+                    	#temp
+                    ORDER BY
+                    	CASE WHEN @OrderBy = 'Id' AND @IsAscending = 1 THEN Id END ASC,
+                    	CASE WHEN @OrderBy = 'Id' AND @IsAscending <> 1 THEN Id END DESC,
+                        CASE WHEN @OrderBy = 'Username' AND @IsAscending = 1 THEN Username END ASC,
+                    	CASE WHEN @OrderBy = 'Username' AND @IsAscending <> 1 THEN Username END DESC,
+                        CASE WHEN @OrderBy = 'FirstName' AND @IsAscending = 1 THEN FirstName END ASC,
+                    	CASE WHEN @OrderBy = 'FirstName' AND @IsAscending <> 1 THEN FirstName END DESC,
+                        CASE WHEN @OrderBy = 'LastName' AND @IsAscending = 1 THEN LastName END ASC,
+                    	CASE WHEN @OrderBy = 'LastName' AND @IsAscending <> 1 THEN LastName END DESC,
+                        CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                    	CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC,
+                        CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending = 1 THEN CreateDate END ASC,
+                    	CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending <> 1 THEN CreateDate END DESC
+                    OFFSET ((@CurrentPage - 1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                    FOR JSON AUTO
+                   """
+        
+        sql = pagination.replaceParams(sql);
 
         try:
             conn = SQL.open_connection()
@@ -518,6 +651,8 @@ class SQL():
             c.execute(sql)
 
             users = c.fetchall()
+
+            users = SQL.get_total_records(users, conn)
 
             c.close()
             conn.close()
@@ -608,8 +743,54 @@ class SQL():
         except pymssql.Error as e:
             print('Error updating user. Error {}'.format(e))
 
-    def get_submitted_items():
-        sql = "SELECT si.Id, 'Blank' as ItemType, luIT.ItemType AS ActualItemType, si.Title, si.ItemText, si.DiscordUserId, si.CreateDate, si.IsApproved, si.IsReviewed FROM SubmittedItems si WITH (NOLOCK) JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id WHERE si.IsApproved = 0 FOR JSON AUTO"
+    def get_submitted_items(pagination):
+        sql = """
+                DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                DECLARE @IsAscending BIT = @Ascending
+
+                SELECT
+                    si.Id,
+                    'Blank' as ItemType,
+                    luIT.ItemType as ActualItemType,
+				    si.Title,
+				    si.ItemText,
+				    si.DiscordUserId,
+				    si.CreateDate,
+				    si.IsApproved,
+				    si.IsReviewed
+                INTO #temp
+                FROM
+                    SubmittedItems si WITH (NOLOCK)
+				    JOIN CodeItemType luIT WITH (NOLOCK) ON si.ItemTypeId = luIT.Id
+                WHERE
+				    si.IsApproved = 0
+                    AND ('@SearchTerm' = ''
+                        OR (
+                            si.Title LIKE '%@SearchTerm%'
+				    		OR luIT.ItemType LIKE '%@SearchTerm%'
+                            )
+                    )
+
+                SELECT
+                    *
+                FROM
+                    #temp
+                ORDER BY
+                    CASE WHEN @OrderBy = 'Title' AND @IsAscending = 1 THEN Title END ASC,
+                    CASE WHEN @OrderBy = 'Title' AND @IsAscending <> 1 THEN Title END DESC,
+                    CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending = 1 THEN CreateDate END ASC,
+                    CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending <> 1 THEN CreateDate END DESC,
+                    CASE WHEN @OrderBy = 'ItemType' AND @IsAscending = 1 THEN ActualItemType END ASC,
+                    CASE WHEN @OrderBy = 'ItemType' AND @IsAscending <> 1 THEN ActualItemType END DESC,
+				    CASE WHEN @OrderBy = 'IsApproved' AND @IsAscending = 1 THEN IsApproved END ASC,
+                    CASE WHEN @OrderBy = 'IsApproved' AND @IsAscending <> 1 THEN IsApproved END DESC,
+				    CASE WHEN @OrderBy = 'IsReviewed' AND @IsAscending = 1 THEN IsReviewed END ASC,
+				    CASE WHEN @OrderBy = 'IsReviewed' AND @IsAscending <> 1 THEN IsReviewed END DESC
+                OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                FOR JSON AUTO
+        """
+
+        sql = pagination.replaceParams(sql)
 
         try:
             conn = SQL.open_connection()
@@ -618,6 +799,8 @@ class SQL():
             c.execute(sql)
 
             items = c.fetchall()
+
+            items = SQL.get_total_records(items, conn)
 
             c.close()
             conn.close()
@@ -670,8 +853,42 @@ class SQL():
             print('Error updating the submitted item. Error {}'.format(e))
             return False
 
-    def get_all_stories():
-        sql = "SELECT Id, Title, Story, IsActive FROM Stories WITH (NOLOCK) FOR JSON AUTO"
+    def get_all_stories(pagination):
+        sql = """
+            DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+            DECLARE @IsAscending BIT = @Ascending
+
+            SELECT
+                Id,
+                Title,
+			    Story,
+			    IsActive
+            INTO #temp
+            FROM
+                Stories WITH (NOLOCK)
+            WHERE
+                ('@SearchTerm' = ''
+                    OR (
+                        Title LIKE '%@SearchTerm%'
+                        )
+                )
+
+            SELECT
+                *
+            FROM
+                #temp
+            ORDER BY
+                CASE WHEN @OrderBy = 'Title' AND @IsAscending = 1 THEN Title END ASC,
+                CASE WHEN @OrderBy = 'Title' AND @IsAscending <> 1 THEN Title END DESC,
+                CASE WHEN @OrderBy = 'Story' AND @IsAscending = 1 THEN Story END ASC,
+                CASE WHEN @OrderBy = 'Story' AND @IsAscending <> 1 THEN Story END DESC,
+				CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC
+            OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+            FOR JSON AUTO
+        """
+
+        sql = pagination.replaceParams(sql)
 
         try:
             conn = SQL.open_connection()
@@ -680,6 +897,8 @@ class SQL():
             c.execute(sql)
 
             stories = c.fetchall()
+
+            stories = SQL.get_total_records(stories, conn)
 
             c.close()
             conn.close()
@@ -798,8 +1017,39 @@ class SQL():
             print("Error updating story. Error {}".format(e))
             return False
 
-    def get_all_wisdoms():
-        sql = "SELECT Id, Wisdom, IsActive FROM Wisdoms WITH (NOLOCK) FOR JSON AUTO"
+    def get_all_wisdoms(pagination):
+        sql = """
+                DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                DECLARE @IsAscending BIT = @Ascending
+
+                SELECT
+                    Id,
+                    Wisdom,
+				    IsActive
+                INTO #temp
+                FROM
+                    Wisdoms WITH (NOLOCK)
+                WHERE
+                    ('@SearchTerm' = ''
+                        OR (
+                            Wisdom LIKE '%@SearchTerm%'
+                            )
+                    )
+
+                SELECT
+                    *
+                FROM
+                    #temp
+                ORDER BY
+                    CASE WHEN @OrderBy = 'Wisdom' AND @IsAscending = 1 THEN Wisdom END ASC,
+                    CASE WHEN @OrderBy = 'Wisdom' AND @IsAscending <> 1 THEN Wisdom END DESC,
+					CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                    CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC
+                OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                FOR JSON AUTO
+        """
+
+        sql = pagination.replaceParams(sql);
 
         try:
             conn = SQL.open_connection()
@@ -808,6 +1058,8 @@ class SQL():
             c.execute(sql)
 
             stories = c.fetchall()
+
+            stories = SQL.get_total_records(stories, conn)
 
             c.close()
             conn.close()
@@ -924,7 +1176,7 @@ class SQL():
             return False
 
     def get_form_by_form_key(formKey):
-        sql = "SELECT vff.FormKey, vff.FieldSchema, vff.ActionLink, vff.IsActive, luVF.FormName FROM VueFormFields vff WITH (NOLOCK) JOIN CodeVueForms luVF WITH (NOLOCK) ON vff.FormKey = luVF.FormKey WHERE vff.FormKey = '@formKey' FOR JSON AUTO"
+        sql = "SELECT Fields.FormKey, Fields.FieldSchema, Fields.ActionLink, Fields.IsActive, Form.FormName, Form.ShowFormName FROM VueFormFields Fields WITH (NOLOCK) JOIN CodeVueForms Form WITH (NOLOCK) ON Fields.FormKey = Form.FormKey WHERE Fields.FormKey = '@formKey' FOR JSON AUTO"
 
         sql = sql.replace("@formKey", formKey)
 
@@ -984,9 +1236,6 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error updating form. Error {}".format(e))
-            print("SQL")
-            print(field)
-            print(formInfo)
             return False
 
     def create_form(form, userId):
@@ -1025,39 +1274,138 @@ class SQL():
             return True
         except pymssql.Error as e:
             print("Error updating form. Error {}".format(e))
-            print("SQL")
-            print(field)
-            print(formInfo)
             return False
 
-    def get_account_info_by_id(accountId, isMaster):
+    def get_account_info_by_id(accountId):
         accountSql = "SELECT a.AccountId, a.AccountName, a.CreateDate, a.IsActive FROM Accounts a WITH (NOLOCK) WHERE a.AccountId = @accountId FOR JSON AUTO"
-        if isMaster == "true":
-            usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 FOR JSON AUTO"
-        else:
-            usersSql = "SELECT u.Id, u.Username, u.FirstName, u.LastName, u.IsLocked, u.IsActive, u.CreateDate FROM Users u WITH (NOLOCK) WHERE u.AccountId = 1 AND u.Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F' FOR JSON AUTO"
 
         accountSql = accountSql.replace("@accountId", str(accountId))
-        usersSql = usersSql.replace("@accountId", str(accountId))
-
-        results = ()
 
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
 
             c.execute(accountSql)
-            accounts = c.fetchone()[0]
-
-            c.execute(usersSql)
-            users = c.fetchall()
-
-            results = (accounts, users)
+            accounts = c.fetchall()
 
             c.close()
             conn.close()
 
-            return results
+            return accounts
+        except pymssql.Error as e:
+            print("Error getting account information. Error {}".format(e))
+            return None
+
+    def get_account_users(accountId, isMaster, pagination):
+        usersSql = ""
+        if isMaster == "true":
+            usersSql = """
+                        DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                        DECLARE @IsAscending BIT = @Ascending
+
+                        SELECT
+                                Id,
+                                Username,
+					    		FirstName,
+					    		LastName,
+					    		IsLocked,
+					    		IsActive,
+					    		CreateDate
+                        INTO #temp
+                        FROM
+                            Users WITH (NOLOCK)
+                        WHERE
+                            ('@SearchTerm' = ''
+                                OR (
+                                    Username LIKE '%@SearchTerm%'
+					    			OR FirstName LIKE '%@SearchTerm%'
+					    			OR LastName LIKE '%@SearchTerm%'
+                                    )
+                            )
+                        
+                        SELECT
+                            *
+                        FROM
+                            #temp
+                        ORDER BY
+                            CASE WHEN @OrderBy = 'Username' AND @IsAscending = 1 THEN Username END ASC,
+                            CASE WHEN @OrderBy = 'Username' AND @IsAscending <> 1 THEN Username END DESC,
+					    	CASE WHEN @OrderBy = 'FirstName' AND @IsAscending = 1 THEN FirstName END ASC,
+                            CASE WHEN @OrderBy = 'FirstName' AND @IsAscending <> 1 THEN FirstName END DESC,
+					    	CASE WHEN @OrderBy = 'LastName' AND @IsAscending = 1 THEN LastName END ASC,
+                            CASE WHEN @OrderBy = 'LastName' AND @IsAscending <> 1 THEN LastName END DESC,
+					    	CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                            CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC,
+					    	CASE WHEN @OrderBy = 'IsLocked' AND @IsAscending = 1 THEN IsLocked END ASC,
+                            CASE WHEN @OrderBy = 'IsLocked' AND @IsAscending <> 1 THEN IsLocked END DESC,
+					    	CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending = 1 THEN CreateDate END ASC,
+                            CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending <> 1 THEN CreateDate END DESC
+                        OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                        FOR JSON AUTO
+            """
+        else:
+            usersSql = """
+                        DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                        DECLARE @IsAscending BIT = @Ascending
+
+                        SELECT
+                                Id,
+                                Username,
+					    		FirstName,
+					    		LastName,
+					    		IsLocked,
+					    		IsActive,
+					    		CreateDate
+                        INTO #temp
+                        FROM
+                            Users WITH (NOLOCK)
+                        WHERE
+					    	Id <> '2F5FA286-5644-4AB1-B04F-D2ED451EF33F'
+                            AND ('@SearchTerm' = ''
+                                OR (
+                                    Username LIKE '%@SearchTerm%'
+					    			OR FirstName LIKE '%@SearchTerm%'
+					    			OR LastName LIKE '%@SearchTerm%'
+                                    )
+                            )
+
+                        SELECT
+                            *
+                        FROM
+                            #temp
+                        ORDER BY
+                            CASE WHEN @OrderBy = 'Username' AND @IsAscending = 1 THEN Username END ASC,
+                            CASE WHEN @OrderBy = 'Username' AND @IsAscending <> 1 THEN Username END DESC,
+					    	CASE WHEN @OrderBy = 'FirstName' AND @IsAscending = 1 THEN FirstName END ASC,
+                            CASE WHEN @OrderBy = 'FirstName' AND @IsAscending <> 1 THEN FirstName END DESC,
+					    	CASE WHEN @OrderBy = 'LastName' AND @IsAscending = 1 THEN LastName END ASC,
+                            CASE WHEN @OrderBy = 'LastName' AND @IsAscending <> 1 THEN LastName END DESC,
+					    	CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                            CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC,
+					    	CASE WHEN @OrderBy = 'IsLocked' AND @IsAscending = 1 THEN IsLocked END ASC,
+                            CASE WHEN @OrderBy = 'IsLocked' AND @IsAscending <> 1 THEN IsLocked END DESC,
+					    	CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending = 1 THEN CreateDate END ASC,
+                            CASE WHEN @OrderBy = 'CreateDate' AND @IsAscending <> 1 THEN CreateDate END DESC
+                        OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                        FOR JSON AUTO
+            """
+
+        usersSql = usersSql.replace("@accountId", str(accountId))
+        usersSql = pagination.replaceParams(usersSql);
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(usersSql)
+            accounts = c.fetchall()
+
+            users = SQL.get_total_records(accounts, conn)
+
+            c.close()
+            conn.close()
+
+            return users
         except pymssql.Error as e:
             print("Error getting account information. Error {}".format(e))
             return None
@@ -1113,9 +1461,44 @@ class SQL():
             print("Error getting documentation. Error {}".format(e))
             return None
 
-    def get_all_documentation():
-        sql = "SELECT HelpContentKey, HelpTitle, HelpContent, IsActive FROM HelpDocumentation WITH (NOLOCK) FOR JSON AUTO"
+    def get_all_documentation(pagination):
+        sql = """ 
+                DECLARE @OrderBy NVARCHAR(255) = '@SortColumn'
+                DECLARE @IsAscending BIT = @Ascending
 
+                SELECT
+                        HelpContentKey,
+                        HelpTitle,
+                        HelpContent,
+                        IsActive
+                INTO #temp
+                FROM
+                    HelpDocumentation WITH (NOLOCK)
+                WHERE
+                    ('@SearchTerm' = ''
+                        OR (
+                            HelpTitle LIKE '%' + '@SearchTerm' + '%'
+                            )
+                    )
+
+                SELECT
+                    *
+                FROM
+                    #temp
+                ORDER BY
+                    CASE WHEN @OrderBy = 'HelpContentKey' AND @IsAscending = 1 THEN HelpContentKey END ASC,
+                    CASE WHEN @OrderBy = 'HelpContentKey' AND @IsAscending <> 1 THEN HelpContentKey END DESC,
+                    CASE WHEN @OrderBy = 'HelpTitle' AND @IsAscending = 1 THEN HelpTitle END ASC,
+                    CASE WHEN @OrderBy = 'HelpTitle' AND @IsAscending <> 1 THEN HelpTitle END DESC,
+                    CASE WHEN @OrderBy = 'HelpContent' AND @IsAscending = 1 THEN HelpContent END ASC,
+                    CASE WHEN @OrderBy = 'HelpContent' AND @IsAscending <> 1 THEN HelpContent END DESC,
+                    CASE WHEN @OrderBy = 'IsActive' AND @IsAscending = 1 THEN IsActive END ASC,
+                    CASE WHEN @OrderBy = 'IsActive' AND @IsAscending <> 1 THEN IsActive END DESC
+                OFFSET ((@CurrentPage-1) * @MaxRows) ROWS FETCH NEXT @MaxRows ROWS ONLY
+                FOR JSON AUTO
+            """
+
+        sql = pagination.replaceParams(sql);
         try:
             conn = SQL.open_connection()
             c = conn.cursor()
@@ -1123,6 +1506,8 @@ class SQL():
             c.execute(sql)
 
             content = c.fetchall()
+
+            content = SQL.get_total_records(content, conn)
 
             c.close()
             conn.close()

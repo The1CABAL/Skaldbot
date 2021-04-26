@@ -1,48 +1,62 @@
 <template>
-    <div class="selectsuggestion">
-        <div>
-            <select @change="setKey($event)" class="select-css">
-                <option value="select">Select</option>
-                <option v-for="form in getForms" :key="form.FormKey" :value="form.FormKey">{{form.FormName}}</option>
-            </select>
-        </div>
+    <div>
+        <vue-select :items="getForms" :value-key="valueKey" :name-key="nameKey" v-on:change="onChange"/>
     </div>
 </template>
 
 <script>
-    import { mapGetters, mapActions } from "vuex";
+    import { mapActions } from "vuex";
+    import fieldSelect from '../CustomFields/fieldSelect'
 
     export default {
         name: "SelectForm",
-        props: ['pageId'],
+
+        props: {
+            pageId: {
+                type: Number | String,
+                required: false,
+                default: 0
+            }
+        },
+
+        components: {
+            'vue-select': fieldSelect
+        },
+
         data() {
             return {
-                formKey: '',
-                thePageId: { ...this.pageId }
+                thePageId: { ...this.pageId },
+                valueKey: 'FormKey',
+                nameKey: 'FormName'
             }
         },
+
         methods: {
             ...mapActions(["fetchAllForms", "fetchAllFormsByPageId"]),
-            setKey(e) {
-                const key = e.target.options[e.target.options.selectedIndex].value;
+            onChange(e) {
+                if (typeof e === 'object') {
+                    this.$emit('formKey', e[this.valueKey])
+                    return;
+                }
 
-                if (key == "select") {
-                    this.formKey = key;
-                    this.$emit('formKey', '');
-                }
-                else {
-                    this.formKey = key;
-                    this.$emit('formKey', key);
-                }
+                this.$emit('formKey', e)
             }
         },
-        computed: mapGetters(["getForms"]),
-        created() {
+
+        computed: {
+            getForms() {
+                return this.$store.getters.getForms;
+            },
+        },
+
+        mounted() {
             if (this.pageId == 0 || this.pageId == undefined)
                 this.fetchAllForms();
             else {
                 this.fetchAllFormsByPageId(this.pageId);
             }
+
+            this.$emit('select-forms-loaded')
         }
     }
 </script>
