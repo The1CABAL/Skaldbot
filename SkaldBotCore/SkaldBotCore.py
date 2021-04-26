@@ -55,7 +55,7 @@ async def on_message(message):
             await message.channel.send('The gods have not yet gifted me with any tails associated with this great hall...')
 
     if message.content.startswith('$why'):
-        await message.channel.send('Isaac lost his ship in Elite: Dangerous so he drank over 6 ounces of rum and wrote a discord bot. \n\nWhat followed was a team effort of many ideas and abilities to create the entity that stands before you today.\n\nI am basically a digital Kvasir.')
+        await message.channel.send('Isaac lost his ship in Elite: Dangerous so he drank over 6 ounces of rum, his teeth got tingly, and he wrote a discord bot. \n\nWhat followed was a team effort of many ideas and abilities to create the entity that stands before you today.\n\nI am basically a digital Kvasir.')
 
     if message.content.startswith('$wisdom'):
         try:
@@ -73,8 +73,8 @@ async def on_message(message):
         answer = YesNo()
         await message.channel.send(answer + '\n\nThe gods have spoken!')
 
-    if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
-        await client.process_commands(message)
+    #if message.content.startswith('$join') or message.content.startswith('$thanks') or message.content.startswith('$sing'):
+    #    await client.process_commands(message)
 
 
 '''
