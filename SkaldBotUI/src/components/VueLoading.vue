@@ -21,7 +21,6 @@
 
         data() {
             return {
-                loader: require('@/assets/loading.gif')
             }
         },
 
