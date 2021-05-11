@@ -1,34 +1,43 @@
 <template>
     <div>
-        <input class="form-control"
+        <vue-input
                :type="passwordFieldType"
                v-model="value"
                :disabled="schema.disabled"
                :maxlength="schema.max"
                :placeholder="schema.placeholder"
-               :readonly="schema.readonly"
-               :validators="schema.validators"
-               :showButton="schema.showButton">
-        <input type="checkbox" id="togglePassword" v-if="showButton" v-on:click="showPassword" />
-        <label for="togglePassword" v-if="showButton">Show Password</label>
+               :readonly="schema.readonly">
+            {{schema.fieldLabel}}
+            </vue-input>
+        <vue-checkbox id="togglePassword" v-if="showButton" v-on:change="showPassword">Show Password</vue-checkbox>
     </div>
 </template>
 
 <script>
     import { abstractField } from "vue-form-generator";
+    import fieldInput from '@/components/CustomFields/fieldInput'
+    import fieldCheckbox from '@/components/CustomFields/fieldCheckbox'
 
     export default {
         name: "passwordField",
         mixins: [abstractField],
+
         data() {
             return {
                 showButton: false,
                 passwordFieldType: 'password'
             }
         },
+
+        components: {
+            'vue-input': fieldInput,
+            'vue-checkbox': fieldCheckbox
+        },
+
         mounted() {
             this.showButton = this.schema.showButton;
         },
+
         watch: {
             showButton: function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -36,6 +45,7 @@
                 }
             }
         },
+
         methods: {
             showPassword() {
                 if (this.passwordFieldType == "password") {

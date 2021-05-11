@@ -1,106 +1,74 @@
 <template>
     <div id="Modal">
-        <transition name="modal-fade">
-            <VueLoading v-if="!isLoaded"></VueLoading>
-            <div class="modal-backdrop" v-if="isLoaded">
-                <div v-if="modalDisplayTypeId == 1">
-                    <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
-                        <div>
-                            <button type="button" class="btn-close topright" @click="closeModal" aria-label="Close modal">x</button>
-                        </div>
-                        <header class="modal-header" id="modalTitle">
-                            <div>
-                                <h4>{{lookupData[0].Title}}</h4>
-                            </div>
-                        </header>
-                        <section class="modal-body" id="modalDescription">
-                            <slot name="body">
-                                <label for="itemType">Suggestion Type:</label>
-                                <input type="text" id="itemType" v-model="lookupData[0].ItemType" disabled />
-                                <label for="itemText">Content:</label>
-                                <br />
-                                <textarea id="itemText" v-model="lookupData[0].ItemText" disabled></textarea>
-                                <br />
-                                <hr />
-                                <label for="serverId">Server ID:</label>
-                                <input type="text" id="serverId" v-model="lookupData[0].ServerId" disabled />
-                                <label for="dateCreated">Date Submitted:</label>
-                                <input type="text" id="dateCreated" :value="getDate(lookupData[0].CreateDate)" disabled />
-                                <label for="discordUserId">Submitted By:</label>
-                                <input type="text" id="discordUserId" v-model="lookupData[0].DiscordUserId" disabled />
-                            </slot>
-                        </section>
-                        <footer class="modal-footer">
-                            <div>
-                                <slot name="footer">
-                                    <button type="button" class="btn-button approve" @click="approveSuggestion">
-                                        Approve
-                                    </button>
-                                    <button type="button" class="btn-button reject" @click="rejectSuggestion">
-                                        Reject
-                                    </button>
-                                </slot>
-                            </div>
-                        </footer>
-                    </div>
-                </div>
-                <div v-if="modalDisplayTypeId == 2 || modalDisplayTypeId == 3">
-                    <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
-                        <div>
-                            <button type="button" class="btn-close topright" @click="closeModal" aria-label="Close modal">x</button>
-                        </div>
-                        <header class="modal-header" id="modalTitle">
-                            <div>
-                                <h4 v-if="modalDisplayTypeId == 2">Manage Story</h4>
-                                <h4 v-if="modalDisplayTypeId == 3">Manage Wisdom</h4>
-                            </div>
-                        </header>
-                        <section class="modal-body" id="modalDescription">
-                            <slot name="body">
-                                <div>
-                                    <label for="title">Title:</label>
-                                    <input type="text" id="title" v-model="lookupData[0].Title" />
-                                    <label for="itemText">Content:</label>
-                                    <br />
-                                    <textarea id="itemText" v-if="modalDisplayTypeId == 2" v-model="lookupData[0].Story" class="modal-textarea"></textarea>
-                                    <textarea id="itemText" v-if="modalDisplayTypeId == 3" v-model="lookupData[0].Wisdom" class="modal-textarea"></textarea>
-                                    <br />
-                                    <label for="serverId">Server ID:</label>
-                                    <input type="text" id="serverId" v-model="lookupData[0].luS[0].ServerId"/>
-                                    <label for="isActive">Is Active:</label>
-                                    <input type="checkbox" id="isActive" v-model="lookupData[0].IsActive" />
-                                </div>
-                            </slot>
-                        </section>
-                        <footer class="modal-footer">
-                            <div>
-                                <slot name="footer">
-                                    <button type="button" class="btn-button approve" @click="saveItem">
-                                        Save
-                                    </button>
-                                    <button type="button" class="btn-button" @click="closeModal">
-                                        Close
-                                    </button>
-                                </slot>
-                            </div>
-                        </footer>
-                    </div>
-                </div>
-            </div>
-        </transition>
+        <modal v-if="isLoaded && isSuggestion" @close="closeModal">
+            <template #title>
+                <p>{{lookupData[0].Title}}</p>
+            </template>
+            <template #body>
+                <vue-input id="itemType" name="itemType" v-model="lookupData[0].ItemType" :is-disabled="true">Suggestion Type</vue-input>
+                <vue-text-area id="itemText" name="itemText" v-model="lookupData[0].ItemText" :is-disabled="true">Content</vue-text-area>
+                <hr />
+                <vue-input id="serverId" name="serverId" v-model="lookupData[0].ServerId" :is-disabled="true">Server ID</vue-input>
+                <vue-input id="dateCreated" name="dateCreated" :value="getDate(lookupData[0].CreateDate)" :is-disabled="true">Date Submitted</vue-input>
+                <vue-input id="discordUserId" name="discordUserId" v-model="lookupData[0].DiscordUserId" :is-disabled="true">Submitted By</vue-input>
+            </template>
+            <template #actionButtons>
+                <vue-button type="button" @click="approveSuggestion">
+                    Approve
+                </vue-button>
+                <vue-button type="button" varient="danger" @click="rejectSuggestion">
+                    Reject
+                </vue-button>
+            </template>
+        </modal>
+        <modal v-if="isLoaded && !isSuggestion" @close="closeModal">
+            <template #title>
+                <p v-if="isStory">Manage Story</p>
+                <p v-if="isWisdom">Manage Wisdom</p>
+            </template>
+            <template #body>
+                <vue-input v-if="isStory" id="title" name="title" v-model="lookupData[0].Title">Title</vue-input>
+                <vue-text-area v-if="isStory" id="itemText" name="itemText" v-model="lookupData[0].Story">Content</vue-text-area>
+                <vue-text-area v-if="isWisdom" id="itemText" name="itemText" v-model="lookupData[0].Wisdom">Content</vue-text-area>
+                <vue-input id="serverId" name="serverId" v-model="lookupData[0].luS[0].ServerId">Server ID</vue-input>
+                <vue-checkbox id="isActive" name="isActive" v-model="lookupData[0].IsActive">Is Active</vue-checkbox>
+            </template>
+            <template #actionButtons>
+                <vue-button type="button" @click="saveItem">
+                    Save
+                </vue-button>
+                <vue-button type="button" varient="danger" @click="closeModal">
+                    Close
+                </vue-button>
+            </template>
+        </modal>
     </div>
 </template>
 
 <script>
     import VueLoading from '../components/VueLoading';
-    import axios from 'axios';
-    import { BaseUrl } from '../helpers/constants';
+    import UtilMixin from '@/mixins/util-mixin'
+    import PageMixin from '@/mixins/page-mixin'
+    import Modal from '@/components/Modal/Modal.vue';
+    import fieldInput from '@/components/CustomFields/fieldInput.vue';
+    import fieldCheckbox from '@/components/CustomFields/fieldCheckbox.vue';
+    import fieldTextArea from '@/components/CustomFields/fieldTextArea.vue';
+    import fieldButton from '@/components/CustomFields/fieldButton.vue';
 
     export default {
-        name: 'Modal',
+        name: 'ModalForm',
+
         components: {
-            VueLoading
+            VueLoading,
+            'modal': Modal,
+            'vue-input': fieldInput,
+            'vue-checkbox': fieldCheckbox,
+            'vue-text-area': fieldTextArea,
+            'vue-button': fieldButton
         },
+
+        mixins: [PageMixin, UtilMixin],
+
         props: {
             modalDisplayTypeId: {
                 type: Number,
@@ -111,82 +79,63 @@
                 required: false
             }
         },
+
         data() {
             return {
                 isLoaded: false,
                 lookupData: {}
             }
         },
+
+        computed: {
+            isSuggestion() {
+                return this.modalDisplayTypeId == 1;
+            },
+
+            isStory() {
+                return this.modalDisplayTypeId == 2;
+            },
+
+            isWisdom() {
+                return this.modalDisplayTypeId == 3;
+            }
+        },
+
         watch: {
-            lookupId: function() {
+            lookupId() {
                 this.getData();
             }
         },
+
         methods: {
-            getDate(date) {
-                let elDate = new Date(date)
-                return (elDate.getMonth() + 1) + '-'
-                    + elDate.getDate() + '-'
-                    + elDate.getFullYear()
-            },
             approveSuggestion() {
-                //let url = BaseUrl + 'submittedItems'
                 let postData = { "IsApproved": 1, "Id": this.lookupId, "UserId": this.$store.getters.userId }
 
                 this.submitSuggestionChange(postData);
-                //let that = this;
-                //axios.post(url, postData).then(function (response) {
-                //    var returnVal = response.data;
-                //    if (returnVal.Message.toString() == "Success") {
-                //        that.$message('Successfully updated submitted item!');
-                //        setTimeout(function () {
-                //            that.close()
-                //        }, 2000)
-                //    }
-                //    else {
-                //        //console.log("Setting success to false");
-                //        that.$message('Error updating submitted item!');
-                //    }
-                //});
             },
+
             rejectSuggestion() {
-                //let url = BaseUrl + 'submittedItems'
                 let postData = { "IsApproved": 0, "Id": this.lookupId, "UserId": this.$store.getters.userId }
 
                 this.submitSuggestionChange(postData);
-                //let that = this;
-                //axios.post(url, postData).then(function (response) {
-                //    var returnVal = response.data;
-                //    if (returnVal.Message.toString() == "Success") {
-                //        that.$message('Successfully updated submitted item!');
-                //        setTimeout(function () {
-                //            that.close()
-                //        }, 2000)
-                //    }
-                //    else {
-                //        //console.log("Setting success to false");
-                //        that.$message('Error updating submitted item!');
-                //    }
-                //});
             },
+
             submitSuggestionChange(postData) {
                 this.$store.dispatch('updateSuggestionState', postData).then(() => {
                     var returnVal = this.$store.getters.getSubmittedResponse;
                     if (returnVal == "Success") {
                         let that = this;
-                        this.$message("Successfully updated submitted item!");
-                        setTimeout(function () {
-                            that.closeModal();
-                        }, 2000)
+                        this.success("Successfully updated submitted item!");
+                        this.closeModal();
                     }
                     else {
-                        this.$message("Error updating submitted item!");
+                        this.error("Error updating submitted item!");
                     }
                 }).catch(err => {
-                    console.log(err);
-                    this.$message("Error updating submitted item!");
+                    this.error("Error updating submitted item!");
                 })
             },
+
             getData() {
                 if (this.lookupId != 0 && this.lookupId != null) {
                     var id = this.modalDisplayTypeId;
@@ -199,8 +148,7 @@
                                 this.lookupData[0].ItemType = this.lookupData[0].luIT[0].ItemType
                                 this.isLoaded = true;
                             }).catch(err => {
-                                console.log(err);
-                                this.$message("There was an error getting the suggestion data");
+                                this.error("There was an error getting the suggestion data");
                             })
                             break;
                         case 2:
@@ -210,7 +158,7 @@
                                 this.isLoaded = true;
                             }).catch(err => {
                                 console.log(err);
-                                this.$message("There was an error getting the story data");
+                                this.error("There was an error getting the story data");
                             })
                             break;
                         case 3:
@@ -220,12 +168,13 @@
                                 this.isLoaded = true;
                             }).catch(err => {
                                 console.log(err);
-                                this.$message("There was an error getting the wisdom data");
+                                this.error("There was an error getting the wisdom data");
                             })
                             break;
                     }
                 }
             },
+
             saveItem() {
                 let that = this;
                 switch (this.modalDisplayTypeId) {
@@ -235,17 +184,14 @@
                             var returnVal = this.$store.getters.getSubmittedResponse;
                             let that = this;
                             if (returnVal == "Success") {
-                                this.$message("Successfully updated story!");
-                                setTimeout(function () {
-                                    that.closeModal();
-                                }, 2000)
+                                this.success("Successfully updated story!");
+                                this.closeModal();
                             }
                             else {
-                                this.$message("Error updating story!");
+                                this.error("Error updating story!");
                             }
                         }).catch(err => {
-                            console.log(err);
-                            this.$message("Error updating story!");
+                            this.error("Error updating story!");
                         })
                         break;
                     case 3:
@@ -254,27 +200,22 @@
                             var returnVal = this.$store.getters.getSubmittedResponse;
                             let that = this;
                             if (returnVal == "Success") {
-                                this.$message("Successfully updated wisdom!");
-                                setTimeout(function () {
-                                    that.closeModal();
-                                }, 2000)
+                                this.success("Successfully updated wisdom!");
+                                this.closeModal();
                             }
                             else {
-                                this.$message("Error updating wisdom!");
+                                this.error("Error updating wisdom!");
                             }
                         }).catch(err => {
-                            console.log(err);
-                            this.$message("Error updating wisdom!");
+                            this.error("Error updating wisdom!");
                         })
                         break;
                 }
             },
+
             closeModal() {
                 this.$emit('close');
             },
         },
     };
 </script>
-
-<style scoped>
-</style>

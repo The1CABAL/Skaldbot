@@ -356,3 +356,5 @@ healthchecksdb
 
 /SkaldBotAPI/config.ini
 /SkaldBotCore/config.ini
+/SkaldBotAPI/devin
+/SkaldBotUI/src/helpers/constants.js

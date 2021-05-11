@@ -89,6 +89,7 @@
     <Build Include="dbo\Tables\Accounts.sql" />
     <Build Include="dbo\Tables\HelpDocumentation.sql" />
     <Build Include="dbo\Stored Procedures\UpsertHelpDocumentation.sql" />
+    <Build Include="dbo\Stored Procedures\UpsertVueFormFields.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />

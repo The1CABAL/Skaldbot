@@ -1,25 +1,17 @@
 <template>
-    <div id="ManageWisdoms">
+    <div id="ManageWisdoms" class="h-full overflow-x-auto">
         <VueLoading v-if="!loaded"></VueLoading>
         <Modal v-show="isModalVisible" @close="closeModal" v-bind:modalDisplayTypeId="modalDisplayTypeId" v-bind:lookupId="lookupId"></Modal>
-        <div v-if="loaded">
-            <div style="margin-bottom: 10px">
-                <el-row>
-                    <el-col :span="6">
-                        <el-input placeholder="Title..." v-model="filters[0].value"></el-input>
-                    </el-col>
-                </el-row>
-            </div>
-
-            <data-tables :data="data" :action-col="actionCol" :filters="filters" @selection-change="handleSelectionChange">
-                <el-table-column v-for="title in titles" :prop="title.prop" :label="title.label" :key="title.prop" sortable="custom">
-                </el-table-column>
-                <el-table-column prop="IsActive" label="Is Active">
-                    <template slot-scope="scope">
-                        <div>{{getBool(scope.row.IsActive)}}</div>
-                    </template>
-                </el-table-column>
-            </data-tables>
+        <div v-show="loaded">
+            <vue-table-filtered showPerPage
+                                showSearchField
+                                showPagination
+                                :columns="titles"
+                                :searchFunction="getData"
+                                @editClick="handleSelectionChange"
+                                :forceRefresh="refreshData"
+                                @data-reset="resetDataVariable">
+            </vue-table-filtered>
         </div>
     </div>
 </template>
@@ -27,113 +19,85 @@
 <script>
     import VueLoading from '../../components/VueLoading';
     import Modal from '../../components/ModalComponent';
+    import PageMixin from '@/mixins/page-mixin.js';
+    import vueTableFiltered from '@/components/Tables/vueTableFiltered';
 
     export default {
         name: "ManageWisdoms",
+
         components: {
             VueLoading,
-            Modal
+            Modal,
+            'vue-table-filtered': vueTableFiltered
         },
+
+        mixins: [PageMixin],
+
         data() {
             return {
                 modalDisplayTypeId: 3,
                 lookupId: 0,
                 loaded: false,
                 isModalVisible: false,
-                data: [],
+                refreshData: false,
                 titles: [
                     {
                         prop: "Id",
-                        label: "Wisdom Id"
+                        label: "Wisdom Id",
+                        sortable: false
                     },
                     {
-                        prop: "Title",
-                        label: "Wisdom Title"
-                    }
-                ],
-                filters: [
-                    {
-                        prop: 'Title',
-                        value: ''
-                    }
-                ],
-                actionCol: {
-                    props: {
-                        label: 'Actions',
+                        prop: "Wisdom",
+                        label: "Wisdom",
+                        sortable: true
                     },
-                    buttons: [
-                        {
-                            props:
-                            {
-                                type: 'primary'
-                            },
-                            handler: row => {
-                                this.lookupId = row.Id
-                                this.showModal();
-                            },
-                            label: 'View'
-                        }
-                    ]
-                },
-                selectedRow: []
+                    {
+                        prop: "IsActive",
+                        label: "Is Active",
+                        sortable: true
+                    },
+                ]
             }
         },
-        mounted: function () {
-            if (this.$store.getters.isLoggedIn) {
-                this.reloadAuthentication();
-            }
-            else {
-                if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
+        mounted() {
+            this.pageMounted().then(() => {
+                if (!this.masterAdmin && !this.admin) {
                     this.$router.push('/unauthorized')
+                    return;
                 }
-                else {
-                    this.isLoaded = true
-                    this.getData();
-                }
-            }
+
+                this.pageReady();
+            })
+                
         },
         methods: {
-            getData() {
+            async getData(model) {
                 this.loaded = false;
-                this.$store.dispatch('getAllWisdoms').then(() => {
-                    this.data = this.$store.getters.getWisdoms;
-                    this.loaded = true
-                }).catch(err => {
-                    console.log(err);
-                    this.$message("Error getting wisdoms");
-                })
+
+                await this.$store.dispatch('getAllWisdoms', model);
+
+                this.loaded = true
+                return this.$store.getters.getWisdoms;
             },
+
             handleSelectionChange(val) {
-                this.selectedRow = val
+                this.lookupId = val
+                this.showModal();
             },
-            getBool(value) {
-                if (value)
-                    return "True"
-                else
-                    return "False"
-            },
+
             showModal() {
                 this.isModalVisible = true
             },
+
             closeModal() {
                 this.isModalVisible = false;
                 this.lookupId = 0;
-                this.getData();
+                this.refreshData = true;
             },
-            reloadAuthentication() {
-                this.$store.dispatch('loadRoles').then(() => {
-                    if (!this.$store.getters.isMasterAdmin && !this.$store.getters.isAdmin) {
-                        this.$router.push('/unauthorized')
-                    }
-                    else {
-                        this.isLoaded = true
-                        this.getData();
-                    }
-                });
+
+            resetDataVariable() {
+                this.refreshData = false;
             }
         }
     }
 </script>
-
-<style scoped>
-</style>
