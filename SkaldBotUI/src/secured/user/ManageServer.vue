@@ -104,7 +104,7 @@
                     UpdateDate: ""
                 }
                 var model = [defaultModel]
-                this.selectedServer = model;
+                this.selectedServer = model[0];
                 this.newServer = true;
                 if (this.servers.length > 0) {
                     var element = document.getElementById("serverSelect");
