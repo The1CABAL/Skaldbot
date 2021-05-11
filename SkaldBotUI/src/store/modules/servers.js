@@ -46,7 +46,7 @@ const mutations = {
         }
     },
     set_server(state, server) {
-        state.server = JSONbig.parse(server);
+        state.server = JSONbig.parse(server)[0];
     }
 };
 
