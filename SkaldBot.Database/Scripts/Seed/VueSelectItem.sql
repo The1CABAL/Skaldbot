@@ -1,0 +1,1 @@
+﻿EXEC UpsertVueSelectItem 1, 'Nickname', 'ServerId', 'CodeServers', 'AccountId = 1 AND IsActive = 1', 1

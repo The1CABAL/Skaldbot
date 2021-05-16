@@ -119,7 +119,7 @@ class SubmitItem(Resource):
             else:
                 title = "NULL"
 
-            suggestion = Suggestion(req_data['typeId'], title, req_data['story'], req_data['ServerId'], req_data['discordUserId'])
+            suggestion = Suggestion(req_data['typeId'], title, req_data['story'], req_data['serverId'], req_data['discordUserId'])
     
             isSubmitted = SQL.submit_item_suggestion(suggestion);
 

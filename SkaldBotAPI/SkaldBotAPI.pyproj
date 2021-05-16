@@ -72,6 +72,7 @@
     <Compile Include="Resource\Users.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource\VueSelectItems.py" />
     <Compile Include="runserver.py" />
     <Compile Include="SkaldBotAPI\__init__.py" />
     <Compile Include="SkaldBotAPI\views.py" />

@@ -25,6 +25,9 @@ Vue.component("field-vue-checkbox", vfgCheckbox);
 import vfgTextArea from './components/vfgFields/vfgTextArea';
 Vue.component("field-vue-textarea", vfgTextArea);
 
+import vfgSelect from './components/vfgFields/vfgSelect';
+Vue.component("field-vue-select", vfgSelect);
+
 import './style/styles.css'
 
 import * as Tabs from 'vue-slim-tabs'

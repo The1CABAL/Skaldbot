@@ -36,7 +36,8 @@ const getters = {
     getUser: state => state.userData,
     getUsers: state => state.users,
     getAllRoles: state => state.roles,
-    getRole: state => state.role
+    getRole: state => state.role,
+    getDiscordUserId: state => state.userData.DiscordUserId ? state.userData.DiscordUserId : undefined
 };
 
 const actions = {
@@ -214,6 +215,10 @@ const mutations = {
 
     },
     set_user_data(state, user) {
+        if (!user) {
+            return;
+        }
+
         state.userData = JSON.parse(user)[0]
     },
     set_all_roles(state, roles) {
