@@ -90,6 +90,7 @@
     <Build Include="dbo\Tables\HelpDocumentation.sql" />
     <Build Include="dbo\Stored Procedures\UpsertHelpDocumentation.sql" />
     <Build Include="dbo\Stored Procedures\UpsertVueFormFields.sql" />
+    <Build Include="dbo\Stored Procedures\UpsertVueSelectItem.sql" />
     <Build Include="dbo\Tables\VueSelectItem.sql" />
   </ItemGroup>
   <ItemGroup>
