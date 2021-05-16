@@ -1640,3 +1640,38 @@ class SQL():
         except pymssql.Error as e:
             print("Error updating password! Error {}".format(e))
             return False
+
+    def get_select_item(selectId):
+        sql = "SELECT TableName, ItemColumn, ValueColumn, WhereClause FROM VueSelectItem WITH (NOLOCK) WHERE VueSelectItemId = @VueSelectItemId"
+
+        sql = sql.replace("@VueSelectItemId", selectId)
+
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor(as_dict=True)
+
+            c.execute(sql)
+            selectItems = c.fetchone()
+
+            c.close()
+            conn.close()
+            return selectItems
+        except pymssql.Error as e:
+            print("Error getting select item. Error {}".format(e))
+            return False
+
+    def execute_built_query(query):
+        try:
+            conn = SQL.open_connection()
+            c = conn.cursor()
+
+            c.execute(query)
+
+            items = c.fetchall()
+
+            c.close()
+            conn.close()
+            return items;
+        except pymssql.Error as e:
+            print("Error executing system built query. Error {}".format(e))
+            return False

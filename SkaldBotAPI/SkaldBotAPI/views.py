@@ -13,6 +13,7 @@ from Resource.Accounts import *
 from Resource.HelpDocumentation import *
 from Resource.Servers import *
 from Resource.GenerateFernetKey import GenerateFernetKey
+from Resource.VueSelectItems import *
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -46,3 +47,4 @@ api.add_resource(GetAllDocumentation, '/getAllDocumentation')
 api.add_resource(Server, '/server')
 api.add_resource(AccountServers, '/accountServers')
 api.add_resource(ChangePassword, '/resetPassword')
+api.add_resource(VueSelectItem, '/selectItems')

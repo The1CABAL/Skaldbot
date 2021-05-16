@@ -40,6 +40,7 @@
 </template>
 
 <script>
+    import Vue from 'vue';
     import VueLoading from '../VueLoading';
     import VueFormGenerator from 'vue-form-generator'
     import { mapActions } from "vuex";
@@ -102,7 +103,7 @@
                 if (this.passedModel != undefined && this.passedModel != null) {
                     this.setModel();
                 }
-            }
+            },
         },
 
         data() {
@@ -154,6 +155,26 @@
 
             validateForm(isValid) {
                 this.isValid = isValid;
+            },
+
+            assignDiscordUserId() {
+                if (!this.schema.fields.some(field => {
+                    return field.model === "discordUserId"
+                })) {
+                    return
+                }
+
+                if (!this.$store.getters.isLoggedIn) {
+                    return;
+                }
+
+                let discordUserId = this.$store.getters.getDiscordUserId;
+
+                if (!discordUserId) {
+                    return;
+                }
+
+                Vue.set(this.model, 'discordUserId', discordUserId);
             },
 
             formSubmit() {
@@ -266,6 +287,8 @@
                     else {
                         this.newModel();
                     }
+
+                    this.assignDiscordUserId();
 
                     this.loaded = true;
                 }).catch((err) => {

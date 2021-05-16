@@ -19,11 +19,16 @@ export default {
         async pageMounted() {
             if (this.$store.getters.isLoggedIn) {
                 await this.reloadRoles();
+                await this.loadUser();
             }
         },
 
         async reloadRoles() {
             await this.$store.dispatch('loadRoles');
+        },
+
+        async loadUser() {
+            await this.$store.dispatch('getUser', this.$store.getters.userId);
         },
 
         pageReady() {
@@ -93,15 +98,15 @@ export default {
 
     computed: {
         masterAdmin() {
-            return this.$store.getters.isMasterAdmin
+            return this.authenticated ? this.$store.getters.isMasterAdmin : false
         },
 
         clientAdmin() {
-            return this.$store.getters.isClientAdmin || this.masterAdmin || this.admin;
+            return this.authenticated ? this.$store.getters.isClientAdmin || this.masterAdmin || this.admin : false
         },
 
         admin() {
-            return this.$store.getters.isAdmin || this.masterAdmin;
+            return this.authenticated ? this.$store.getters.isAdmin || this.masterAdmin : false;
         },
 
         authenticated() {

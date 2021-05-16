@@ -90,6 +90,7 @@
     <Build Include="dbo\Tables\HelpDocumentation.sql" />
     <Build Include="dbo\Stored Procedures\UpsertHelpDocumentation.sql" />
     <Build Include="dbo\Stored Procedures\UpsertVueFormFields.sql" />
+    <Build Include="dbo\Tables\VueSelectItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiles\SkaldBot.Database.publish.xml" />
@@ -104,6 +105,7 @@
     <None Include="Scripts\Seed\CodeServers.sql" />
     <None Include="Scripts\Seed\Accounts.sql" />
     <None Include="Scripts\Seed\HelpDocumentation.sql" />
+    <None Include="Scripts\Seed\VueSelectItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Seed\Seed.PostDeploy.sql" />

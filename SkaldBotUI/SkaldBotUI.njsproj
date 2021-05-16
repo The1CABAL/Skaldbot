@@ -66,10 +66,12 @@
     <Content Include="src\components\vfgFields\vfgButton.vue" />
     <Content Include="src\components\vfgFields\vfgCheckbox.vue" />
     <Content Include="src\components\vfgFields\vfgInput.vue" />
+    <Content Include="src\components\vfgFields\vfgSelect.vue" />
     <Content Include="src\components\vfgFields\vfgTextArea.vue" />
     <Content Include="src\helpers\constants.js" />
     <Content Include="src\mixins\page-mixin.js" />
     <Content Include="src\mixins\util-mixin.js" />
+    <Content Include="src\mixins\vfg-mixin.js" />
     <Content Include="src\Offline\Dockerfile" />
     <Content Include="src\Offline\html\index.html" />
     <Content Include="src\secured\user\ManageServer.vue">
