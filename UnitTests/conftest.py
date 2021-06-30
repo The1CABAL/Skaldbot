@@ -13,4 +13,4 @@ def supply_constants():
         constants = constants_file.read()
         ApiUrl_Imported = (constants.split("'")[1:2])[0]
         
-    return ApiUrl_Imported, oauthToken_Imported, githubSecret_Imported
+    return ApiUrl_Imported

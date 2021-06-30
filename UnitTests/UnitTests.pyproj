@@ -23,7 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="conftest.py" />
-    <Compile Include="test_basic_fixture.py">
+    <Compile Include="test_url_endpoints.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
