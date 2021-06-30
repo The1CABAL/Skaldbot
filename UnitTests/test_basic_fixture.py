@@ -6,3 +6,4 @@ import pytest
 def test_constantsUrl(supply_constants, ApiUrl):
     ApiUrl_Imported, oauthToken_Imported, githubSecret_Imported = supply_constants
     assert ApiUrl_Imported == ApiUrl, "ApiUrl compaison failed"
+
