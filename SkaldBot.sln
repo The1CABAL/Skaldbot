@@ -11,6 +11,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "SkaldBotUI", "SkaldBotUI\Sk
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SkaldBotCore", "SkaldBotCore\SkaldBotCore.pyproj", "{BE51D694-0D00-4542-90F1-80D519BF4E94}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "UnitTests", "UnitTests\UnitTests.pyproj", "{F6519C6F-4FF2-4E5B-97FB-F3166F2DA9B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,8 @@ Global
 		{F6192AB1-A0C6-4997-8808-9F5B974113A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE51D694-0D00-4542-90F1-80D519BF4E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE51D694-0D00-4542-90F1-80D519BF4E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6519C6F-4FF2-4E5B-97FB-F3166F2DA9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6519C6F-4FF2-4E5B-97FB-F3166F2DA9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
