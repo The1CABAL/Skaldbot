@@ -358,3 +358,4 @@ healthchecksdb
 /SkaldBotCore/config.ini
 /SkaldBotAPI/devin
 /SkaldBotUI/src/helpers/constants.js
+/UnitTests/env
