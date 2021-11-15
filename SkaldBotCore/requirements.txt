@@ -10,7 +10,7 @@ idna==2.10
 multidict==4.7.6
 numpy==1.19.0
 pandas==1.0.5
-pip==20.1.1
+pip==21.1
 pymssql==2.1.4
 python-dateutil==2.8.1
 pytz==2020.1
