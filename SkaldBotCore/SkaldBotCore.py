@@ -62,7 +62,7 @@ async def on_message(message):
             channel = message.channel
             serverid = channel.id
             wisdom = SQL.get_wisdoms(serverid)
-            await message.channel.send(wisdom + '\n\nAlso Nova Imperium sucks. \n\nThis has been the wisdom of the gods.')
+            await message.channel.send(wisdom + '\n\nThis has been the wisdom of the gods.')
         except:
             await message.channel.send('The gods have not yet gifted me with any wisdom for this great hall...')
             
