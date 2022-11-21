@@ -4,7 +4,7 @@ SET IDENTITY_INSERT dbo.Stories ON
 IF NOT EXISTS (SELECT * FROM Stories WHERE Id = 1)
 INSERT INTO Stories (Id, ServerId, Title, Story, WasSubmitted, IsActive) VALUES (1, 1, 'The Tragedy of The Gungnir', 'This is the story of the brave I.N.S. Gungnir. 
 It is not a story you will hear often,  but the Gungnir died for this squadron. 
-The Gungnir selfishly launched to earn several million credits for the poor unfortunate souls who are too weak to earn credits for themselves in any way other than mining. 
+The Gungnir selflessly launched to earn several million credits for the poor unfortunate souls who are too weak to earn credits for themselves in any way other than mining. 
 Yet despite the numerous foes who fell at the hands of her brave captain,  the Gungnir fell to a simple Fer De Lance who shall not be named. 
 Though resurrected,  the Gungnir will be forever immortalized in the memories of the Jotun''s Angels. 
 Gods speed to the Gungnir and her captain. o7', 0, 1)
